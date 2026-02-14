@@ -1,3 +1,4 @@
+import sys
 import uuid
 from datetime import datetime
 
@@ -5,6 +6,11 @@ from kernel import data
 from kernel.llm import run_agentic
 from kernel.prompts import load_prompt
 from kernel.tools import load_tools, check_required_tools
+
+
+def _log(msg: str):
+    """Print a kernel progress message to stderr."""
+    print(f"  [kernel] {msg}", file=sys.stderr, flush=True)
 
 
 class ChatSession:
@@ -50,6 +56,7 @@ class ChatSession:
         conversation_history = self._format_history()
 
         # Run agentic chat with full tool access
+        _log("CHAT ...")
         chat_tools = load_tools("chat")
         system, user = load_prompt("chat", {
             "conversation_history": conversation_history,

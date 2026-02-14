@@ -59,13 +59,18 @@ def run_agentic(system: str, user: str, tools: list, max_iterations: int = 10) -
 
     messages = [{"role": "user", "content": user}]
     all_tool_calls = []
+    all_text = []
 
     for iteration in range(1, max_iterations + 1):
         response = provider.complete_with_tools(system, messages, tool_schemas, model)
 
+        # Accumulate text from every iteration
+        if response.text:
+            all_text.append(response.text)
+
         if not response.tool_calls:
             return AgenticResult(
-                text=response.text,
+                text="\n\n".join(all_text),
                 tool_calls_made=all_tool_calls,
                 iterations=iteration,
             )
@@ -112,7 +117,7 @@ def run_agentic(system: str, user: str, tools: list, max_iterations: int = 10) -
 
     # Max iterations reached — return whatever we have
     return AgenticResult(
-        text=response.text if response else "",
+        text="\n\n".join(all_text),
         tool_calls_made=all_tool_calls,
         iterations=max_iterations,
     )
