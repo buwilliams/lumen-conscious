@@ -119,6 +119,19 @@ def run(timeout):
 
 
 @cli.command()
+def explore():
+    """Manually trigger the explore loop."""
+    from kernel.step_exploration import run_explore_loop
+
+    click.echo("Running explore loop...\n")
+    result = run_explore_loop()
+
+    question = result.get("question", "")
+    if question:
+        click.echo(f"Question: {question}")
+
+
+@cli.command()
 @click.option("--trigger", multiple=True, help="Specify trigger reasons")
 def reflect(trigger):
     """Manually trigger the reflection loop."""
@@ -147,30 +160,41 @@ def reflect(trigger):
 
 
 @cli.command()
-def status():
-    """Print current state."""
+@click.option("--memories", "show_memories", is_flag=True, help="Show recent memories")
+@click.option("--author", type=click.Choice(["self", "kernel", "goal", "external"]),
+              help="Filter memories by author (implies --memories)")
+@click.option("--date", "date_str", type=str, help="Filter memories by date YYYY-MM-DD (implies --memories)")
+@click.option("--all", "show_all", is_flag=True, help="Show all memories (implies --memories)")
+def about(show_memories, author, date_str, show_all):
+    """Print current state: soul, values, goals, skills, and optionally memories."""
     from kernel import data
 
     soul = data.read_soul()
     values = data.read_values()
     goals = data.read_goals()
-    memories = data.read_memories(all_memories=True)
+    skill_names = data.list_skills()
 
-    # Soul summary (first paragraph)
-    soul_lines = [l for l in soul.strip().split("\n") if l.strip()]
-    soul_summary = soul_lines[0] if soul_lines else "(no soul)"
-    click.echo(f"Soul: {soul_summary}")
+    # Soul
+    click.echo("Soul:")
+    if soul.strip():
+        for line in soul.strip().split("\n")[:5]:
+            click.echo(f"  {line}")
+    else:
+        click.echo("  (no soul defined)")
     click.echo()
 
     # Values
     click.echo("Values:")
     active = [v for v in values if v.status == "active"]
+    deprecated = [v for v in values if v.status == "deprecated"]
     if active:
         for v in sorted(active, key=lambda x: x.weight, reverse=True):
             bar = "█" * int(v.weight * 10) + "░" * (10 - int(v.weight * 10))
             click.echo(f"  {v.name:<20} {bar} {v.weight:.1f}")
     else:
         click.echo("  (none)")
+    if deprecated:
+        click.echo(f"  ({len(deprecated)} deprecated)")
     click.echo()
 
     # Goals
@@ -182,88 +206,44 @@ def status():
         click.echo("  (none)")
     click.echo()
 
-    # Memory counts
-    by_author = {}
-    for m in memories:
-        by_author[m.author] = by_author.get(m.author, 0) + 1
-    click.echo(f"Memories: {len(memories)} total")
-    for author, count in sorted(by_author.items()):
-        click.echo(f"  {author}: {count}")
-
-
-@cli.command()
-@click.option("--author", type=click.Choice(["self", "kernel", "goal", "external"]))
-@click.option("--date", "date_str", type=str, help="Filter by date (YYYY-MM-DD)")
-@click.option("--all", "show_all", is_flag=True, help="Show all memories")
-def memory(author, date_str, show_all):
-    """View recent memories."""
-    from kernel import data
-
-    dt = date.fromisoformat(date_str) if date_str else None
-    if show_all:
-        memories = data.read_memories(author=author, all_memories=True)
-    elif dt:
-        memories = data.read_memories(author=author, dt=dt)
+    # Skills
+    click.echo("Skills:")
+    if skill_names:
+        for name in skill_names:
+            click.echo(f"  {name}/")
     else:
-        memories = data.read_recent_memories(20)
-        if author:
-            memories = [m for m in memories if m.author == author]
+        click.echo("  (none installed)")
+    click.echo()
 
-    if not memories:
-        click.echo("No memories found.")
-        return
+    # Memory summary (always show counts)
+    all_memories = data.read_memories(all_memories=True)
+    by_author = {}
+    for m in all_memories:
+        by_author[m.author] = by_author.get(m.author, 0) + 1
+    click.echo(f"Memories: {len(all_memories)} total")
+    for a, count in sorted(by_author.items()):
+        click.echo(f"  {a}: {count}")
 
-    click.echo(f"Showing {len(memories)} memories:\n")
-    for m in memories:
-        ts = m.timestamp[:19]
-        click.echo(f"[{ts}] ({m.author}, w={m.weight:.1f})")
-        click.echo(f"  {m.description[:200]}")
+    # Detailed memories if requested
+    if show_memories or author or date_str or show_all:
         click.echo()
+        dt = date.fromisoformat(date_str) if date_str else None
 
+        if show_all:
+            memories = data.read_memories(author=author, all_memories=True)
+        elif dt:
+            memories = data.read_memories(author=author, dt=dt)
+        else:
+            memories = data.read_recent_memories(20)
+            if author:
+                memories = [m for m in memories if m.author == author]
 
-@cli.command()
-def values():
-    """List current values."""
-    from kernel import data
-
-    vals = data.read_values()
-    if not vals:
-        click.echo("No values defined.")
-        return
-
-    for v in sorted(vals, key=lambda x: x.weight, reverse=True):
-        bar = "█" * int(v.weight * 10) + "░" * (10 - int(v.weight * 10))
-        click.echo(f"  {v.name:<20} {bar} {v.weight:.1f}  [{v.status}]")
-
-
-@cli.command()
-@click.option("--year", type=int, help="Filter by year")
-@click.option("--status", "goal_status", type=click.Choice(["todo", "working", "done", "perpetual"]))
-def goals(year, goal_status):
-    """List current goals."""
-    from kernel import data
-
-    all_goals = data.read_goals(year=year)
-    if goal_status:
-        all_goals = [g for g in all_goals if g.status == goal_status]
-
-    if not all_goals:
-        click.echo("No goals found.")
-        return
-
-    for g in sorted(all_goals, key=lambda x: x.weight, reverse=True):
-        click.echo(f"  {g.name:<30} weight={g.weight:.1f}  status={g.status}")
-
-
-@cli.command()
-def skills():
-    """List available skills."""
-    from kernel import data
-
-    skill_names = data.list_skills()
-    if not skill_names:
-        click.echo("No skills installed.")
-        return
-
-    for name in skill_names:
-        click.echo(f"  {name}/")
+        if not memories:
+            click.echo("No memories found.")
+        else:
+            click.echo(f"Showing {len(memories)} memories:\n")
+            for m in memories:
+                ts = m.timestamp[:19]
+                click.echo(f"[{ts}] ({m.author}, w={m.weight:.1f})")
+                click.echo(f"  {m.description[:200]}")
+                click.echo()
