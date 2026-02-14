@@ -46,21 +46,35 @@ def chat(session):
 
 
 @cli.command()
-def run():
-    """Start the internal loop (action + explore cycles)."""
+@click.option("--timeout", type=int, default=None,
+              help="Timeout in milliseconds (default: 1800000 = 30 min)")
+def run(timeout):
+    """Start the internal loop (action → explore → reflect cycles)."""
     from kernel.loops import run_action_loop, run_explore_loop
     from kernel.reflection import should_reflect, run_reflection_loop
+    from kernel.config import load_config
 
-    click.echo("Lumen internal loop started. Ctrl+C to stop.\n")
+    if timeout is None:
+        config = load_config()
+        timeout = config.get("run", {}).get("timeout_ms")
+
+    timeout_seconds = timeout / 1000.0 if timeout else None
+    start = time.time()
+
+    if timeout_seconds:
+        click.echo(f"Lumen internal loop started (timeout: {timeout_seconds:.0f}s). Ctrl+C to stop.\n")
+    else:
+        click.echo("Lumen internal loop started. Ctrl+C to stop.\n")
     cycle = 0
     cycles_since_reflection = 0
     recent_deltas = []
 
     try:
-        while True:
+        while timeout_seconds is None or time.time() - start < timeout_seconds:
             cycle += 1
+            slot = cycle % 3
 
-            if cycle % 2 == 1:
+            if slot == 1:
                 # Action loop
                 click.echo(f"[cycle {cycle}] Running action loop...")
                 result = run_action_loop()
@@ -70,30 +84,35 @@ def run():
                     recent_deltas = recent_deltas[-10:]
                 click.echo(f"  action: {result.get('action', 'none')}")
                 click.echo(f"  delta: {delta}")
-            else:
+                cycles_since_reflection += 1
+            elif slot == 2:
                 # Explore loop
                 click.echo(f"[cycle {cycle}] Running explore loop...")
                 result = run_explore_loop()
                 click.echo(f"  question: {result.get('question', 'none')}")
-
-            cycles_since_reflection += 1
-
-            # Check reflection trigger after action loops
-            if cycle % 2 == 1:
+                cycles_since_reflection += 1
+            else:
+                # Reflection slot
                 trigger = should_reflect(cycles_since_reflection, recent_deltas)
                 if trigger.get("should_reflect"):
-                    click.echo(f"\n[reflection triggered] {trigger.get('triggers', [])}")
+                    click.echo(f"[cycle {cycle}] Running reflection loop...")
+                    click.echo(f"  triggers: {trigger.get('triggers', [])}")
                     ref_result = run_reflection_loop(trigger.get("triggers", []))
                     changes = ref_result.get("changes", [])
                     click.echo(f"  {len(changes)} changes applied")
                     cycles_since_reflection = 0
                     recent_deltas = []
+                else:
+                    click.echo(f"[cycle {cycle}] Reflection skipped (no triggers)")
 
             click.echo()
             time.sleep(2)
 
     except KeyboardInterrupt:
-        click.echo(f"\nStopped after {cycle} cycles.")
+        pass
+
+    elapsed = time.time() - start
+    click.echo(f"\nStopped after {cycle} cycles ({elapsed:.1f}s elapsed).")
 
 
 @cli.command()
