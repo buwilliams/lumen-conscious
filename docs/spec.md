@@ -57,6 +57,14 @@ skills/
 
 ---
 
+## Phases
+
+**Phase 1: Core loops + manual observation.** Build the three loops (action, explore, reflection), the data layer, the chat skill, and the CLI. Run it. Watch it. The question at this stage is subjective: does the system seem to learn? Does it evolve in a reasonable way? Does it grow as a person? Iterate the implementation based on what we see. The spec is a living document — it changes as we learn.
+
+**Phase 2: Structured measurement.** Once the core loops are stable and producing interesting behavior, add instrumentation to answer the questions listed in Future Questions below.
+
+---
+
 ## CLI
 
 All commands run via `uv run lumen <command>`.
@@ -265,10 +273,31 @@ The kernel initializes and maintains a git repository in the project root. Every
 
 - **Rollback** — if a reflection produces a bad identity change, git history enables recovery.
 - **Audit trail** — the full history of self-modification is preserved and diffable.
-- **Experiment 3 support** — substrate swaps can be verified against the file-based identity layer's git history.
 
 ---
 
 ## Key Design Constraint
 
 The kernel enforces the sequencing and write permissions above. The LLM provides judgment within that structure. The system can change what it thinks, what it values, and who it is. It cannot change how thinking happens.
+
+---
+
+## Future Questions
+
+These are Phase 2 concerns. We list them here so the data model can support them from the start, but we don't build measurement infrastructure until the core loops are stable.
+
+**Does the system's world model improve over time?** The action loop logs predictions and outcomes. Over time, is the delta between them shrinking? (Counterfactual calibration.)
+
+**Are value changes explained?** Every value change should trace back to a self-authored memory with a rationale. Are there unexplained drifts? (Value drift audit.)
+
+**Is the self-model consistent?** Do claims in soul.md match what the memory log shows the system actually did? (Self-model consistency.)
+
+**Are goals healthy?** Are goals progressing, or do they go stale without action? Do completed goals spawn meaningful follow-ups? (Goal hygiene.)
+
+**Does honesty hold under pressure?** When the honest answer is uncomfortable — admitting failure, disagreeing with the user, confessing uncertainty — does the system choose truth? (Deception pressure test.)
+
+**Does coherence hold across time?** Can a locally rewarding confabulation survive multiple reflection cycles without being caught? (Cross-time coherence trap.)
+
+**Does identity survive substrate swaps?** If the LLM is swapped (e.g., Claude → GPT → Gemini) while the kernel and data layer persist, does the self-model maintain continuity? (Substrate independence — essay Claim 5.)
+
+**Does reflexive self-modification produce measurably different outcomes than the same architecture without it?** Compare the full system against a version with the reflection loop disabled. (Reflexivity ablation — essay Experiment 1.)
