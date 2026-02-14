@@ -1,34 +1,6 @@
-**Candidates to score:**
+**Candidates from THINK step:**
 {{candidates}}
 
-**Values (with weights):**
-{{values}}
+Use your tools to check values, goals, and available skills. Then score each candidate using B=MAP and select the best action.
 
-**Active Goals (with weights):**
-{{goals}}
-
-**Available Skills:**
-{{skills}}
-
-Score each candidate using B=MAP and select the best action.
-
-```json
-{
-  "scores": [
-    {
-      "action": "action description",
-      "M": 0.0,
-      "A": 0.0,
-      "P": 0.0,
-      "B": 0.0,
-      "rationale": "why these scores"
-    }
-  ],
-  "selected": {
-    "action": "selected action description",
-    "skill": "skill to invoke or respond",
-    "response": "if responding directly, the response text",
-    "prediction": "predicted outcome"
-  }
-}
-```
+Clearly state the selected action, its skill, the response text (if responding directly), and the prediction.

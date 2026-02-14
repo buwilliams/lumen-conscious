@@ -47,7 +47,7 @@ Mutable instance state. Git-tracked for rollback and audit.
 
 **Explore Loop** (seeks novelty): Generates open-ended questions from perpetual goals. Writes memories only. Alternates with action loop during `lumen run`.
 
-**Reflection Loop** (metaprogramming): REVIEW → ASK → EVOLVE. The only loop that can modify values, goal weights, perpetual status, and soul.md. Auto-commits to git after EVOLVE. Triggered by: prediction deltas, value conflicts, goal completion/staleness, periodic cycles, or explicit request.
+**Reflection Loop** (metaprogramming): REVIEW → ASK → EVOLVE. The only loop that can modify values, goal weights, perpetual status, and soul.md. Triggered by: prediction deltas, value conflicts, goal completion/staleness, periodic cycles, or explicit request. Git commits are manual.
 
 ## B=MAP Scoring
 

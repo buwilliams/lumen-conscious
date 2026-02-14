@@ -2,15 +2,16 @@ import uuid
 from datetime import datetime
 
 from kernel import data
-from kernel.loops import run_action_loop
+from kernel.llm import run_agentic
+from kernel.prompts import load_prompt
+from kernel.tools import load_tools, check_required_tools
 
 
 class ChatSession:
     """Manages a conversation session.
 
-    Each turn: record user input as external memory → pass it as the situation
-    to the action loop → the action loop runs its full cycle (THINK → DECIDE →
-    ACT → RECORD) → return whatever the loop produces.
+    Each turn: record user input as external memory -> run agentic chat
+    with full tool access (including reflect meta-tool) -> return response.
 
     Conversation history is maintained for continuity across turns.
     """
@@ -28,7 +29,7 @@ class ChatSession:
         data.create_conversation(self.session_id)
 
     def turn(self, user_input: str) -> str:
-        """Process one user turn through the action loop."""
+        """Process one user turn using agentic chat with tools."""
         # Record user input as external memory
         data.append_memory(data.make_memory(
             author="external",
@@ -48,13 +49,22 @@ class ChatSession:
         # Build conversation history string for context
         conversation_history = self._format_history()
 
-        # Run the action loop with user input as the situation
-        result = run_action_loop(
-            situation=f"User said: {user_input}",
-            conversation_history=conversation_history,
-        )
+        # Run agentic chat with full tool access
+        chat_tools = load_tools("chat")
+        system, user = load_prompt("chat", {
+            "conversation_history": conversation_history,
+            "user_input": user_input,
+        })
 
-        response = result.get("response") or result.get("result") or "I'm not sure how to respond."
+        result = run_agentic(system, user, chat_tools)
+
+        # Check required tools (read_memories)
+        missing = check_required_tools("chat", result.tool_calls_made)
+        if missing:
+            retry_user = user + f"\n\nYou must use the following tools: {', '.join(missing)}. Please try again."
+            result = run_agentic(system, retry_user, chat_tools)
+
+        response = result.text or "I'm not sure how to respond."
 
         # Record response as self memory
         data.append_memory(data.make_memory(

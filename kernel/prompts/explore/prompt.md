@@ -1,24 +1,8 @@
-**Identity:**
-{{soul}}
+Use your tools to read the system's current state (soul, values, goals, memories). Then generate one open-ended question that would help the system grow.
 
-**Values:**
-{{values}}
-
-**Perpetual Goals:**
-{{goals}}
-
-**Recent Memories:**
-{{memories}}
-
-Generate one open-ended question that would help the system grow. The question should:
+The question should:
 - Target something the system doesn't know that might matter
 - Be filtered through the perpetual goals and values
 - Push toward novelty, not rehash what's already known
 
-```json
-{
-  "question": "the open-ended question",
-  "rationale": "why this question matters given the system's goals and values",
-  "domain": "what area of knowledge this explores"
-}
-```
+Record the question as a memory using `record_memory`, then describe the question, rationale, and domain in your response.

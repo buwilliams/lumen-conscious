@@ -1,34 +1,14 @@
-**Identity:**
-{{soul}}
-
-**Values:**
-{{values}}
-
-**Active Goals:**
-{{goals}}
-
-**Recent Memories:**
-{{memories}}
-
 **Current Situation:**
 {{situation}}
 
 {{conversation_history}}
 
-Analyze this situation. Generate 1-3 candidate actions with predicted outcomes.
+Use your tools to read the system's current state (soul, values, goals, memories). Then analyze the situation and generate 1-3 candidate actions with predicted outcomes.
 
-```json
-{
-  "analysis": "your analysis of the situation",
-  "candidates": [
-    {
-      "action": "description of the action",
-      "skill": "respond or skill_name",
-      "values": ["value names this serves"],
-      "goals": ["goal names this serves"],
-      "prediction": "predicted outcome if this action is taken",
-      "response": "if skill is respond, the actual response text"
-    }
-  ]
-}
-```
+For each candidate, describe:
+- Action: what to do
+- Skill: "respond" for direct response, or a skill name
+- Values: which values this serves
+- Goals: which goals this serves
+- Prediction: predicted outcome
+- Response: if responding directly, the actual response text

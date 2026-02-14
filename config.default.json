@@ -24,5 +24,46 @@
   "motivation_threshold": 0.2,
   "run": {
     "timeout_ms": null
+  },
+  "tools": {
+    "steps": {
+      "think": {
+        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "list_skills"],
+        "required": ["read_soul", "read_values", "read_goals", "read_memories"]
+      },
+      "decide": {
+        "tools": ["read_values", "read_goals", "list_skills"],
+        "required": ["list_skills"]
+      },
+      "act": {
+        "tools": ["update_goal_status", "invoke_skill", "create_skill", "record_memory"],
+        "required": []
+      },
+      "record": {
+        "tools": [],
+        "required": []
+      },
+      "review": {
+        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "list_skills"],
+        "required": ["read_soul", "read_memories", "read_values", "read_goals"]
+      },
+      "ask": {
+        "tools": ["read_soul", "read_values", "read_goals", "read_memories"],
+        "required": []
+      },
+      "evolve": {
+        "tools": ["write_soul", "update_value", "update_goal", "record_memory"],
+        "required": ["record_memory"]
+      },
+      "explore": {
+        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "record_memory"],
+        "required": ["read_memories", "record_memory"]
+      },
+      "chat": {
+        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "list_skills",
+                  "update_goal_status", "invoke_skill", "create_skill", "record_memory", "reflect"],
+        "required": ["read_memories"]
+      }
+    }
   }
 }

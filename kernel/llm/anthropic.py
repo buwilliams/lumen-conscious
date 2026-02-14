@@ -1,6 +1,6 @@
 import os
 
-from kernel.llm.base import LLMProvider
+from kernel.llm.base import LLMProvider, LLMResponse, ToolUseRequest
 
 
 class AnthropicProvider(LLMProvider):
@@ -32,3 +32,33 @@ class AnthropicProvider(LLMProvider):
             messages=[{"role": "user", "content": user}],
         )
         return response.content[0].text
+
+    def complete_with_tools(self, system: str, messages: list[dict], tools: list[dict], model: str) -> LLMResponse:
+        kwargs = {
+            "model": model,
+            "max_tokens": 4096,
+            "system": system,
+            "messages": messages,
+        }
+        if tools:
+            kwargs["tools"] = tools
+
+        response = self.client.messages.create(**kwargs)
+
+        text_parts = []
+        tool_calls = []
+        for block in response.content:
+            if block.type == "text":
+                text_parts.append(block.text)
+            elif block.type == "tool_use":
+                tool_calls.append(ToolUseRequest(
+                    id=block.id,
+                    name=block.name,
+                    arguments=block.input,
+                ))
+
+        return LLMResponse(
+            text="\n".join(text_parts),
+            tool_calls=tool_calls,
+            stop_reason=response.stop_reason,
+        )

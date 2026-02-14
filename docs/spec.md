@@ -170,7 +170,7 @@ Runs only when triggered. Questions values and goals themselves.
 
 1. **REVIEW.** Load recent memories (author: self, goal, external — exclude kernel), prediction deltas, value conflicts, goal statuses. Summarize what happened since last reflection. Kernel-authored memories are the audit trail, not the experience. The system reflects on what it did and felt, not on the mechanics of how it processed. Kernel logs: what was reviewed, what triggers fired to enter reflection (author: kernel).
 2. **ASK.** For each tension or failure surfaced in review, run counterfactual reasoning against the self. "If I reweighted this value, how would past decisions have changed? Should I want what I want?" Generate proposed changes with rationale.
-3. **EVOLVE.** Run a consistency check on all proposed changes before applying. If two proposals contradict (e.g., increase and decrease the same value weight), resolve by keeping the proposal with stronger evidential support from the REVIEW step — log the conflict and the resolution rationale. Then apply consistent changes. For each change, log: what triggered it, what changed, why (author: self). Kernel logs: which files were modified, before and after states (author: kernel). The kernel commits all changes to git after each EVOLVE step, enabling rollback if a reflection produces a bad change.
+3. **EVOLVE.** Run a consistency check on all proposed changes before applying. If two proposals contradict (e.g., increase and decrease the same value weight), resolve by keeping the proposal with stronger evidential support from the REVIEW step — log the conflict and the resolution rationale. Then apply consistent changes. For each change, log: what triggered it, what changed, why (author: self). Kernel logs: which files were modified, before and after states (author: kernel). Git commits are manual — the user commits after reviewing changes.
 
 Writes: value weights and statuses, goal weights and existence, soul.md identity updates, memories explaining changes.
 
@@ -269,7 +269,7 @@ Goals live in data/goals/[year].json. The year is baked into the kernel's read/w
 
 ## Version Control
 
-The kernel initializes and maintains a git repository in the project root. Every EVOLVE step auto-commits all changes to data/ with a message describing what changed and why. This provides:
+The project uses a git repository for rollback and audit. The user commits changes manually — the kernel does not auto-commit. This provides:
 
 - **Rollback** — if a reflection produces a bad identity change, git history enables recovery.
 - **Audit trail** — the full history of self-modification is preserved and diffable.

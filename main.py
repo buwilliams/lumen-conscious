@@ -52,8 +52,9 @@ def chat(session):
               help="Timeout in milliseconds (default: 1800000 = 30 min)")
 def run(timeout):
     """Start the internal loop (action → explore → reflect cycles)."""
-    from kernel.loops import run_action_loop, run_explore_loop
-    from kernel.reflection import should_reflect, run_reflection_loop
+    from kernel.step_action import run_action_loop
+    from kernel.step_exploration import run_explore_loop
+    from kernel.step_reflection import should_reflect, run_reflection_loop
     from kernel.config import load_config
 
     if timeout is None:
@@ -121,29 +122,28 @@ def run(timeout):
 @click.option("--trigger", multiple=True, help="Specify trigger reasons")
 def reflect(trigger):
     """Manually trigger the reflection loop."""
-    from kernel.reflection import run_reflection_loop
+    from kernel.step_reflection import run_reflection_loop
 
     triggers = list(trigger) if trigger else ["explicit"]
     click.echo(f"Running reflection loop (triggers: {triggers})...\n")
     result = run_reflection_loop(triggers)
 
-    review = result.get("review", {})
-    click.echo(f"Review: {review.get('summary', 'No summary')[:200]}")
-    click.echo()
+    review = result.get("review", "")
+    if review:
+        click.echo(f"Review: {review[:300]}")
+        click.echo()
 
     changes = result.get("changes", [])
     if changes:
         click.echo(f"{len(changes)} changes applied:")
         for c in changes:
-            click.echo(f"  - {c.get('type')}: {c.get('target')} → {c.get('new_value')}")
+            click.echo(f"  - {c.get('name', '')} {c}")
     else:
         click.echo("No changes proposed.")
 
-    conflicts = result.get("conflicts", [])
-    if conflicts:
-        click.echo(f"\n{len(conflicts)} conflicts resolved:")
-        for c in conflicts:
-            click.echo(f"  - {c.get('description')}")
+    evolve_text = result.get("evolve_text", "")
+    if evolve_text:
+        click.echo(f"\nEvolve: {evolve_text[:300]}")
 
 
 @cli.command()
