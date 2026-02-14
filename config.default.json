@@ -1,0 +1,23 @@
+{
+  "llm": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-20250514",
+    "api_key_env": "ANTHROPIC_API_KEY"
+  },
+  "embedding": {
+    "provider": "openai",
+    "model": "text-embedding-3-small",
+    "api_key_env": "OPENAI_API_KEY"
+  },
+  "memory": {
+    "retrieve_count": 20,
+    "weight_decay_rate": 0.01,
+    "weight_boost": 0.05
+  },
+  "reflection": {
+    "cycle_interval": 5,
+    "prediction_delta_threshold": 0.3,
+    "staleness_cycles": 10
+  },
+  "motivation_threshold": 0.2
+}
