@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 from dataclasses import dataclass, asdict
 from datetime import datetime, date
 from pathlib import Path
@@ -147,6 +148,8 @@ def append_memory(mem: Memory):
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "a") as f:
         f.write(json.dumps(asdict(mem)) + "\n")
+    if mem.author == "kernel":
+        print(f"  [{mem.author}] {mem.situation}: {mem.description}", file=sys.stderr)
 
 
 def make_memory(author: str, weight: float, situation: str, description: str) -> Memory:

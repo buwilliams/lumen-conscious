@@ -23,6 +23,8 @@ def chat(session):
     """Start a conversation."""
     from kernel.chat import ChatSession
 
+    import readline  # noqa: F401 — enables arrow keys, history, line editing
+
     s = ChatSession(session_id=session)
     click.echo(f"Lumen chat (session: {s.session_id})")
     click.echo("Type 'exit' or Ctrl+C to quit.\n")
@@ -38,7 +40,7 @@ def chat(session):
             if not user_input.strip():
                 continue
             response = s.turn(user_input)
-            click.echo(f"lumen: {response}\n")
+            click.echo(f"\nlumen: {response}\n")
     except KeyboardInterrupt:
         click.echo("\n")
 

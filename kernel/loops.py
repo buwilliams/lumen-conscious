@@ -1,9 +1,15 @@
 import json
+import sys
 
 from kernel import data, memory, skills
 from kernel.config import load_config
 from kernel.llm import call_llm, extract_json
 from kernel.prompts import load_prompt
+
+
+def _log(msg: str):
+    """Print a kernel progress message to stderr."""
+    print(f"  [kernel] {msg}", file=sys.stderr, flush=True)
 
 
 def format_values(values: list[data.Value]) -> str:
@@ -48,6 +54,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
     skill_names = data.list_skills()
 
     # --- THINK ---
+    _log("THINK ...")
     system, user = load_prompt("think", {
         "soul": soul,
         "values": format_values(values),
@@ -79,6 +86,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         }]
 
     # --- DECIDE ---
+    _log("DECIDE ...")
     system, user = load_prompt("decide", {
         "candidates": json.dumps(candidates, indent=2),
         "values": format_values(values),
@@ -110,6 +118,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         return {"action": "skip", "result": None, "response": None, "record": None, "delta": 0.0}
 
     # --- ACT ---
+    _log(f"ACT (skill: {selected.get('skill', 'respond')}) ...")
     skill_name = selected.get("skill", "respond")
     result = None
     response = None
@@ -135,6 +144,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
     ))
 
     # --- RECORD ---
+    _log("RECORD ...")
     prediction = selected.get("prediction", "")
     system, user = load_prompt("record", {
         "situation": sit,
