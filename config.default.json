@@ -2,7 +2,9 @@
   "llm": {
     "provider": "anthropic",
     "model": "claude-sonnet-4-20250514",
-    "api_key_env": "ANTHROPIC_API_KEY"
+    "auth_type": "api_key",
+    "api_key_env": "ANTHROPIC_API_KEY",
+    "auth_token_env": "ANTHROPIC_AUTH_TOKEN"
   },
   "embedding": {
     "provider": "openai",

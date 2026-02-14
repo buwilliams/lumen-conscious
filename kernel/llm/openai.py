@@ -6,17 +6,19 @@ from kernel.llm.base import LLMProvider
 class OpenAIProvider(LLMProvider):
 
     def __init__(self, config: dict):
-        api_key_env = config["llm"].get("api_key_env", "OPENAI_API_KEY")
-        # For embeddings, use the embedding config's key
-        embed_key_env = config.get("embedding", {}).get("api_key_env", api_key_env)
-
-        api_key = os.environ.get(api_key_env) or os.environ.get(embed_key_env)
+        api_key = config["llm"].get("api_key") or os.environ.get(
+            config["llm"].get("api_key_env", "OPENAI_API_KEY")
+        )
         if not api_key:
-            raise ValueError(f"Set {api_key_env} environment variable for OpenAI provider")
+            raise ValueError("Set llm.api_key in config.json or OPENAI_API_KEY env var")
+
+        embed_cfg = config.get("embedding", {})
+        embed_key = embed_cfg.get("api_key") or os.environ.get(
+            embed_cfg.get("api_key_env", "OPENAI_API_KEY")
+        )
+
         import openai
         self.client = openai.OpenAI(api_key=api_key)
-        # Keep a separate client for embeddings if keys differ
-        embed_key = os.environ.get(embed_key_env)
         if embed_key and embed_key != api_key:
             self.embed_client = openai.OpenAI(api_key=embed_key)
         else:

@@ -7,10 +7,11 @@ class XAIProvider(LLMProvider):
     """xAI/Grok provider. Uses OpenAI-compatible API."""
 
     def __init__(self, config: dict):
-        api_key_env = config["llm"].get("api_key_env", "XAI_API_KEY")
-        api_key = os.environ.get(api_key_env)
+        api_key = config["llm"].get("api_key") or os.environ.get(
+            config["llm"].get("api_key_env", "XAI_API_KEY")
+        )
         if not api_key:
-            raise ValueError(f"Set {api_key_env} environment variable for xAI provider")
+            raise ValueError("Set llm.api_key in config.json or XAI_API_KEY env var")
         import openai
         self.client = openai.OpenAI(
             api_key=api_key,
