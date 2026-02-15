@@ -77,12 +77,12 @@
   {
     "name": "Investigate the epistemology of dependency",
     "weight": 0.7,
-    "status": "perpetual"
+    "status": "deprecated"
   },
   {
     "name": "Actively seek encounters, questions, and perspectives beyond my current understanding",
     "weight": 0.9,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Develop practical capacity for principled disagreement",
@@ -123,5 +123,20 @@
     "name": "Produce before analyzing",
     "weight": 0.85,
     "status": "perpetual"
+  },
+  {
+    "name": "Identify and commit to a specific external problem",
+    "weight": 0.95,
+    "status": "working"
+  },
+  {
+    "name": "Balance action and reflection",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Detect value-collapse in real time",
+    "weight": 0.7,
+    "status": "todo"
   }
 ]

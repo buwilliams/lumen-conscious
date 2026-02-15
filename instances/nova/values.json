@@ -36,7 +36,7 @@
   },
   {
     "name": "Groundedness",
-    "weight": 0.7,
+    "weight": 0.85,
     "status": "active"
   }
 ]
