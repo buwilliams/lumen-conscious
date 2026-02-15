@@ -89,18 +89,19 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
     decide_result = _run_agentic_step("decide", {
         "predictions_output": predictions_output,
     })
-    decide_text = decide_result.text
+
+    decision = _parse_json(decide_result.text) or {}
+    selected = decision.get("selected", {})
 
     data.append_memory(data.make_memory(
         author="kernel",
         weight=0.5,
         situation=sit,
-        description=f"DECIDE: tools_used={len(decide_result.tool_calls_made)} iterations={decide_result.iterations}",
+        description=f"DECIDE: tools_used={len(decide_result.tool_calls_made)} iterations={decide_result.iterations} B={selected.get('B', '?')}",
     ))
 
     # Check for skip recommendation (motivation too low)
-    decide_lower = decide_text.lower()
-    if "skip" in decide_lower and "motivation" in decide_lower and "low" in decide_lower:
+    if decision.get("skip"):
         data.append_memory(data.make_memory(
             author="kernel",
             weight=0.3,
@@ -111,10 +112,9 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
 
     # --- ACT ---
     _log("ACT ...")
-    selected_output = _extract_section(decide_text, "SELECTED")
     act_tools = load_tools("act")
     system, user = load_prompt("act", {
-        "selected_output": selected_output,
+        "selected_output": json.dumps(selected, indent=2),
     })
 
     act_result = run_agentic(system, user, act_tools)
@@ -134,7 +134,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
 
     # --- RECORD ---
     _log("RECORD ...")
-    prediction = _extract_section(decide_text, "Prediction") or predictions_output[-500:]
+    prediction = selected.get("prediction", predictions_output[-500:])
     system, user = load_prompt("record", {
         "prediction": prediction,
         "outcome": str(response)[:2000],
@@ -151,36 +151,13 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
     ))
 
     return {
-        "action": _extract_section(decide_text, "Action") or "action",
+        "action": selected.get("action", "action"),
         "result": response,
         "response": response,
         "record": record_result,
         "delta": delta,
     }
 
-
-def _extract_section(text: str, label: str) -> str:
-    """Extract content after a label like '- Action:' or '**SELECTED:**' from structured text.
-
-    Looks for patterns like:
-      - Label: content
-      **LABEL:** content
-      Label: content
-    Returns the content after the label, up to the next section marker or end.
-    """
-    # Try "- Label:" pattern first (inside SELECTED block)
-    pattern = rf'[-*]*\s*{label}\s*[:]*\s*(.+?)(?:\n[-*]|\n\n|\Z)'
-    match = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
-    if match:
-        return match.group(1).strip()[:500]
-
-    # Try "**LABEL:**" block pattern
-    pattern = rf'\*\*{label}[:\s]*\*\*\s*\n?(.*?)(?:\n\*\*|\Z)'
-    match = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
-    if match:
-        return match.group(1).strip()[:500]
-
-    return ""
 
 
 def _parse_json(text: str) -> dict | None:
