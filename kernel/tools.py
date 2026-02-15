@@ -54,6 +54,13 @@ def handle_read_goals(status: str | None = None) -> str:
     return json.dumps([asdict(g) for g in goals], indent=2)
 
 
+def _truncate_description(desc: str, max_len: int = 500) -> str:
+    """Truncate a memory description for LLM context. Full data stays in storage."""
+    if len(desc) <= max_len:
+        return desc
+    return desc[:max_len] + "..."
+
+
 def handle_read_memories(author: str | None = None, n: int = 20) -> str:
     if author and author != "kernel":
         mems = memory.retrieve_non_kernel_memories(n)
@@ -67,7 +74,8 @@ def handle_read_memories(author: str | None = None, n: int = 20) -> str:
         return "(no memories found)"
     lines = []
     for m in mems:
-        lines.append(f"[{m.timestamp}] ({m.author}, w={m.weight}) {m.situation}: {m.description}")
+        desc = _truncate_description(m.description)
+        lines.append(f"[{m.timestamp}] ({m.author}, w={m.weight}) {m.situation}: {desc}")
     return "\n".join(lines)
 
 
@@ -78,7 +86,8 @@ def handle_read_memories_non_kernel(n: int = 40) -> str:
         return "(no memories found)"
     lines = []
     for m in mems:
-        lines.append(f"[{m.timestamp}] ({m.author}, w={m.weight}) {m.situation}: {m.description}")
+        desc = _truncate_description(m.description)
+        lines.append(f"[{m.timestamp}] ({m.author}, w={m.weight}) {m.situation}: {desc}")
     return "\n".join(lines)
 
 
@@ -319,13 +328,10 @@ def load_tools(step: str) -> list[Tool]:
     step_config = config.get("tools", {}).get("steps", {}).get(step, {})
     tool_names = step_config.get("tools", [])
 
-    # For reflection read steps, swap in the non-kernel memory reader
-    reflection_read_steps = {"review", "ask"}
-
     loaded = []
     for name in tool_names:
-        if name == "read_memories" and step in reflection_read_steps:
-            # Use the non-kernel variant for reflection read steps
+        if name == "read_memories":
+            # Always use non-kernel variant — kernel memories are audit trail, not cognition
             loaded.append(Tool(
                 name="read_memories",
                 description="Read recent memories (excluding kernel-authored audit trail).",
