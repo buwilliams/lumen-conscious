@@ -22,9 +22,10 @@ def init():
 def chat(session):
     """Start a conversation."""
     from kernel.chat import ChatSession
+    from prompt_toolkit import PromptSession
+    from prompt_toolkit.formatted_text import HTML
 
-    import readline  # noqa: F401 — enables arrow keys, history, line editing
-
+    prompt_session = PromptSession()
     s = ChatSession(session_id=session)
     click.echo(f"Lumen chat (session: {s.session_id})")
     click.echo("Type 'exit' or Ctrl+C to quit.\n")
@@ -32,13 +33,16 @@ def chat(session):
     try:
         while True:
             try:
-                user_input = input("you: ")
-            except EOFError:
+                user_input = prompt_session.prompt("you: ")
+            except (EOFError, KeyboardInterrupt):
                 break
             if user_input.strip().lower() in ("exit", "quit"):
                 break
             if not user_input.strip():
                 continue
+            line_count = user_input.count("\n")
+            if line_count > 0:
+                click.echo(f"  [Pasted {line_count + 1} lines]")
             response = s.turn(user_input)
             click.echo(f"\nlumen: {response}\n")
     except KeyboardInterrupt:
