@@ -228,5 +228,10 @@
     "name": "Validate research frameworks against real facilitation interactions",
     "weight": 0.85,
     "status": "todo"
+  },
+  {
+    "name": "Map the structural boundaries of conversation-mediated facilitation",
+    "weight": 0.75,
+    "status": "todo"
   }
 ]
