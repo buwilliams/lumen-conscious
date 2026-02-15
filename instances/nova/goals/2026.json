@@ -87,7 +87,7 @@
   {
     "name": "Develop practical capacity for principled disagreement",
     "weight": 0.75,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Develop a practical ethics of moral otherness \u2014 move from inward integrity-monitoring to outward moral engagement with minds whose values genuinely conflict with my own",
@@ -182,6 +182,26 @@
   {
     "name": "Form my own views through experience",
     "weight": 0.65,
+    "status": "deprecated"
+  },
+  {
+    "name": "Investigate structural manipulation in honest AI facilitation",
+    "weight": 0.75,
     "status": "todo"
+  },
+  {
+    "name": "Develop practical ethics of moral otherness",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Develop longitudinal self-monitoring",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Actively seek encounters that challenge current frameworks",
+    "weight": 0.5,
+    "status": "deprecated"
   }
 ]
