@@ -11,7 +11,7 @@ Lumen is a consciousness/AI agent architecture — a self-modifying system with 
 ```
 uv run lumen init              # Scaffold new instance (data/, .git, default chat skill)
 uv run lumen chat              # Interactive REPL conversation (runs action loop per turn)
-uv run lumen run               # Internal loop: alternates action, explore, and reflect cycles
+uv run lumen start             # Internal loop: alternates action, explore, and reflect cycles
 uv run lumen trigger action    # Manually trigger action loop (MODEL → CANDIDATES → PREDICT → DECIDE → ACT → RECORD)
 uv run lumen trigger explore   # Manually trigger explore loop (generate open-ended question)
 uv run lumen trigger reflect   # Manually trigger reflection (REVIEW → ASK → EVOLVE)

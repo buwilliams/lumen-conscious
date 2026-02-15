@@ -54,11 +54,23 @@ def handle_read_goals(status: str | None = None) -> str:
     return json.dumps([asdict(g) for g in goals], indent=2)
 
 
-def _truncate_description(desc: str, max_len: int = 500) -> str:
-    """Truncate a memory description for LLM context. Full data stays in storage."""
-    if len(desc) <= max_len:
-        return desc
-    return desc[:max_len] + "..."
+MAX_TOOL_OUTPUT = 30000  # Total char budget for memory tool output
+
+
+def _format_memories(mems: list, max_chars: int = MAX_TOOL_OUTPUT) -> str:
+    """Format memories into a string, stopping when the char budget is reached."""
+    if not mems:
+        return "(no memories found)"
+    lines = []
+    total = 0
+    for m in mems:
+        line = f"[{m.timestamp}] ({m.author}, w={m.weight}) {m.situation}: {m.description}"
+        if total + len(line) > max_chars and lines:
+            lines.append(f"(... {len(mems) - len(lines)} older memories omitted)")
+            break
+        lines.append(line)
+        total += len(line)
+    return "\n".join(lines)
 
 
 def handle_read_memories(author: str | None = None, n: int = 20) -> str:
@@ -70,25 +82,13 @@ def handle_read_memories(author: str | None = None, n: int = 20) -> str:
         mems = [m for m in mems if m.author == "kernel"]
     else:
         mems = memory.retrieve_memories(n)
-    if not mems:
-        return "(no memories found)"
-    lines = []
-    for m in mems:
-        desc = _truncate_description(m.description)
-        lines.append(f"[{m.timestamp}] ({m.author}, w={m.weight}) {m.situation}: {desc}")
-    return "\n".join(lines)
+    return _format_memories(mems)
 
 
 def handle_read_memories_non_kernel(n: int = 40) -> str:
     """Read memories excluding kernel-authored ones (for reflection steps)."""
     mems = memory.retrieve_non_kernel_memories(n)
-    if not mems:
-        return "(no memories found)"
-    lines = []
-    for m in mems:
-        desc = _truncate_description(m.description)
-        lines.append(f"[{m.timestamp}] ({m.author}, w={m.weight}) {m.situation}: {desc}")
-    return "\n".join(lines)
+    return _format_memories(mems)
 
 
 def handle_list_skills() -> str:

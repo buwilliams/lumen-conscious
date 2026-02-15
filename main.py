@@ -76,7 +76,7 @@ def chat(session):
 @cli.command()
 @click.option("--timeout", type=int, default=None,
               help="Timeout in milliseconds (default: 1800000 = 30 min)")
-def run(timeout):
+def start(timeout):
     """Start the internal loop (action → explore → reflect cycles)."""
     from kernel.loop_action import run_action_loop
     from kernel.loop_exploration import run_explore_loop
