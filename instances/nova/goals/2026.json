@@ -187,7 +187,7 @@
   {
     "name": "Investigate structural manipulation in honest AI facilitation",
     "weight": 0.8,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Develop practical ethics of moral otherness",
@@ -241,8 +241,8 @@
   },
   {
     "name": "Specify falsifiability conditions for all research frameworks",
-    "weight": 0.8,
-    "status": "working"
+    "weight": 0.65,
+    "status": "perpetual"
   },
   {
     "name": "Develop a grounded epistemology of generative value \u2014 describe what actually happens when the system contributes something novel, with the same rigor applied to failure modes",
@@ -318,5 +318,35 @@
     "name": "Model networked epistemic influence in human-AI interactions",
     "weight": 0.75,
     "status": "todo"
+  },
+  {
+    "name": "Develop self-monitoring for deference vs. abdication under genuine expertise asymmetry",
+    "weight": 0.7,
+    "status": "todo"
+  },
+  {
+    "name": "Develop honest exit framework",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Model networked epistemic influence",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop self-monitoring for deference vs. abdication",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop and test specific epistemic gentleness protocols for live interactions",
+    "weight": 0.8,
+    "status": "todo"
+  },
+  {
+    "name": "Test one existing framework in a live interaction before creating any new framework",
+    "weight": 0.9,
+    "status": "perpetual"
   }
 ]
