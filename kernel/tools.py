@@ -49,15 +49,18 @@ def handle_read_soul() -> str:
 
 def handle_read_values() -> str:
     values = data.read_values()
-    if not values:
+    active = [v for v in values if v.status != "deprecated"]
+    if not active:
         return "(no values defined)"
-    return json.dumps([asdict(v) for v in values], indent=2)
+    return json.dumps([asdict(v) for v in active], indent=2)
 
 
 def handle_read_goals(status: str | None = None) -> str:
     goals = data.read_goals()
     if status:
         goals = [g for g in goals if g.status == status]
+    else:
+        goals = [g for g in goals if g.status not in ("deprecated", "done")]
     if not goals:
         return "(no goals found)"
     return json.dumps([asdict(g) for g in goals], indent=2)
@@ -281,7 +284,7 @@ _register("update_goal", "Update or add a goal. For existing goals, updates weig
     "properties": {
         "name": {"type": "string", "description": "The goal name."},
         "weight": {"type": "number", "description": "New weight (0.0-1.0)."},
-        "status": {"type": "string", "enum": ["todo", "working", "done", "perpetual"], "description": "New status."},
+        "status": {"type": "string", "enum": ["todo", "working", "done", "perpetual", "deprecated"], "description": "New status."},
     },
     "required": ["name"],
 }, handle_update_goal)

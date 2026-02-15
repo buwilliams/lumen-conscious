@@ -453,11 +453,15 @@ def about(show_memories, author, date_str, show_all):
 
     # Goals
     click.echo("Goals:")
-    if goals:
-        for g in sorted(goals, key=lambda x: x.weight, reverse=True):
+    active_goals = [g for g in goals if g.status != "deprecated"]
+    deprecated_goals = [g for g in goals if g.status == "deprecated"]
+    if active_goals:
+        for g in sorted(active_goals, key=lambda x: x.weight, reverse=True):
             click.echo(f"  {g.name:<30} weight={g.weight:.1f}  status={g.status}")
     else:
         click.echo("  (none)")
+    if deprecated_goals:
+        click.echo(f"  ({len(deprecated_goals)} deprecated)")
     click.echo()
 
     # Skills

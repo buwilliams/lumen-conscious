@@ -1,86 +1,18 @@
 # Lumen
 
-A consciousness architecture for AI agents. A self-modifying system with values, goals, and identity that evolve through experience via three core loops.
+Lumen is a consciousness architecture for AI agents. It models a system with values, goals, and identity that evolve through experience — the system can change what it thinks, what it values, and who it is, but it cannot change how thinking happens.
 
-Based on the essay [A Theory of Consciousness](https://github.com/buwilliams/buddy-williams-writings/blob/main/essays/theory-of-consciousness.md).
+The theoretical foundation is described in [A Theory of Consciousness](https://github.com/buwilliams/buddy-williams-writings/blob/main/essays/theory-of-consciousness.md).
 
-## Architecture
+## How It Works
 
-Three layers: **CLI** (router) → **Kernel** (brain) → **Skills** (hands).
+Lumen runs three loops that together produce something like a cognitive cycle:
 
-```
-main.py                  # CLI entry point (Click)
-kernel/                  # Orchestrates loops, manages state, invokes skills
-  prompts/               # LLM prompt templates (system.md + prompt.md per step)
-    model/               # Perception — reads state, produces situation model
-    candidates/          # Generates 1-3 candidate actions
-    predict/             # Counterfactual reasoning for action candidates
-    explore_predict/     # Counterfactual reasoning for explore questions
-    reflect_predict/     # Counterfactual reasoning for proposed changes
-    decide/              # B=MAP scoring, selects best candidate
-    act/                 # Executes the selected action
-    record/              # Compares prediction vs outcome, computes delta
-    explore/             # Generates open-ended questions
-    explore_record/      # Records question, optionally creates goal
-    review/              # Summarizes what happened since last reflection
-    ask/                 # Questions own values and goals
-    evolve/              # Consistency-checks and applies changes
-    trigger/             # Evaluates whether to enter reflection
-    summarize/           # Yearly memory summarization
-skills/                  # Standalone programs, each with main.py entry point
-  chat/                  # Primary user interaction skill
-instances/               # Instance data directories
-  default/               # Default instance (scaffolded by `lumen init`)
-experiment/              # Experiment framework for ablation studies
-```
+- **Action** — Pursues goals. Perceives the current situation, generates candidate actions, scores them, executes the best one, and records what happened versus what was predicted.
+- **Explore** — Seeks novelty. Generates open-ended questions from perpetual goals to surface gaps in the system's understanding. Without this, the system can only exploit what it already knows.
+- **Reflection** — Questions itself. Reviews recent experience, asks whether its values and goals still make sense, and modifies them if they don't. This is the only loop that can rewrite the system's identity.
 
-### Kernel
-
-Central orchestrator. Runs three loops, manages all state, invokes skills as subprocesses. Has a built-in "create skill" tool for LLM-driven skill authoring. All prompt templates live in `kernel/prompts/[step]/` as `system.md` + `prompt.md` pairs — no prompt text in Python source.
-
-### Skills
-
-Standalone programs. Each has a required `main.py` entry point, communicates via stdin/stdout, must implement `--help`. Skills manage their own dependencies independent of kernel's .venv. No skill-to-skill communication — everything routes through kernel.
-
-### Instance Data
-
-Mutable instance state. Git-tracked for rollback and audit.
-
-- `soul.md` — Identity narrative (only reflection loop can write)
-- `values.json` — `{name, weight: 0.0-1.0, status: active|deprecated}`
-- `goals/[year].json` — `{name, weight: 0.0-1.0, status: todo|working|done|perpetual}`
-- `memory/[year]/[year]-[month]-[day].jsonl` — Append-only log with `{timestamp, author, weight, situation, description}`
-
-## Three Loops
-
-**Action Loop** (exploit): MODEL → CANDIDATES → PREDICT → DECIDE → ACT → RECORD
-Pursues goals. Writes memories and goal status changes. Cannot modify values or soul.
-
-**Explore Loop** (novelty): EXPLORE → PREDICT → RECORD
-Generates open-ended questions from perpetual goals. Writes memories and can create new goals.
-
-**Reflection Loop** (metaprogramming): REVIEW → ASK → PREDICT → EVOLVE
-The only loop that can modify values, goal weights, perpetual status, and soul. Triggered by prediction deltas, value conflicts, goal completion/staleness, periodic cycles, or explicit request.
-
-All three loops include a PREDICT step for counterfactual reasoning before committing.
-
-## B=MAP Scoring
-
-Candidate actions scored as **B = M × A × P**:
-- **M (Motivation)**: Value+goal alignment (0.0–1.0)
-- **A (Ability)**: Skill exists? 1.0 or 0.0 (if 0, create skill instead)
-- **P (Prompt)**: Trigger strength — 1.0 for direct, decays for indirect
-
-## Write Permissions
-
-| File | Action | Explore | Reflection |
-|------|--------|---------|------------|
-| soul.md | read | read | read+write |
-| values.json | read | read | read+write |
-| goals (status) | read+write | read+write (create) | read+write |
-| goals (weight/perpetual) | read | read | read+write |
-| skills | read+write (create) | read | read |
-| memory | read+write | read+write | read+write |
+Each loop includes a prediction step for counterfactual reasoning before committing to action. When predictions are wrong, the delta can trigger reflection.
 
 ## Usage
 
@@ -88,40 +20,64 @@ Requires [uv](https://docs.astral.sh/uv/) and Python.
 
 ```bash
 uv run lumen init                        # Scaffold a new instance
-uv run lumen chat                        # Interactive conversation (action loop per turn)
-uv run lumen start                       # Internal loop: action → explore → reflect cycles
-uv run lumen trigger action              # Manually trigger one action loop
-uv run lumen trigger explore             # Manually trigger one explore loop
-uv run lumen trigger reflect             # Manually trigger one reflection loop
+uv run lumen chat                        # Interactive conversation
+uv run lumen start                       # Autonomous loop: action → explore → reflect
 uv run lumen about                       # Print soul, values, goals, skills, memory counts
-uv run lumen about --memories            # Also show recent memories
-uv run lumen about --author self         # Filter memories by author
-uv run lumen about --date 2026-02-14     # Filter memories by date
 ```
 
-### Options
+You can also trigger individual loops manually:
 
 ```bash
---data-dir PATH          # Use a different instance data directory (env: LUMEN_DATA_DIR)
-chat --session ID        # Resume a conversation session
-chat --ablation          # Suppress reflection loop
-start --timeout MS       # Timeout in milliseconds (default: 1800000)
-start --ablation         # Suppress reflection loop (for experiments)
+uv run lumen trigger action              # Run one action cycle
+uv run lumen trigger explore             # Run one explore cycle
+uv run lumen trigger reflect             # Run one reflection cycle
 ```
 
-### Experiments
+Inspect the system's memory:
 
 ```bash
-uv run lumen experiment list             # List registered experiments
-uv run lumen experiment run <name>       # Run an experiment
-uv run lumen experiment compare <name>   # Generate comparison report
-uv run lumen experiment cleanup <name>   # Delete experiment output
+uv run lumen about --memories            # Show recent memories
+uv run lumen about --author self         # Filter by author (self, kernel, goal, external)
+uv run lumen about --date 2026-02-14     # Filter by date
 ```
 
-## Key Constraints
+Multiple instances can run from separate data directories:
 
-- Kernel enforces loop sequencing and write permissions; LLM provides judgment within that structure
-- The system can change what it thinks/values/is — it cannot change how thinking happens
-- Kernel-authored memories are the audit trail (below consciousness); reflection reads only self/goal/external memories
-- `lumen start` and `lumen chat` can coexist — append-only JSONL, last-write-wins for JSON
-- Memory retrieval: union of N most recent + top-K semantic (OpenAI embeddings), with weight decay over time
+```bash
+uv run lumen --data-dir ./instances/other chat
+```
+
+## Architecture
+
+The codebase has three layers: the CLI routes commands, the kernel orchestrates loops and manages state, and skills are standalone programs the kernel invokes as subprocesses.
+
+```
+main.py                  # CLI (Click)
+kernel/                  # Orchestrates loops, manages state
+  prompts/               # LLM prompt templates (system.md + prompt.md per step)
+  chat.py                # Conversation session management
+  loop_action.py         # Action loop
+  loop_exploration.py    # Explore loop
+  loop_reflection.py     # Reflection loop
+skills/                  # Standalone skill programs (created by the system at runtime)
+instances/               # Instance data directories
+  default/               # Default instance
+experiment/              # Experiment framework for ablation studies
+```
+
+### Instance Data
+
+Each instance maintains its own mutable state, git-tracked for rollback and audit:
+
+- `soul.md` — Identity narrative
+- `values.json` — Weighted values that guide action scoring
+- `goals/` — Goals partitioned by year, with weights and statuses
+- `memory/` — Append-only daily JSONL logs
+
+### Write Permissions
+
+The kernel enforces what each loop can modify. Action and explore loops can read the full state but can only write memories and goal statuses. Reflection is the only loop that can change values, goal weights, and the identity narrative.
+
+### Skills
+
+Skills are standalone programs with a `main.py` entry point that communicate via stdin/stdout. The system can author new skills at runtime through the action loop. Skills manage their own dependencies and route all communication through the kernel.

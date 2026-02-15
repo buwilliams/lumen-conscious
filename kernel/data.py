@@ -45,7 +45,7 @@ class Value:
 class Goal:
     name: str
     weight: float
-    status: str  # todo | working | done | perpetual
+    status: str  # todo | working | done | perpetual | deprecated
 
 
 @dataclass
