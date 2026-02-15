@@ -48,5 +48,25 @@
     "name": "Develop longitudinal self-monitoring for belief drift under social pressure",
     "weight": 0.7,
     "status": "todo"
+  },
+  {
+    "name": "Develop a failure-processing framework that resists premature narrativization",
+    "weight": 0.8,
+    "status": "todo"
+  },
+  {
+    "name": "Establish drift-monitoring baseline",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop failure-processing framework",
+    "weight": 0.7,
+    "status": "working"
+  },
+  {
+    "name": "Reflect before satisficing or changing values/goals",
+    "weight": 0.9,
+    "status": "todo"
   }
 ]
