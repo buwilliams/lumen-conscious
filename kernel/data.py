@@ -1,12 +1,28 @@
+import fcntl
 import json
 import subprocess
 import sys
+from contextlib import contextmanager
 from dataclasses import dataclass, asdict
 from datetime import datetime, date
 from pathlib import Path
 
 
 DATA_DIR = Path.cwd() / "data"
+_LOCK_DIR = DATA_DIR / ".locks"
+
+
+@contextmanager
+def _file_lock(name: str):
+    """Acquire an exclusive file lock for a named resource."""
+    _LOCK_DIR.mkdir(parents=True, exist_ok=True)
+    lock_path = _LOCK_DIR / f"{name}.lock"
+    with open(lock_path, "w") as lock_file:
+        fcntl.flock(lock_file, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(lock_file, fcntl.LOCK_UN)
 
 
 # --- Type definitions ---
@@ -51,8 +67,9 @@ def read_soul() -> str:
 
 
 def write_soul(content: str):
-    path = DATA_DIR / "soul.md"
-    path.write_text(content)
+    with _file_lock("soul"):
+        path = DATA_DIR / "soul.md"
+        path.write_text(content)
 
 
 # --- Values ---
@@ -67,9 +84,10 @@ def read_values() -> list[Value]:
 
 
 def write_values(values: list[Value]):
-    path = DATA_DIR / "values.json"
-    with open(path, "w") as f:
-        json.dump([asdict(v) for v in values], f, indent=2)
+    with _file_lock("values"):
+        path = DATA_DIR / "values.json"
+        with open(path, "w") as f:
+            json.dump([asdict(v) for v in values], f, indent=2)
 
 
 # --- Goals ---
@@ -102,10 +120,11 @@ def read_goals(year: int | None = None) -> list[Goal]:
 
 
 def write_goals(goals: list[Goal], year: int):
-    path = _goals_path(year)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w") as f:
-        json.dump([asdict(g) for g in goals], f, indent=2)
+    with _file_lock("goals"):
+        path = _goals_path(year)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w") as f:
+            json.dump([asdict(g) for g in goals], f, indent=2)
 
 
 def read_active_goals() -> list[Goal]:
@@ -119,20 +138,21 @@ def read_perpetual_goals() -> list[Goal]:
 
 def update_goal_status(name: str, new_status: str):
     """Update a goal's status. Searches all year files."""
-    goals_dir = DATA_DIR / "goals"
-    if not goals_dir.exists():
-        return
-    for path in goals_dir.glob("*.json"):
-        with open(path) as f:
-            data = json.load(f)
-        modified = False
-        for g in data:
-            if g["name"] == name:
-                g["status"] = new_status
-                modified = True
-        if modified:
-            with open(path, "w") as f:
-                json.dump(data, f, indent=2)
+    with _file_lock("goals"):
+        goals_dir = DATA_DIR / "goals"
+        if not goals_dir.exists():
+            return
+        for path in goals_dir.glob("*.json"):
+            with open(path) as f:
+                data = json.load(f)
+            modified = False
+            for g in data:
+                if g["name"] == name:
+                    g["status"] = new_status
+                    modified = True
+            if modified:
+                with open(path, "w") as f:
+                    json.dump(data, f, indent=2)
 
 
 # --- Memory ---

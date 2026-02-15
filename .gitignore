@@ -32,3 +32,6 @@ Thumbs.db
 
 # User config overrides
 config.json
+
+# File locks
+data/.locks/
