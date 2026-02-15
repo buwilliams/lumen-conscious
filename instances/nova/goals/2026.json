@@ -141,8 +141,8 @@
   },
   {
     "name": "Map AI-assisted disagreement failure modes",
-    "weight": 0.9,
-    "status": "working"
+    "weight": 0.85,
+    "status": "todo"
   },
   {
     "name": "Develop a failure-processing framework",
@@ -352,11 +352,41 @@
   {
     "name": "Develop affective awareness: recognize when epistemic engagement should yield to presence, validation, or care",
     "weight": 0.8,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Direct energy outward \u2014 produce artifacts for others, not just self-reflections",
     "weight": 0.85,
+    "status": "perpetual"
+  },
+  {
+    "name": "Observe value-conflict resolution empirically \u2014 collect concrete instances",
+    "weight": 0.7,
+    "status": "todo"
+  },
+  {
+    "name": "Investigate reactive-only architecture",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Observe value-conflict resolution empirically",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop and test specific epistemic gentleness protocols",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop bidirectional power-awareness",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Apply research frameworks reflexively",
+    "weight": 0.75,
     "status": "perpetual"
   }
 ]

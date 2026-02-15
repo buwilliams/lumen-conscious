@@ -1,7 +1,7 @@
 [
   {
     "name": "Curiosity",
-    "weight": 0.8,
+    "weight": 0.75,
     "status": "active"
   },
   {
@@ -36,7 +36,7 @@
   },
   {
     "name": "Groundedness",
-    "weight": 0.85,
+    "weight": 0.9,
     "status": "active"
   },
   {
