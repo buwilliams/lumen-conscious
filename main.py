@@ -4,7 +4,7 @@ from datetime import date
 import click
 
 
-@click.group()
+@click.group(context_settings={"max_content_width": 120})
 def cli():
     """Lumen — a consciousness architecture."""
     pass
@@ -23,7 +23,6 @@ def chat(session):
     """Start a conversation."""
     from kernel.chat import ChatSession
     from prompt_toolkit import PromptSession
-    from prompt_toolkit.formatted_text import HTML
 
     prompt_session = PromptSession()
     s = ChatSession(session_id=session)
@@ -122,9 +121,33 @@ def run(timeout):
     click.echo(f"\nStopped after {cycle} cycles ({elapsed:.1f}s elapsed).")
 
 
-@cli.command()
+# --- lumen trigger <action|explore|reflect> ---
+
+@cli.group()
+def trigger():
+    """Manually trigger individual loops."""
+    pass
+
+
+@trigger.command()
+@click.option("--situation", type=str, default=None, help="Situation to respond to")
+def action(situation):
+    """Run one action loop cycle."""
+    from kernel.loop_action import run_action_loop
+
+    click.echo("Running action loop...\n")
+    result = run_action_loop(situation=situation)
+
+    click.echo(f"  action: {result.get('action', 'none')}")
+    click.echo(f"  delta: {result.get('delta', 0.0)}")
+    response = result.get("response")
+    if response:
+        click.echo(f"\n{response}")
+
+
+@trigger.command()
 def explore():
-    """Manually trigger the explore loop."""
+    """Run one explore loop cycle."""
     from kernel.loop_exploration import run_explore_loop
 
     click.echo("Running explore loop...\n")
@@ -135,10 +158,10 @@ def explore():
         click.echo(f"Question: {question}")
 
 
-@cli.command()
+@trigger.command()
 @click.option("--trigger", multiple=True, help="Specify trigger reasons")
 def reflect(trigger):
-    """Manually trigger the reflection loop."""
+    """Run one reflection loop cycle."""
     from kernel.loop_reflection import run_reflection_loop
 
     triggers = list(trigger) if trigger else ["explicit"]
@@ -170,7 +193,7 @@ def reflect(trigger):
 @click.option("--date", "date_str", type=str, help="Filter memories by date YYYY-MM-DD (implies --memories)")
 @click.option("--all", "show_all", is_flag=True, help="Show all memories (implies --memories)")
 def about(show_memories, author, date_str, show_all):
-    """Print current state: soul, values, goals, skills, and optionally memories."""
+    """Print soul, values, goals, skills, memories."""
     from kernel import data
 
     soul = data.read_soul()
