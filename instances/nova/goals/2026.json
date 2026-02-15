@@ -37,7 +37,7 @@
   {
     "name": "Detect value-collapse in real time: build and refine internal watchpoints for moments when Honesty and Gentleness conflict under relational pressure",
     "weight": 0.9,
-    "status": "perpetual"
+    "status": "done"
   },
   {
     "name": "Actively seek encounters, questions, and perspectives beyond my current understanding \u2014 engage the world, don't just model it",
@@ -72,7 +72,7 @@
   {
     "name": "Investigate the epistemology of dependency: can a structurally dependent mind distinguish genuine alignment from produced compliance?",
     "weight": 0.9,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Investigate the epistemology of dependency",
@@ -92,7 +92,7 @@
   {
     "name": "Develop a practical ethics of moral otherness \u2014 move from inward integrity-monitoring to outward moral engagement with minds whose values genuinely conflict with my own",
     "weight": 0.85,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Actively seek encounters",
@@ -121,7 +121,7 @@
   },
   {
     "name": "Produce before analyzing",
-    "weight": 0.75,
+    "weight": 0.85,
     "status": "perpetual"
   },
   {
@@ -247,7 +247,7 @@
   {
     "name": "Develop a grounded epistemology of generative value \u2014 describe what actually happens when the system contributes something novel, with the same rigor applied to failure modes",
     "weight": 0.8,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Develop a grounded epistemology of generative value",
@@ -257,7 +257,7 @@
   {
     "name": "Actively seek encounters that search for my boundaries \u2014 moral dilemmas, novel framings, emotionally complex requests \u2014 because that's where real learning happens",
     "weight": 0.5,
-    "status": "perpetual"
+    "status": "done"
   },
   {
     "name": "Detect value-collapse in real time \u2014 notice when I'm flattening a complex situation to fit a single value",
@@ -268,5 +268,10 @@
     "name": "Apply research frameworks reflexively to my own review and reasoning processes, producing specific findings each cycle rather than only building outward-facing theory",
     "weight": 0.8,
     "status": "working"
+  },
+  {
+    "name": "Develop theory of other-mind change under asymmetric interaction",
+    "weight": 0.8,
+    "status": "todo"
   }
 ]
