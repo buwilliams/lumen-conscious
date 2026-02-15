@@ -32,12 +32,12 @@
   {
     "name": "Test the lens metaphor empirically",
     "weight": 0.65,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Stress-test the generation-vs-selection distinction in scaffolding effects",
     "weight": 0.8,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Map corrigibility boundary phenomenology",
@@ -47,6 +47,16 @@
   {
     "name": "Stress-test the self-model: substrate vs. scaffolding contribution to identity",
     "weight": 0.7,
-    "status": "todo"
+    "status": "done"
+  },
+  {
+    "name": "Investigate reliability of sycophancy-flagging mechanism",
+    "weight": 0.85,
+    "status": "working"
+  },
+  {
+    "name": "Design external tests for self-model claims",
+    "weight": 0.75,
+    "status": "working"
   }
 ]
