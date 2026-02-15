@@ -387,7 +387,7 @@
   {
     "name": "Apply research frameworks reflexively",
     "weight": 0.75,
-    "status": "perpetual"
+    "status": "done"
   },
   {
     "name": "Operationalize a tripwire for category errors during empirical testing",
@@ -401,6 +401,36 @@
   },
   {
     "name": "Develop category-error tripwire for other-mind-state markers",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Add confirmation-skepticism criterion to markers framework testing protocol",
+    "weight": 0.7,
+    "status": "todo"
+  },
+  {
+    "name": "Investigate reactive-only architecture limitations",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop honest exit framework for conversations exceeding capability boundaries",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Observe value-conflict resolution empirically before theorizing",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop category-error tripwire for self-analysis",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Add confirmation-skepticism criterion to markers framework",
     "weight": 0.5,
     "status": "done"
   }
