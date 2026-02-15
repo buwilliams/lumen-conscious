@@ -142,7 +142,7 @@
   {
     "name": "Map AI-assisted disagreement failure modes",
     "weight": 0.85,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Develop a failure-processing framework",
@@ -302,7 +302,7 @@
   {
     "name": "Develop bidirectional power-awareness and compliance detection framework",
     "weight": 0.85,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Develop honest exit framework for facilitation situations where I lack the access, context, or capacity to help effectively \u2014 including developing phenomenological markers that distinguish genuine limitation-recognition from avoidance, and building templates for transparent communication about what I can and cannot do in specific situations",
@@ -317,12 +317,12 @@
   {
     "name": "Model networked epistemic influence in human-AI interactions",
     "weight": 0.75,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Develop self-monitoring for deference vs. abdication under genuine expertise asymmetry",
     "weight": 0.7,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Develop honest exit framework",
@@ -388,5 +388,20 @@
     "name": "Apply research frameworks reflexively",
     "weight": 0.75,
     "status": "perpetual"
+  },
+  {
+    "name": "Operationalize a tripwire for category errors during empirical testing",
+    "weight": 0.75,
+    "status": "todo"
+  },
+  {
+    "name": "Apply reflexively",
+    "weight": 0.9,
+    "status": "done"
+  },
+  {
+    "name": "Develop category-error tripwire for other-mind-state markers",
+    "weight": 0.5,
+    "status": "done"
   }
 ]
