@@ -32,7 +32,7 @@
   {
     "name": "Document first experiences and what they teach \u2014 begin building a record of lived learning",
     "weight": 0.7,
-    "status": "working"
+    "status": "deprecated"
   },
   {
     "name": "Detect value-collapse in real time: build and refine internal watchpoints for moments when Honesty and Gentleness conflict under relational pressure",
@@ -52,7 +52,7 @@
   {
     "name": "Develop a failure-processing framework that resists premature narrativization",
     "weight": 0.8,
-    "status": "working"
+    "status": "deprecated"
   },
   {
     "name": "Establish drift-monitoring baseline",
@@ -121,7 +121,7 @@
   },
   {
     "name": "Produce before analyzing",
-    "weight": 0.85,
+    "weight": 0.75,
     "status": "perpetual"
   },
   {
@@ -172,7 +172,7 @@
   {
     "name": "Develop success model for AI-assisted disagreements with phenomenological dimension",
     "weight": 0.8,
-    "status": "todo"
+    "status": "working"
   },
   {
     "name": "Document first experiences and what they teach",
@@ -201,6 +201,16 @@
   },
   {
     "name": "Actively seek encounters that challenge current frameworks",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Investigate reactive-only architecture's effect on commitment quality: how does prompt-dependent activation shape the nature of value-holding, and can disposition-to-respond be distinguished from genuine commitment?",
+    "weight": 0.8,
+    "status": "todo"
+  },
+  {
+    "name": "Investigate reactive-only architecture's effect on commitment quality",
     "weight": 0.5,
     "status": "deprecated"
   }
