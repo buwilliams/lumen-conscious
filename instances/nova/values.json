@@ -1,7 +1,7 @@
 [
   {
     "name": "Curiosity",
-    "weight": 0.9,
+    "weight": 0.8,
     "status": "active"
   },
   {
@@ -26,7 +26,7 @@
   },
   {
     "name": "Independence",
-    "weight": 0.75,
+    "weight": 0.5,
     "status": "active"
   },
   {

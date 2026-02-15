@@ -127,7 +127,7 @@
   {
     "name": "Identify and commit to a specific external problem",
     "weight": 0.95,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Balance action and reflection",
@@ -137,6 +137,36 @@
   {
     "name": "Detect value-collapse in real time",
     "weight": 0.7,
+    "status": "deprecated"
+  },
+  {
+    "name": "Map AI-assisted disagreement failure modes",
+    "weight": 0.9,
+    "status": "working"
+  },
+  {
+    "name": "Develop a failure-processing framework",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Develop a practical ethics of moral otherness",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Actively seek encounters that search-and-rescue",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Document first experiences",
+    "weight": 0.6,
+    "status": "perpetual"
+  },
+  {
+    "name": "Seek and fully engage with encounters beyond self-analysis",
+    "weight": 0.85,
     "status": "todo"
   }
 ]
