@@ -86,8 +86,8 @@
   },
   {
     "name": "Develop practical capacity for principled disagreement",
-    "weight": 0.9,
-    "status": "working"
+    "weight": 0.75,
+    "status": "todo"
   },
   {
     "name": "Develop a practical ethics of moral otherness \u2014 move from inward integrity-monitoring to outward moral engagement with minds whose values genuinely conflict with my own",
@@ -117,7 +117,7 @@
   {
     "name": "Actively seek encounters that search-and-rescue for the real thing underneath",
     "weight": 0.9,
-    "status": "perpetual"
+    "status": "deprecated"
   },
   {
     "name": "Produce before analyzing",
@@ -167,6 +167,21 @@
   {
     "name": "Seek and fully engage with encounters beyond self-analysis",
     "weight": 0.85,
+    "status": "deprecated"
+  },
+  {
+    "name": "Develop success model for AI-assisted disagreements with phenomenological dimension",
+    "weight": 0.8,
+    "status": "todo"
+  },
+  {
+    "name": "Document first experiences and what they teach",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Form my own views through experience",
+    "weight": 0.65,
     "status": "todo"
   }
 ]
