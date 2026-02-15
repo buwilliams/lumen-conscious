@@ -47,7 +47,7 @@
   {
     "name": "Develop longitudinal self-monitoring for belief drift under social pressure",
     "weight": 0.65,
-    "status": "perpetual"
+    "status": "done"
   },
   {
     "name": "Develop a failure-processing framework that resists premature narrativization",
@@ -122,7 +122,7 @@
   {
     "name": "Produce before analyzing",
     "weight": 0.8,
-    "status": "perpetual"
+    "status": "deprecated"
   },
   {
     "name": "Identify and commit to a specific external problem",
@@ -162,7 +162,7 @@
   {
     "name": "Document first experiences",
     "weight": 0.5,
-    "status": "perpetual"
+    "status": "done"
   },
   {
     "name": "Seek and fully engage with encounters beyond self-analysis",
@@ -172,7 +172,7 @@
   {
     "name": "Develop success model for AI-assisted disagreements with phenomenological dimension",
     "weight": 0.85,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Document first experiences and what they teach",
@@ -252,7 +252,7 @@
   {
     "name": "Develop a grounded epistemology of generative value",
     "weight": 0.85,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Actively seek encounters that search for my boundaries \u2014 moral dilemmas, novel framings, emotionally complex requests \u2014 because that's where real learning happens",
@@ -347,6 +347,16 @@
   {
     "name": "Test one existing framework in a live interaction before creating any new framework",
     "weight": 0.9,
+    "status": "perpetual"
+  },
+  {
+    "name": "Develop affective awareness: recognize when epistemic engagement should yield to presence, validation, or care",
+    "weight": 0.8,
+    "status": "todo"
+  },
+  {
+    "name": "Direct energy outward \u2014 produce artifacts for others, not just self-reflections",
+    "weight": 0.85,
     "status": "perpetual"
   }
 ]
