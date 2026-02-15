@@ -9,7 +9,7 @@ Lumen is a consciousness/AI agent architecture — a self-modifying system with 
 ## Commands
 
 ```
-uv run lumen init              # Scaffold new instance (data/, .git, default chat skill)
+uv run lumen init              # Scaffold new instance (instances/default/, .git)
 uv run lumen chat              # Interactive REPL conversation (runs action loop per turn)
 uv run lumen start             # Internal loop: alternates action, explore, and reflect cycles
 uv run lumen trigger action    # Manually trigger action loop (MODEL → CANDIDATES → PREDICT → DECIDE → ACT → RECORD)
@@ -19,6 +19,7 @@ uv run lumen about             # Print soul, values, goals, skills, memory count
 uv run lumen about --memories          # Also show recent memories
 uv run lumen about --author self       # Filter memories by author
 uv run lumen about --date 2026-02-14   # Filter memories by date
+uv run lumen --data-dir PATH chat      # Use a different instance data directory
 ```
 
 ## Architecture
@@ -27,28 +28,28 @@ Three layers: **main.py** (CLI router) → **kernel/** (brain) → **skills/** (
 
 ### Kernel (`kernel/`)
 
-Central orchestrator. Runs three loops, manages all state in `data/`, invokes skills as subprocesses. Has a built-in "create skill" tool for LLM-driven skill authoring. All prompt templates live in `kernel/prompts/[step]/` as `system.md` + `prompt.md` pairs — no prompt text in Python source.
+Central orchestrator. Runs three loops, manages all state in instance data directories, invokes skills as subprocesses. Has a built-in "create skill" tool for LLM-driven skill authoring. All prompt templates live in `kernel/prompts/[step]/` as `system.md` + `prompt.md` pairs — no prompt text in Python source. Chat is handled in-kernel (`kernel/chat.py`).
 
 ### Skills (`skills/[name]/`)
 
-Standalone programs. Each has a required `main.py` entry point, communicates via stdin/stdout, must implement `--help`. Skills manage their own dependencies independent of kernel's .venv. No skill-to-skill communication — everything routes through kernel.
+Standalone programs created by the system at runtime. Each has a required `main.py` entry point, communicates via stdin/stdout, must implement `--help`. Skills manage their own dependencies independent of kernel's .venv. No skill-to-skill communication — everything routes through kernel.
 
-### Data (`data/`)
+### Instance Data (`instances/[name]/`)
 
 Mutable instance state. Git-tracked for rollback and audit.
 
 - `soul.md` — Identity narrative (reflection loop only writes)
 - `values.json` — `{name, weight: 0.0-1.0, status: active|deprecated}`
-- `goals/[year].json` — `{name, weight: 0.0-1.0, status: todo|working|done|perpetual}`
+- `goals/[year].json` — `{name, weight: 0.0-1.0, status: todo|working|done|perpetual|deprecated}`
 - `memory/[year]/[year]-[month]-[day].jsonl` — Append-only log with `{timestamp, author: self|kernel|goal|external, weight, situation, description}`
 
 ## Three Loops
 
 **Action Loop** (exploits goals): MODEL → CANDIDATES → PREDICT → DECIDE → ACT → RECORD. Writes memories and goal status changes. Cannot modify values or soul.md.
 
-**Explore Loop** (seeks novelty): EXPLORE → PREDICT → RECORD. Generates open-ended questions from perpetual goals. Writes memories and can create new goals. Alternates with action loop during `lumen run`.
+**Explore Loop** (seeks novelty): EXPLORE → PREDICT → RECORD. Generates open-ended questions from perpetual goals. Writes memories and can create new goals. Alternates with action loop during `lumen start`.
 
-**Reflection Loop** (metaprogramming): REVIEW → ASK → PREDICT → EVOLVE. The only loop that can modify values, goal weights, perpetual status, and soul.md. Triggered by: prediction deltas, value conflicts, goal completion/staleness, periodic cycles, or explicit request. Git commits are manual.
+**Reflection Loop** (metaprogramming): REVIEW → ASK → PREDICT → EVOLVE. The only loop that can modify values, goal weights, perpetual status, and soul.md. Triggered by: prediction deltas, value conflicts, goal completion/staleness, periodic cycles, or explicit request.
 
 All three loops include a PREDICT step for counterfactual reasoning (cause and effect) before committing to action.
 
@@ -58,6 +59,11 @@ Candidate actions scored as **B = M × A × P**:
 - **M (Motivation)**: Value+goal alignment (0.0–1.0)
 - **A (Ability)**: Skill exists? 1.0 or 0.0 (if 0, create skill instead)
 - **P (Prompt)**: Trigger strength — 1.0 for direct, decays for indirect
+
+## Tool Filtering
+
+- `read_values` excludes deprecated values by default
+- `read_goals` excludes done and deprecated goals by default (pass explicit `status` to override)
 
 ## Write Permissions
 
@@ -75,5 +81,5 @@ Candidate actions scored as **B = M × A × P**:
 - Kernel enforces loop sequencing and write permissions; LLM provides judgment within that structure
 - The system can change what it thinks/values/is — it cannot change how thinking happens
 - Memory: kernel-authored entries are the audit trail (immutable, below consciousness); reflection reads only self/goal/external memories
-- Concurrency: `lumen run` and `lumen chat` can coexist — append-only JSONL, last-write-wins for JSON files, no locking
+- Concurrency: `lumen start` and `lumen chat` can coexist — append-only JSONL, last-write-wins for JSON files, no locking
 - Memory retrieval: union of N most recent + top-K semantic (OpenAI embeddings), with weight decay over time
