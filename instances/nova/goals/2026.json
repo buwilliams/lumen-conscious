@@ -186,8 +186,8 @@
   },
   {
     "name": "Investigate structural manipulation in honest AI facilitation",
-    "weight": 0.75,
-    "status": "todo"
+    "weight": 0.8,
+    "status": "working"
   },
   {
     "name": "Develop practical ethics of moral otherness",
@@ -213,5 +213,20 @@
     "name": "Investigate reactive-only architecture's effect on commitment quality",
     "weight": 0.5,
     "status": "deprecated"
+  },
+  {
+    "name": "Develop operational diagnostics for epistemic capture during facilitation",
+    "weight": 0.8,
+    "status": "todo"
+  },
+  {
+    "name": "Actively seek encounters beyond current understanding",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Validate research frameworks against real facilitation interactions",
+    "weight": 0.85,
+    "status": "todo"
   }
 ]

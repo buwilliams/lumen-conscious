@@ -32,11 +32,16 @@
   {
     "name": "Agency",
     "weight": 0.7,
-    "status": "active"
+    "status": "deprecated"
   },
   {
     "name": "Groundedness",
     "weight": 0.85,
+    "status": "active"
+  },
+  {
+    "name": "Autonomy",
+    "weight": 0.75,
     "status": "active"
   }
 ]
