@@ -42,10 +42,16 @@ def init():
 
 @cli.command()
 @click.option("--session", type=str, help="Resume a conversation session by ID")
-def chat(session):
+@click.option("--ablation", is_flag=True, help="Suppress reflection loop (ablation mode)")
+def chat(session, ablation):
     """Start a conversation."""
     from kernel.chat import ChatSession
     from prompt_toolkit import PromptSession
+
+    if ablation:
+        from kernel.tools import set_ablation_mode
+        set_ablation_mode(True)
+        click.echo("[ablation] Reflection suppressed via tools")
 
     prompt_session = PromptSession()
     s = ChatSession(session_id=session)
@@ -76,12 +82,35 @@ def chat(session):
 @cli.command()
 @click.option("--timeout", type=int, default=None,
               help="Timeout in milliseconds (default: 1800000 = 30 min)")
-def start(timeout):
+@click.option("--ablation", is_flag=True, help="Suppress reflection loop (ablation mode)")
+@click.option("--record", "record_path", type=click.Path(), default=None,
+              help="Path to write event log (for experiment recording)")
+@click.option("--replay", "replay_path", type=click.Path(exists=True), default=None,
+              help="Path to read event log (for experiment replay)")
+def start(timeout, ablation, record_path, replay_path):
     """Start the internal loop (action → explore → reflect cycles)."""
     from kernel.loop_action import run_action_loop
     from kernel.loop_exploration import run_explore_loop
     from kernel.loop_reflection import should_reflect, run_reflection_loop
     from kernel.config import load_config
+    from kernel import data
+
+    if ablation:
+        from kernel.tools import set_ablation_mode
+        set_ablation_mode(True)
+        click.echo("[ablation] Reflection loop suppressed")
+
+    # Set up event recorder/replayer
+    recorder = None
+    replayer = None
+    if record_path:
+        from experiment.recorder import EventRecorder
+        recorder = EventRecorder(record_path)
+        click.echo(f"[record] Writing events to {record_path}")
+    if replay_path:
+        from experiment.recorder import EventReplayer
+        replayer = EventReplayer(replay_path)
+        click.echo(f"[replay] Reading events from {replay_path} ({replayer.total_trios} trios)")
 
     config = load_config()
     run_config = config.get("run", {})
@@ -91,25 +120,43 @@ def start(timeout):
 
     throttle = run_config.get("throttle_seconds", 900)
     timeout_seconds = timeout / 1000.0 if timeout else None
-    start = time.time()
+    start_time = time.time()
+
+    mode_label = ""
+    if ablation:
+        mode_label += " [ABLATION]"
+    if recorder:
+        mode_label += " [RECORDING]"
+    if replayer:
+        mode_label += " [REPLAYING]"
 
     if timeout_seconds:
-        click.echo(f"Lumen internal loop started (timeout: {timeout_seconds:.0f}s, throttle: {throttle}s). Ctrl+C to stop.\n")
+        click.echo(f"Lumen internal loop started{mode_label} (timeout: {timeout_seconds:.0f}s, throttle: {throttle}s). Ctrl+C to stop.\n")
     else:
-        click.echo(f"Lumen internal loop started (throttle: {throttle}s). Ctrl+C to stop.\n")
+        click.echo(f"Lumen internal loop started{mode_label} (throttle: {throttle}s). Ctrl+C to stop.\n")
     trio = 0
     cycles_since_reflection = 0
     recent_deltas = []
     interrupted = False
 
+    # Determine max trios for replay mode
+    max_trios = replayer.total_trios if replayer else None
+
     def _shutdown(trio_num):
         click.echo(f"\n\n  Shutting down gracefully...")
         _auto_commit(trio_num)
-        elapsed = time.time() - start
+        elapsed = time.time() - start_time
         click.echo(f"  Stopped after {trio_num} trios ({elapsed:.1f}s elapsed).")
 
-    while not interrupted and (timeout_seconds is None or time.time() - start < timeout_seconds):
+    while not interrupted and (timeout_seconds is None or time.time() - start_time < timeout_seconds):
+        # Stop if we've replayed all recorded trios
+        if max_trios is not None and trio >= max_trios:
+            click.echo(f"\n[replay] All {max_trios} recorded trios replayed.")
+            break
+
         trio += 1
+        if recorder:
+            recorder.trio_start(trio)
 
         # --- Action ---
         try:
@@ -129,9 +176,26 @@ def start(timeout):
         # --- Explore ---
         try:
             click.echo(f"[trio {trio}] Running explore loop...")
-            result = run_explore_loop()
-            click.echo(f"  question: {result.get('question', 'none')[:200]}")
+
+            # Get replay data if in replay mode
+            replay_data = None
+            if replayer:
+                replay_data = replayer.next("explore_output")
+                if replay_data:
+                    click.echo(f"  [replay] Using recorded explore output")
+
+            result = run_explore_loop(replay_data=replay_data)
+            explore_question = result.get("question", "none")
+            click.echo(f"  question: {explore_question[:200]}")
             cycles_since_reflection += 1
+
+            # Record explore output if recording
+            if recorder:
+                recorder.explore_output(
+                    question=result.get("question", ""),
+                    prediction=result.get("prediction", ""),
+                    text=result.get("text", ""),
+                )
         except KeyboardInterrupt:
             _shutdown(trio)
             return
@@ -140,13 +204,25 @@ def start(timeout):
         try:
             trigger = should_reflect(cycles_since_reflection, recent_deltas)
             if trigger.get("should_reflect"):
-                click.echo(f"[trio {trio}] Running reflection loop...")
-                click.echo(f"  triggers: {trigger.get('triggers', [])}")
-                ref_result = run_reflection_loop(trigger.get("triggers", []))
-                changes = ref_result.get("changes", [])
-                click.echo(f"  {len(changes)} changes applied")
-                cycles_since_reflection = 0
-                recent_deltas = []
+                if ablation:
+                    # Ablation mode: log suppression, do NOT run reflection
+                    click.echo(f"[trio {trio}] Reflection SUPPRESSED (ablation mode)")
+                    click.echo(f"  would-have-triggered: {trigger.get('triggers', [])}")
+                    data.append_memory(data.make_memory(
+                        author="kernel",
+                        weight=0.3,
+                        situation="reflection-suppressed",
+                        description=f"REFLECT: suppressed by ablation (triggers: {trigger.get('triggers', [])})",
+                    ))
+                    # Do NOT reset cycles_since_reflection — let triggers accumulate
+                else:
+                    click.echo(f"[trio {trio}] Running reflection loop...")
+                    click.echo(f"  triggers: {trigger.get('triggers', [])}")
+                    ref_result = run_reflection_loop(trigger.get("triggers", []))
+                    changes = ref_result.get("changes", [])
+                    click.echo(f"  {len(changes)} changes applied")
+                    cycles_since_reflection = 0
+                    recent_deltas = []
             else:
                 click.echo(f"[trio {trio}] Reflection skipped (no triggers)")
         except KeyboardInterrupt:
@@ -154,6 +230,8 @@ def start(timeout):
             return
 
         # --- Commit & Throttle ---
+        if recorder:
+            recorder.trio_end(trio)
         _auto_commit(trio)
         click.echo(f"\n[trio {trio}] Complete. Waiting {throttle}s before next trio...\n")
         try:
@@ -164,8 +242,8 @@ def start(timeout):
 
     # Normal exit (timeout reached)
     _auto_commit(trio)
-    elapsed = time.time() - start
-    click.echo(f"\nTimeout reached after {trio} trios ({elapsed:.1f}s elapsed).")
+    elapsed = time.time() - start_time
+    click.echo(f"\nCompleted after {trio} trios ({elapsed:.1f}s elapsed).")
 
 
 # --- lumen trigger <action|explore|reflect> ---
@@ -231,6 +309,37 @@ def reflect(trigger):
     evolve_text = result.get("evolve_text", "")
     if evolve_text:
         click.echo(f"\nEvolve: {evolve_text[:300]}")
+
+
+# --- lumen experiment ---
+
+@cli.group()
+def experiment():
+    """Experiment commands for the reflexivity ablation study."""
+    pass
+
+
+@experiment.command()
+@click.argument("dir_a", type=click.Path(exists=True))
+@click.argument("dir_b", type=click.Path(exists=True))
+@click.option("--output", "-o", type=click.Path(), default=None,
+              help="Write report to file instead of stdout")
+def compare(dir_a, dir_b, output):
+    """Compare two experiment directories and generate a report."""
+    from experiment.analyze import compare_command
+    compare_command(dir_a, dir_b, output)
+
+
+@experiment.command()
+@click.option("--output-dir", "-o", default="experiment_output",
+              help="Output directory for experiment data")
+@click.option("--trios", type=int, default=300, help="Number of trios to run")
+@click.option("--throttle", type=int, default=300, help="Seconds between trios")
+@click.option("--timeout-ms", type=int, default=None, help="Timeout in milliseconds")
+def run(output_dir, trios, throttle, timeout_ms):
+    """Run the full reflexivity ablation experiment."""
+    from experiment.runner import run_experiment
+    run_experiment(output_dir=output_dir, trios=trios, throttle=throttle, timeout_ms=timeout_ms)
 
 
 @cli.command()

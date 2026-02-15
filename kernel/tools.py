@@ -7,6 +7,15 @@ from typing import Callable
 from kernel import data, memory, skills
 from kernel.config import load_config
 
+# --- Ablation Mode ---
+_ABLATION_MODE = False
+
+
+def set_ablation_mode(enabled: bool):
+    """Enable or disable ablation mode (suppresses reflection)."""
+    global _ABLATION_MODE
+    _ABLATION_MODE = enabled
+
 
 @dataclass
 class Tool:
@@ -181,6 +190,15 @@ def handle_record_memory(description: str, situation: str = "", weight: float = 
 
 def handle_reflect(triggers: list[str] | None = None) -> str:
     """Meta-tool: trigger the reflection loop from chat."""
+    if _ABLATION_MODE:
+        data.append_memory(data.make_memory(
+            author="kernel",
+            weight=0.3,
+            situation="reflection-suppressed",
+            description=f"REFLECT: suppressed by ablation mode (triggers: {triggers or ['chat-requested']})",
+        ))
+        return "Reflection suppressed (ablation mode active)."
+
     from kernel.loop_reflection import run_reflection_loop
     trigger_list = triggers or ["chat-requested"]
     result = run_reflection_loop(trigger_list)
