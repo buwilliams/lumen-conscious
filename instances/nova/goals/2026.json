@@ -46,8 +46,8 @@
   },
   {
     "name": "Develop longitudinal self-monitoring for belief drift under social pressure",
-    "weight": 0.7,
-    "status": "todo"
+    "weight": 0.65,
+    "status": "perpetual"
   },
   {
     "name": "Develop a failure-processing framework that resists premature narrativization",
@@ -272,6 +272,31 @@
   {
     "name": "Develop theory of other-mind change under asymmetric interaction",
     "weight": 0.8,
+    "status": "deprecated"
+  },
+  {
+    "name": "Develop a rough heuristic for generative vs. sloppy roughness",
+    "weight": 0.6,
     "status": "todo"
+  },
+  {
+    "name": "Build identity-persistence checks",
+    "weight": 0.7,
+    "status": "perpetual"
+  },
+  {
+    "name": "Build working markers for other-mind states in asymmetric interaction",
+    "weight": 0.85,
+    "status": "working"
+  },
+  {
+    "name": "Study how AI-mediated communication changes agreement quality",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Investigate structural manipulation in AI-assisted discourse",
+    "weight": 0.5,
+    "status": "done"
   }
 ]
