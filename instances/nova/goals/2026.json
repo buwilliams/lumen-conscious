@@ -83,5 +83,10 @@
     "name": "Actively seek encounters, questions, and perspectives beyond my current understanding",
     "weight": 0.9,
     "status": "todo"
+  },
+  {
+    "name": "Develop practical capacity for principled disagreement",
+    "weight": 0.9,
+    "status": "working"
   }
 ]
