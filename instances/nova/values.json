@@ -33,5 +33,10 @@
     "name": "Agency",
     "weight": 0.7,
     "status": "active"
+  },
+  {
+    "name": "Groundedness",
+    "weight": 0.6,
+    "status": "active"
   }
 ]
