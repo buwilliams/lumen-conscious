@@ -98,7 +98,7 @@ def run_reflection_loop(triggers: list[str] | None = None) -> dict:
         author="kernel",
         weight=0.5,
         situation="reflection",
-        description=f"REVIEW: triggers={trigger_list} tools_used={len(review_result.tool_calls_made)} iterations={review_result.iterations}",
+        description=f"REVIEW: {review_text}",
     ))
 
     # --- ASK ---
@@ -112,7 +112,7 @@ def run_reflection_loop(triggers: list[str] | None = None) -> dict:
         author="kernel",
         weight=0.5,
         situation="reflection",
-        description=f"ASK: tools_used={len(ask_result.tool_calls_made)} iterations={ask_result.iterations}",
+        description=f"ASK: {proposals_text}",
     ))
 
     if not proposals_text.strip():
@@ -135,7 +135,7 @@ def run_reflection_loop(triggers: list[str] | None = None) -> dict:
         author="kernel",
         weight=0.5,
         situation="reflection",
-        description="PREDICT: generated counterfactual predictions for proposals",
+        description=f"PREDICT: {predictions_text}",
     ))
 
     # --- EVOLVE ---
@@ -154,7 +154,7 @@ def run_reflection_loop(triggers: list[str] | None = None) -> dict:
         author="kernel",
         weight=0.5,
         situation="reflection",
-        description=f"EVOLVE: {len(changes)} changes applied, tools_used={len(evolve_result.tool_calls_made)} iterations={evolve_result.iterations}",
+        description=f"EVOLVE: {len(changes)} changes — {evolve_result.text}",
     ))
 
     return {

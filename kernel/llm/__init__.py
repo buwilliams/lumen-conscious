@@ -1,8 +1,35 @@
 import sys
+import threading
+import time
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 
 from kernel.config import load_config
 from kernel.llm.base import ToolUseRequest, LLMResponse
+
+
+@contextmanager
+def _timer(label: str = ""):
+    """Show an elapsed-seconds counter on stderr while waiting for the LLM."""
+    stop = threading.Event()
+    prefix = f"  [{label}] " if label else "  "
+
+    def _tick():
+        start = time.monotonic()
+        while not stop.wait(1.0):
+            elapsed = int(time.monotonic() - start)
+            print(f"\r{prefix}{elapsed}s", end="", file=sys.stderr, flush=True)
+
+    start = time.monotonic()
+    t = threading.Thread(target=_tick, daemon=True)
+    t.start()
+    try:
+        yield
+    finally:
+        stop.set()
+        t.join()
+        elapsed = time.monotonic() - start
+        print(f"\r{prefix}{elapsed:.1f}s", file=sys.stderr, flush=True)
 
 
 @dataclass
@@ -19,7 +46,8 @@ def call_llm(system: str, user: str) -> str:
     provider_name = config["llm"]["provider"]
     model = config["llm"]["model"]
     provider = _get_provider(provider_name, config)
-    return provider.complete(system, user, model)
+    with _timer("llm"):
+        return provider.complete(system, user, model)
 
 
 def get_embeddings(texts: list[str]) -> list[list[float]]:
@@ -62,7 +90,8 @@ def run_agentic(system: str, user: str, tools: list, max_iterations: int = 10) -
     all_text = []
 
     for iteration in range(1, max_iterations + 1):
-        response = provider.complete_with_tools(system, messages, tool_schemas, model)
+        with _timer("llm"):
+            response = provider.complete_with_tools(system, messages, tool_schemas, model)
 
         # Accumulate text from every iteration
         if response.text:

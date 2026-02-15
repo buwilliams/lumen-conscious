@@ -53,7 +53,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         author="kernel",
         weight=0.5,
         situation=sit,
-        description=f"MODEL: tools_used={len(model_result.tool_calls_made)} iterations={model_result.iterations}",
+        description=f"MODEL: {model_output}",
     ))
 
     # --- CANDIDATES ---
@@ -67,7 +67,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         author="kernel",
         weight=0.5,
         situation=sit,
-        description=f"CANDIDATES: tools_used={len(candidates_result.tool_calls_made)} iterations={candidates_result.iterations}",
+        description=f"CANDIDATES: {candidates_output}",
     ))
 
     # --- PREDICT ---
@@ -81,7 +81,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         author="kernel",
         weight=0.5,
         situation=sit,
-        description=f"PREDICT: generated predictions for candidates",
+        description=f"PREDICT: {predictions_output}",
     ))
 
     # --- DECIDE ---
@@ -97,7 +97,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         author="kernel",
         weight=0.5,
         situation=sit,
-        description=f"DECIDE: tools_used={len(decide_result.tool_calls_made)} iterations={decide_result.iterations} B={selected.get('B', '?')}",
+        description=f"DECIDE: {json.dumps(decision)}",
     ))
 
     # Check for skip recommendation (motivation too low)
@@ -129,7 +129,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         author="kernel",
         weight=0.5,
         situation=sit,
-        description=f"ACT: tools_used={len(act_result.tool_calls_made)} response_length={len(response)}",
+        description=f"ACT: {response}",
     ))
 
     # --- RECORD ---
@@ -147,7 +147,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         author="kernel",
         weight=0.5,
         situation=sit,
-        description=f"RECORD: delta={delta} {json.dumps(record_result.get('delta_description', ''))}",
+        description=f"RECORD: delta={delta} {json.dumps(record_result)}",
     ))
 
     return {
@@ -157,7 +157,6 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         "record": record_result,
         "delta": delta,
     }
-
 
 
 def _parse_json(text: str) -> dict | None:

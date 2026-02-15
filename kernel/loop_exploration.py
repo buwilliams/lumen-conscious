@@ -45,7 +45,7 @@ def run_explore_loop() -> dict:
         author="kernel",
         weight=0.4,
         situation="explore loop",
-        description=f"EXPLORE: tools_used={len(explore_result.tool_calls_made)} iterations={explore_result.iterations}",
+        description=f"EXPLORE: {explore_output}",
     ))
 
     # --- PREDICT ---
@@ -59,7 +59,7 @@ def run_explore_loop() -> dict:
         author="kernel",
         weight=0.4,
         situation="explore loop",
-        description="PREDICT: evaluated whether question is worth pursuing",
+        description=f"PREDICT: {prediction_output}",
     ))
 
     # --- RECORD ---
@@ -73,7 +73,7 @@ def run_explore_loop() -> dict:
         author="kernel",
         weight=0.4,
         situation="explore loop",
-        description=f"RECORD: tools_used={len(record_result.tool_calls_made)} iterations={record_result.iterations}",
+        description=f"RECORD: {record_result.text}",
     ))
 
     return {
