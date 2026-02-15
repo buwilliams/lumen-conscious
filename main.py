@@ -50,6 +50,54 @@ def init():
 
 
 @cli.command()
+@click.option("--file", "file_path", type=click.Path(exists=True),
+              help="Read soul text from a file instead of interactive input")
+def seed(file_path):
+    """Seed a new instance with a personalized identity."""
+    from kernel import data
+    from kernel.seed import run_seed
+
+    if data.DATA_DIR.exists():
+        click.echo(f"{data.DATA_DIR} already exists. Remove it first to re-seed.")
+        raise SystemExit(1)
+
+    if file_path:
+        from pathlib import Path
+        soul_text = Path(file_path).read_text()
+    else:
+        from prompt_toolkit import PromptSession
+        click.echo("Enter your identity narrative (soul.md content).")
+        click.echo("Write freely — who is this system? What does it care about?")
+        click.echo("Press Escape+Enter or Alt+Enter to finish.\n")
+        prompt_session = PromptSession()
+        try:
+            soul_text = prompt_session.prompt("soul> ", multiline=True)
+        except (EOFError, KeyboardInterrupt):
+            click.echo("\nSeed cancelled.")
+            return
+
+    if not soul_text.strip():
+        click.echo("No soul text provided. Aborting.")
+        raise SystemExit(1)
+
+    click.echo("\nSeeding instance...\n")
+    run_seed(soul_text)
+
+    # Print summary
+    values = data.read_values()
+    goals = data.read_goals()
+    click.echo(f"\nInstance seeded:")
+    click.echo(f"  soul.md — written")
+    click.echo(f"  values — {len(values)} created")
+    for v in values:
+        click.echo(f"    {v.name} (weight={v.weight:.1f})")
+    click.echo(f"  goals — {len(goals)} created")
+    for g in goals:
+        click.echo(f"    {g.name} (weight={g.weight:.1f}, status={g.status})")
+    click.echo(f"  memory — first memory recorded")
+
+
+@cli.command()
 @click.option("--session", type=str, help="Resume a conversation session by ID")
 @click.option("--ablation", is_flag=True, help="Suppress reflection loop (ablation mode)")
 def chat(session, ablation):

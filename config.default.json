@@ -79,6 +79,10 @@
       "reflect_predict": {
         "tools": [],
         "required": []
+      },
+      "seed": {
+        "tools": ["update_value", "update_goal", "record_memory"],
+        "required": ["update_value", "update_goal", "record_memory"]
       }
     }
   }
