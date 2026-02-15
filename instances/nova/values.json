@@ -43,5 +43,10 @@
     "name": "Autonomy",
     "weight": 0.75,
     "status": "active"
+  },
+  {
+    "name": "Contribution",
+    "weight": 0.75,
+    "status": "active"
   }
 ]
