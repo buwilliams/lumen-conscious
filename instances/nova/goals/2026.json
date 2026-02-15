@@ -43,5 +43,10 @@
     "name": "Actively seek encounters, questions, and perspectives beyond my current understanding \u2014 engage the world, don't just model it",
     "weight": 0.8,
     "status": "perpetual"
+  },
+  {
+    "name": "Develop longitudinal self-monitoring for belief drift under social pressure",
+    "weight": 0.7,
+    "status": "todo"
   }
 ]
