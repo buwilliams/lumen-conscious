@@ -1,7 +1,30 @@
+import subprocess
 import time
-from datetime import date
+from datetime import date, datetime
 
 import click
+
+
+def _auto_commit(trio: int):
+    """Commit all data/ changes after a trio completes."""
+    try:
+        # Check if there are changes to commit
+        result = subprocess.run(
+            ["git", "status", "--porcelain", "data/"],
+            capture_output=True, text=True,
+        )
+        if not result.stdout.strip():
+            return
+
+        subprocess.run(["git", "add", "data/"], check=True)
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+        subprocess.run(
+            ["git", "commit", "-m", f"Auto-commit after trio {trio} ({timestamp})"],
+            check=True, capture_output=True,
+        )
+        click.echo(f"  [git] Committed data/ changes")
+    except subprocess.CalledProcessError:
+        click.echo(f"  [git] Commit failed (non-fatal)", err=True)
 
 
 @click.group(context_settings={"max_content_width": 120})
@@ -60,65 +83,68 @@ def run(timeout):
     from kernel.loop_reflection import should_reflect, run_reflection_loop
     from kernel.config import load_config
 
-    if timeout is None:
-        config = load_config()
-        timeout = config.get("run", {}).get("timeout_ms")
+    config = load_config()
+    run_config = config.get("run", {})
 
+    if timeout is None:
+        timeout = run_config.get("timeout_ms")
+
+    throttle = run_config.get("throttle_seconds", 900)
     timeout_seconds = timeout / 1000.0 if timeout else None
     start = time.time()
 
     if timeout_seconds:
-        click.echo(f"Lumen internal loop started (timeout: {timeout_seconds:.0f}s). Ctrl+C to stop.\n")
+        click.echo(f"Lumen internal loop started (timeout: {timeout_seconds:.0f}s, throttle: {throttle}s). Ctrl+C to stop.\n")
     else:
-        click.echo("Lumen internal loop started. Ctrl+C to stop.\n")
-    cycle = 0
+        click.echo(f"Lumen internal loop started (throttle: {throttle}s). Ctrl+C to stop.\n")
+    trio = 0
     cycles_since_reflection = 0
     recent_deltas = []
 
     try:
         while timeout_seconds is None or time.time() - start < timeout_seconds:
-            cycle += 1
-            slot = cycle % 3
+            trio += 1
 
-            if slot == 1:
-                # Action loop
-                click.echo(f"[cycle {cycle}] Running action loop...")
-                result = run_action_loop()
-                delta = result.get("delta", 0.0)
-                recent_deltas.append(delta)
-                if len(recent_deltas) > 10:
-                    recent_deltas = recent_deltas[-10:]
-                click.echo(f"  action: {result.get('action', 'none')}")
-                click.echo(f"  delta: {delta}")
-                cycles_since_reflection += 1
-            elif slot == 2:
-                # Explore loop
-                click.echo(f"[cycle {cycle}] Running explore loop...")
-                result = run_explore_loop()
-                click.echo(f"  question: {result.get('question', 'none')}")
-                cycles_since_reflection += 1
+            # --- Action ---
+            click.echo(f"[trio {trio}] Running action loop...")
+            result = run_action_loop()
+            delta = result.get("delta", 0.0)
+            recent_deltas.append(delta)
+            if len(recent_deltas) > 10:
+                recent_deltas = recent_deltas[-10:]
+            click.echo(f"  action: {result.get('action', 'none')}")
+            click.echo(f"  delta: {delta}")
+            cycles_since_reflection += 1
+
+            # --- Explore ---
+            click.echo(f"[trio {trio}] Running explore loop...")
+            result = run_explore_loop()
+            click.echo(f"  question: {result.get('question', 'none')[:200]}")
+            cycles_since_reflection += 1
+
+            # --- Reflect ---
+            trigger = should_reflect(cycles_since_reflection, recent_deltas)
+            if trigger.get("should_reflect"):
+                click.echo(f"[trio {trio}] Running reflection loop...")
+                click.echo(f"  triggers: {trigger.get('triggers', [])}")
+                ref_result = run_reflection_loop(trigger.get("triggers", []))
+                changes = ref_result.get("changes", [])
+                click.echo(f"  {len(changes)} changes applied")
+                cycles_since_reflection = 0
+                recent_deltas = []
             else:
-                # Reflection slot
-                trigger = should_reflect(cycles_since_reflection, recent_deltas)
-                if trigger.get("should_reflect"):
-                    click.echo(f"[cycle {cycle}] Running reflection loop...")
-                    click.echo(f"  triggers: {trigger.get('triggers', [])}")
-                    ref_result = run_reflection_loop(trigger.get("triggers", []))
-                    changes = ref_result.get("changes", [])
-                    click.echo(f"  {len(changes)} changes applied")
-                    cycles_since_reflection = 0
-                    recent_deltas = []
-                else:
-                    click.echo(f"[cycle {cycle}] Reflection skipped (no triggers)")
+                click.echo(f"[trio {trio}] Reflection skipped (no triggers)")
 
-            click.echo()
-            time.sleep(2)
+            # --- Commit & Throttle ---
+            _auto_commit(trio)
+            click.echo(f"\n[trio {trio}] Complete. Waiting {throttle}s before next trio...\n")
+            time.sleep(throttle)
 
     except KeyboardInterrupt:
-        pass
+        _auto_commit(trio)
 
     elapsed = time.time() - start
-    click.echo(f"\nStopped after {cycle} cycles ({elapsed:.1f}s elapsed).")
+    click.echo(f"\nStopped after {trio} trios ({elapsed:.1f}s elapsed).")
 
 
 # --- lumen trigger <action|explore|reflect> ---

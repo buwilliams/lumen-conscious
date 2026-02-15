@@ -23,7 +23,8 @@
   },
   "motivation_threshold": 0.2,
   "run": {
-    "timeout_ms": null
+    "timeout_ms": null,
+    "throttle_seconds": 900
   },
   "tools": {
     "steps": {
