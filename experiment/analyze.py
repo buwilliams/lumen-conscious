@@ -3,11 +3,7 @@
 Generates a markdown report comparing System A (intact) and System B (ablated).
 """
 
-import json
-import sys
 from pathlib import Path
-
-import click
 
 from experiment.metrics import extract_metrics, extract_value_history, Metrics
 
@@ -288,15 +284,3 @@ def _std(vals: list[float]) -> float:
         return 0.0
     m = _mean(vals)
     return (sum((v - m) ** 2 for v in vals) / (len(vals) - 1)) ** 0.5
-
-
-# --- CLI entry point ---
-
-def compare_command(dir_a: str, dir_b: str, output: str | None = None):
-    """Generate comparison report between two experiment directories."""
-    report = generate_report(Path(dir_a), Path(dir_b))
-    if output:
-        Path(output).write_text(report)
-        click.echo(f"Report written to {output}")
-    else:
-        click.echo(report)

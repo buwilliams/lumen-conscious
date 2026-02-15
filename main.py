@@ -324,31 +324,93 @@ def reflect(trigger):
 
 @cli.group()
 def experiment():
-    """Experiment commands for the reflexivity ablation study."""
+    """Run and manage experiments."""
     pass
 
 
-@experiment.command()
-@click.argument("dir_a", type=click.Path(exists=True))
-@click.argument("dir_b", type=click.Path(exists=True))
-@click.option("--output", "-o", type=click.Path(), default=None,
-              help="Write report to file instead of stdout")
-def compare(dir_a, dir_b, output):
-    """Compare two experiment directories and generate a report."""
-    from experiment.analyze import compare_command
-    compare_command(dir_a, dir_b, output)
+@experiment.command("list")
+def list_cmd():
+    """List available experiments."""
+    from experiment import list_experiments
+    experiments = list_experiments()
+    if not experiments:
+        click.echo("No experiments registered.")
+        return
+    for exp in experiments:
+        click.echo(f"  {exp.name:<20} {exp.description}")
 
 
 @experiment.command()
-@click.option("--output-dir", "-o", default="experiment_output",
-              help="Output directory for experiment data")
+@click.argument("name")
+@click.option("--output-dir", "-o", default=None,
+              help="Output directory (default: experiments/<name>)")
 @click.option("--trios", type=int, default=300, help="Number of trios to run")
 @click.option("--throttle", type=int, default=300, help="Seconds between trios")
 @click.option("--timeout-ms", type=int, default=None, help="Timeout in milliseconds")
-def run(output_dir, trios, throttle, timeout_ms):
-    """Run the full reflexivity ablation experiment."""
-    from experiment.runner import run_experiment
-    run_experiment(output_dir=output_dir, trios=trios, throttle=throttle, timeout_ms=timeout_ms)
+def run(name, output_dir, **kwargs):
+    """Run a named experiment."""
+    from experiment import get, list_experiments
+    from pathlib import Path
+
+    exp = get(name)
+    if not exp:
+        available = ", ".join(e.name for e in list_experiments())
+        click.echo(f"Error: Unknown experiment '{name}'. Available: {available}", err=True)
+        raise SystemExit(1)
+
+    out = Path(output_dir) if output_dir else Path("experiments") / name
+    out.mkdir(parents=True, exist_ok=True)
+    exp.run(out, **kwargs)
+
+
+@experiment.command()
+@click.argument("name")
+@click.option("--output-dir", "-o", default=None,
+              help="Output directory (default: experiments/<name>)")
+@click.option("--output", type=click.Path(), default=None,
+              help="Write report to file instead of stdout")
+def compare(name, output_dir, output):
+    """Generate comparison report for an experiment."""
+    from experiment import get, list_experiments
+    from pathlib import Path
+
+    exp = get(name)
+    if not exp:
+        available = ", ".join(e.name for e in list_experiments())
+        click.echo(f"Error: Unknown experiment '{name}'. Available: {available}", err=True)
+        raise SystemExit(1)
+
+    out = Path(output_dir) if output_dir else Path("experiments") / name
+    if not out.exists():
+        click.echo(f"Error: No output found at {out}", err=True)
+        raise SystemExit(1)
+
+    exp.compare(out, output)
+
+
+@experiment.command()
+@click.argument("name")
+@click.option("--output-dir", "-o", default=None,
+              help="Output directory (default: experiments/<name>)")
+def cleanup(name, output_dir):
+    """Delete experiment output."""
+    import shutil
+    from experiment import get, list_experiments
+    from pathlib import Path
+
+    exp = get(name)
+    if not exp:
+        available = ", ".join(e.name for e in list_experiments())
+        click.echo(f"Error: Unknown experiment '{name}'. Available: {available}", err=True)
+        raise SystemExit(1)
+
+    out = Path(output_dir) if output_dir else Path("experiments") / name
+    if not out.exists():
+        click.echo(f"Nothing to clean up at {out}")
+        return
+
+    shutil.rmtree(out)
+    click.echo(f"Deleted {out}")
 
 
 @cli.command()
