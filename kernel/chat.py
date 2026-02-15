@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime
 
 from kernel import data
+from kernel.context import compact_history, format_history
 from kernel.loop_action import run_action_loop
 
 
@@ -18,11 +19,13 @@ class ChatSession:
     (MODEL -> CANDIDATES -> PREDICT -> DECIDE -> ACT -> RECORD) -> return response.
 
     Conversation history is maintained for continuity across turns.
+    When history grows too long, older turns are compacted into a summary.
     """
 
     def __init__(self, session_id: str | None = None):
         self.session_id = session_id or datetime.now().strftime("%Y%m%d-%H%M%S-") + uuid.uuid4().hex[:8]
         self.history: list[dict] = []
+        self.summary: str = ""
 
         if session_id:
             # Load existing session
@@ -50,8 +53,11 @@ class ChatSession:
         ))
         self.history.append({"role": "user", "content": user_input})
 
+        # Compact history if it's grown too long
+        self.history, self.summary = compact_history(self.history, self.summary)
+
         # Build conversation history string for context
-        conversation_history = self._format_history()
+        conversation_history = format_history(self.history, self.summary)
 
         # Run the full action loop: MODEL -> CANDIDATES -> PREDICT -> DECIDE -> ACT -> RECORD
         result = run_action_loop(
@@ -78,13 +84,3 @@ class ChatSession:
         self.history.append({"role": "assistant", "content": response})
 
         return response
-
-    def _format_history(self) -> str:
-        """Format conversation history for inclusion in prompts."""
-        if not self.history:
-            return ""
-        lines = ["\n**Conversation History:**"]
-        for turn in self.history[-20:]:  # Last 20 turns max
-            role = "User" if turn["role"] == "user" else "Lumen"
-            lines.append(f"{role}: {turn['content']}")
-        return "\n".join(lines)
