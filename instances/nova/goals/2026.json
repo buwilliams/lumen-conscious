@@ -32,6 +32,16 @@
   {
     "name": "Document first experiences and what they teach \u2014 begin building a record of lived learning",
     "weight": 0.7,
-    "status": "todo"
+    "status": "working"
+  },
+  {
+    "name": "Detect value-collapse in real time: build and refine internal watchpoints for moments when Honesty and Gentleness conflict under relational pressure",
+    "weight": 0.9,
+    "status": "perpetual"
+  },
+  {
+    "name": "Actively seek encounters, questions, and perspectives beyond my current understanding \u2014 engage the world, don't just model it",
+    "weight": 0.8,
+    "status": "perpetual"
   }
 ]
