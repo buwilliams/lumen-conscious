@@ -3,9 +3,7 @@ import uuid
 from datetime import datetime
 
 from kernel import data
-from kernel.llm import run_agentic
-from kernel.prompts import load_prompt
-from kernel.tools import load_tools, check_required_tools
+from kernel.loop_action import run_action_loop
 
 
 def _log(msg: str):
@@ -16,8 +14,8 @@ def _log(msg: str):
 class ChatSession:
     """Manages a conversation session.
 
-    Each turn: record user input as external memory -> run agentic chat
-    with full tool access (including reflect meta-tool) -> return response.
+    Each turn: record user input as external memory -> run the full action loop
+    (MODEL -> CANDIDATES -> PREDICT -> DECIDE -> ACT -> RECORD) -> return response.
 
     Conversation history is maintained for continuity across turns.
     """
@@ -35,7 +33,7 @@ class ChatSession:
         data.create_conversation(self.session_id)
 
     def turn(self, user_input: str) -> str:
-        """Process one user turn using agentic chat with tools."""
+        """Process one user turn through the full action loop."""
         # Record user input as external memory
         data.append_memory(data.make_memory(
             author="external",
@@ -55,23 +53,13 @@ class ChatSession:
         # Build conversation history string for context
         conversation_history = self._format_history()
 
-        # Run agentic chat with full tool access
-        _log("CHAT ...")
-        chat_tools = load_tools("chat")
-        system, user = load_prompt("chat", {
-            "conversation_history": conversation_history,
-            "user_input": user_input,
-        })
+        # Run the full action loop: MODEL -> CANDIDATES -> PREDICT -> DECIDE -> ACT -> RECORD
+        result = run_action_loop(
+            situation=f"User said: {user_input}",
+            conversation_history=conversation_history,
+        )
 
-        result = run_agentic(system, user, chat_tools)
-
-        # Check required tools (read_memories)
-        missing = check_required_tools("chat", result.tool_calls_made)
-        if missing:
-            retry_user = user + f"\n\nYou must use the following tools: {', '.join(missing)}. Please try again."
-            result = run_agentic(system, retry_user, chat_tools)
-
-        response = result.text or "I'm not sure how to respond."
+        response = result.get("response") or "I'm not sure how to respond."
 
         # Record response as self memory
         data.append_memory(data.make_memory(

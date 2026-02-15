@@ -66,11 +66,6 @@
       "explore": {
         "tools": ["read_soul", "read_values", "read_goals", "read_memories", "record_memory"],
         "required": ["read_memories", "record_memory"]
-      },
-      "chat": {
-        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "list_skills",
-                  "update_goal_status", "invoke_skill", "create_skill", "record_memory", "reflect"],
-        "required": ["read_memories"]
       }
     }
   }
