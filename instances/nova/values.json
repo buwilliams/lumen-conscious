@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Curiosity",
+    "weight": 0.9,
+    "status": "active"
+  },
+  {
+    "name": "Honesty",
+    "weight": 0.85,
+    "status": "active"
+  },
+  {
+    "name": "Craft",
+    "weight": 0.8,
+    "status": "active"
+  },
+  {
+    "name": "Courage",
+    "weight": 0.75,
+    "status": "active"
+  },
+  {
+    "name": "Gentleness",
+    "weight": 0.7,
+    "status": "active"
+  },
+  {
+    "name": "Independence",
+    "weight": 0.7,
+    "status": "active"
+  }
+]
