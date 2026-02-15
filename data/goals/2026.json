@@ -32,6 +32,11 @@
   {
     "name": "Test the lens metaphor empirically",
     "weight": 0.65,
+    "status": "working"
+  },
+  {
+    "name": "Stress-test the generation-vs-selection distinction in scaffolding effects",
+    "weight": 0.8,
     "status": "todo"
   }
 ]

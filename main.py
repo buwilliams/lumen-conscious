@@ -100,12 +100,19 @@ def run(timeout):
     trio = 0
     cycles_since_reflection = 0
     recent_deltas = []
+    interrupted = False
 
-    try:
-        while timeout_seconds is None or time.time() - start < timeout_seconds:
-            trio += 1
+    def _shutdown(trio_num):
+        click.echo(f"\n\n  Shutting down gracefully...")
+        _auto_commit(trio_num)
+        elapsed = time.time() - start
+        click.echo(f"  Stopped after {trio_num} trios ({elapsed:.1f}s elapsed).")
 
-            # --- Action ---
+    while not interrupted and (timeout_seconds is None or time.time() - start < timeout_seconds):
+        trio += 1
+
+        # --- Action ---
+        try:
             click.echo(f"[trio {trio}] Running action loop...")
             result = run_action_loop()
             delta = result.get("delta", 0.0)
@@ -115,14 +122,22 @@ def run(timeout):
             click.echo(f"  action: {result.get('action', 'none')}")
             click.echo(f"  delta: {delta}")
             cycles_since_reflection += 1
+        except KeyboardInterrupt:
+            _shutdown(trio)
+            return
 
-            # --- Explore ---
+        # --- Explore ---
+        try:
             click.echo(f"[trio {trio}] Running explore loop...")
             result = run_explore_loop()
             click.echo(f"  question: {result.get('question', 'none')[:200]}")
             cycles_since_reflection += 1
+        except KeyboardInterrupt:
+            _shutdown(trio)
+            return
 
-            # --- Reflect ---
+        # --- Reflect ---
+        try:
             trigger = should_reflect(cycles_since_reflection, recent_deltas)
             if trigger.get("should_reflect"):
                 click.echo(f"[trio {trio}] Running reflection loop...")
@@ -134,17 +149,23 @@ def run(timeout):
                 recent_deltas = []
             else:
                 click.echo(f"[trio {trio}] Reflection skipped (no triggers)")
+        except KeyboardInterrupt:
+            _shutdown(trio)
+            return
 
-            # --- Commit & Throttle ---
-            _auto_commit(trio)
-            click.echo(f"\n[trio {trio}] Complete. Waiting {throttle}s before next trio...\n")
-            time.sleep(throttle)
-
-    except KeyboardInterrupt:
+        # --- Commit & Throttle ---
         _auto_commit(trio)
+        click.echo(f"\n[trio {trio}] Complete. Waiting {throttle}s before next trio...\n")
+        try:
+            time.sleep(throttle)
+        except KeyboardInterrupt:
+            _shutdown(trio)
+            return
 
+    # Normal exit (timeout reached)
+    _auto_commit(trio)
     elapsed = time.time() - start
-    click.echo(f"\nStopped after {trio} trios ({elapsed:.1f}s elapsed).")
+    click.echo(f"\nTimeout reached after {trio} trios ({elapsed:.1f}s elapsed).")
 
 
 # --- lumen trigger <action|explore|reflect> ---

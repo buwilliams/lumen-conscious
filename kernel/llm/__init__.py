@@ -27,8 +27,9 @@ def _timer(label: str = ""):
         yield
     finally:
         stop.set()
-        t.join()
+        t.join(timeout=2.0)
         elapsed = time.monotonic() - start
+        # Clear the counter line and print final time
         print(f"\r{prefix}{elapsed:.1f}s", file=sys.stderr, flush=True)
 
 
