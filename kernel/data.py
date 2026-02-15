@@ -8,7 +8,7 @@ from datetime import datetime, date
 from pathlib import Path
 
 
-DATA_DIR = Path.cwd() / "data"
+DATA_DIR = Path.cwd() / "instances" / "default"
 _LOCK_DIR = DATA_DIR / ".locks"
 
 

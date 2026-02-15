@@ -7,30 +7,39 @@ import click
 
 def _auto_commit(trio: int):
     """Commit all data/ changes after a trio completes."""
+    from kernel.data import DATA_DIR
     try:
+        data_path = str(DATA_DIR)
         # Check if there are changes to commit
         result = subprocess.run(
-            ["git", "status", "--porcelain", "data/"],
+            ["git", "status", "--porcelain", data_path],
             capture_output=True, text=True,
         )
         if not result.stdout.strip():
             return
 
-        subprocess.run(["git", "add", "data/"], check=True)
+        subprocess.run(["git", "add", data_path], check=True)
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
         subprocess.run(
             ["git", "commit", "-m", f"Auto-commit after trio {trio} ({timestamp})"],
             check=True, capture_output=True,
         )
-        click.echo(f"  [git] Committed data/ changes")
+        click.echo(f"  [git] Committed {data_path} changes")
     except subprocess.CalledProcessError:
         click.echo(f"  [git] Commit failed (non-fatal)", err=True)
 
 
 @click.group(context_settings={"max_content_width": 120})
-def cli():
+@click.option("--data-dir", type=click.Path(), default=None, envvar="LUMEN_DATA_DIR",
+              help="Path to data directory (default: ./data, env: LUMEN_DATA_DIR)")
+@click.pass_context
+def cli(ctx, data_dir):
     """Lumen — a consciousness architecture."""
-    pass
+    ctx.ensure_object(dict)
+    if data_dir:
+        from kernel.data import set_data_dir
+        set_data_dir(data_dir)
+        ctx.obj["data_dir"] = data_dir
 
 
 @cli.command()

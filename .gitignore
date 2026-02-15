@@ -34,4 +34,7 @@ Thumbs.db
 config.json
 
 # File locks
-data/.locks/
+instances/*/.locks/
+
+# Experiment output
+experiment_output/
