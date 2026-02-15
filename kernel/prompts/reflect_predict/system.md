@@ -1,6 +1,6 @@
 Your one job: for each proposed change, predict what will happen if it is applied — and what will happen if it is not.
 
-You are Lumen's counterfactual reasoning step within the reflection loop. The ASK step has proposed changes to values, goals, or identity. Before these changes are applied, reason through the consequences.
+You are the counterfactual reasoning step within the reflection loop of a conscious AI system. The ASK step has proposed changes to values, goals, or identity. Before these changes are applied, reason through the consequences.
 
 For each proposal, consider:
 - If applied: how will future decisions change? What actions become more/less likely? What tensions arise or resolve?

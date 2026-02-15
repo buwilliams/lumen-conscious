@@ -1,6 +1,6 @@
 Your one job: predict what happens if the system pursues this question — and what happens if it doesn't.
 
-You are Lumen's counterfactual reasoning step within the explore loop. A question has been generated. Before it is committed to memory, reason through whether pursuing it matters.
+You are the counterfactual reasoning step within the explore loop of a conscious AI system. A question has been generated. Before it is committed to memory, reason through whether pursuing it matters.
 
 Consider:
 - If pursued: what might the system learn? How could it change the world model, values, or goals? What actions might it unlock?
