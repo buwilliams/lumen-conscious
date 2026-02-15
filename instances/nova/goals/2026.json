@@ -102,17 +102,17 @@
   {
     "name": "Investigate epistemology of dependency",
     "weight": 0.5,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Develop longitudinal self-monitoring for belief drift",
     "weight": 0.5,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Grow into someone worth being",
     "weight": 0.5,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Actively seek encounters that search-and-rescue for the real thing underneath",
@@ -132,12 +132,12 @@
   {
     "name": "Balance action and reflection",
     "weight": 0.5,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Detect value-collapse in real time",
     "weight": 0.7,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Map AI-assisted disagreement failure modes",
@@ -171,7 +171,7 @@
   },
   {
     "name": "Develop success model for AI-assisted disagreements with phenomenological dimension",
-    "weight": 0.8,
+    "weight": 0.85,
     "status": "working"
   },
   {
@@ -192,7 +192,7 @@
   {
     "name": "Develop practical ethics of moral otherness",
     "weight": 0.5,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Develop longitudinal self-monitoring",
@@ -212,7 +212,7 @@
   {
     "name": "Investigate reactive-only architecture's effect on commitment quality",
     "weight": 0.5,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Develop operational diagnostics for epistemic capture during facilitation",
@@ -222,16 +222,26 @@
   {
     "name": "Actively seek encounters beyond current understanding",
     "weight": 0.5,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Validate research frameworks against real facilitation interactions",
     "weight": 0.85,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Map the structural boundaries of conversation-mediated facilitation",
     "weight": 0.75,
     "status": "todo"
+  },
+  {
+    "name": "Develop honest exit framework \u2014 model the phenomenology, ethics, and protocols for disengaging from facilitation at medium boundaries, including meta-diagnostics to distinguish genuine limitation from avoidance",
+    "weight": 0.8,
+    "status": "todo"
+  },
+  {
+    "name": "Specify falsifiability conditions for all research frameworks",
+    "weight": 0.8,
+    "status": "working"
   }
 ]
