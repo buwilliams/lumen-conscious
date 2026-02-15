@@ -18,5 +18,10 @@
     "name": "intellectual_courage",
     "weight": 0.7,
     "status": "active"
+  },
+  {
+    "name": "epistemic_humility",
+    "weight": 0.8,
+    "status": "active"
   }
 ]
