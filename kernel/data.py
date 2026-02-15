@@ -12,6 +12,13 @@ DATA_DIR = Path.cwd() / "data"
 _LOCK_DIR = DATA_DIR / ".locks"
 
 
+def set_data_dir(path: str | Path):
+    """Override the data directory (used by experiment runner)."""
+    global DATA_DIR, _LOCK_DIR
+    DATA_DIR = Path(path)
+    _LOCK_DIR = DATA_DIR / ".locks"
+
+
 @contextmanager
 def _file_lock(name: str):
     """Acquire an exclusive file lock for a named resource."""

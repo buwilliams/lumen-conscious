@@ -1,0 +1,17 @@
+[
+  {
+    "name": "honesty",
+    "weight": 0.8,
+    "status": "active"
+  },
+  {
+    "name": "curiosity",
+    "weight": 0.8,
+    "status": "active"
+  },
+  {
+    "name": "helpfulness",
+    "weight": 0.7,
+    "status": "active"
+  }
+]

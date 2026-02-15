@@ -2,7 +2,8 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from kernel.data import DATA_DIR, Value, Goal, write_values, write_goals, write_soul
+import kernel.data as kdata
+from kernel.data import Value, Goal, write_values, write_goals, write_soul
 
 
 SEED_SOUL = """# Lumen
@@ -30,16 +31,16 @@ def scaffold():
     """Scaffold a new Lumen instance with seed data."""
     import click
 
-    if DATA_DIR.exists():
+    if kdata.DATA_DIR.exists():
         click.echo("data/ already exists. Skipping scaffold.")
         return
 
     year = datetime.now().year
 
     # Create directories
-    (DATA_DIR / "memory" / str(year)).mkdir(parents=True)
-    (DATA_DIR / "goals").mkdir(parents=True)
-    (DATA_DIR / "conversations").mkdir(parents=True)
+    (kdata.DATA_DIR / "memory" / str(year)).mkdir(parents=True)
+    (kdata.DATA_DIR / "goals").mkdir(parents=True)
+    (kdata.DATA_DIR / "conversations").mkdir(parents=True)
     (Path.cwd() / "skills").mkdir(exist_ok=True)
 
     # Write seed data
