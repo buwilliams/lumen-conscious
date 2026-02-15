@@ -172,7 +172,7 @@ def handle_record_memory(description: str, situation: str = "", weight: float = 
 
 def handle_reflect(triggers: list[str] | None = None) -> str:
     """Meta-tool: trigger the reflection loop from chat."""
-    from kernel.step_reflection import run_reflection_loop
+    from kernel.loop_reflection import run_reflection_loop
     trigger_list = triggers or ["chat-requested"]
     result = run_reflection_loop(trigger_list)
     changes = result.get("changes", [])

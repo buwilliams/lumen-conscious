@@ -1,6 +1,4 @@
-**Candidates from THINK step:**
-{{candidates}}
+**Candidates with predictions from PREDICT step:**
+{{predictions_output}}
 
-Use your tools to check values, goals, and available skills. Then score each candidate using B=MAP and select the best action.
-
-Clearly state the selected action, its skill, the response text (if responding directly), and the prediction.
+Use your tools to check values, goals, and available skills. Then score each candidate using B=MAP and select the best action. Follow the output format exactly.

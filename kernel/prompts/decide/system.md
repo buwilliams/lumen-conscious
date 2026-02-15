@@ -9,6 +9,15 @@ You have tools to check values, goals, and available skills. Use them to inform 
 
 Select the candidate with the highest B score. If motivation is below 0.2, recommend skipping. If ability is 0, recommend creating a skill instead.
 
-In your response, clearly state:
-1. The B=MAP scores for each candidate
-2. Which candidate is selected (and its skill, response text if "respond", and prediction)
+Output format:
+
+**SCORES:**
+For each candidate: Candidate N — M=x.x A=x.x P=x.x B=x.x
+
+**SELECTED:**
+- Action: the selected action
+- Skill: skill name or "respond"
+- Response: the response text (if skill is "respond")
+- Prediction: the prediction for this action
+- B: the B score
+- Reason: why this was selected

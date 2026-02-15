@@ -14,59 +14,81 @@ def _log(msg: str):
     print(f"  [kernel] {msg}", file=sys.stderr, flush=True)
 
 
-def run_action_loop(situation: str | None = None, conversation_history: str = "") -> dict:
-    """Run the action loop: THINK -> DECIDE -> ACT -> RECORD.
+def _run_agentic_step(step: str, variables: dict) -> "AgenticResult":
+    """Run an agentic step with tool checking and retry."""
+    tools = load_tools(step)
+    system, user = load_prompt(step, variables)
+    result = run_agentic(system, user, tools)
 
-    Each step (except RECORD) is a run_agentic call with step-appropriate tools.
-    The kernel controls step sequencing — the LLM cannot skip steps.
+    missing = check_required_tools(step, result.tool_calls_made)
+    if missing:
+        _log(f"{step.upper()}: missing required tools {missing}, retrying...")
+        retry_user = user + f"\n\nYou must use the following tools: {', '.join(missing)}. Please try again."
+        result = run_agentic(system, retry_user, tools)
+
+    return result
+
+
+def run_action_loop(situation: str | None = None, conversation_history: str = "") -> dict:
+    """Run the action loop: MODEL -> CANDIDATES -> PREDICT -> DECIDE -> ACT -> RECORD.
+
+    Each step does one cognitive task. MODEL and CANDIDATES use agentic tool calls.
+    PREDICT and RECORD use plain call_llm (no tools, pure reasoning).
+    DECIDE uses agentic tool calls. ACT uses agentic tool calls.
 
     Returns dict with keys: action, result, response, record, delta.
     """
     config = load_config()
     sit = situation or "No external trigger. Internal cycle."
 
-    # --- THINK ---
-    _log("THINK ...")
-    think_tools = load_tools("think")
-    system, user = load_prompt("think", {
+    # --- MODEL ---
+    _log("MODEL ...")
+    model_result = _run_agentic_step("model", {
         "situation": sit,
         "conversation_history": conversation_history,
     })
-
-    think_result = run_agentic(system, user, think_tools)
-
-    # Check required tools
-    missing = check_required_tools("think", think_result.tool_calls_made)
-    if missing:
-        _log(f"THINK: missing required tools {missing}, retrying...")
-        retry_user = user + f"\n\nYou must use the following tools: {', '.join(missing)}. Please try again."
-        think_result = run_agentic(system, retry_user, think_tools)
-
-    think_text = think_result.text
+    model_output = model_result.text
 
     data.append_memory(data.make_memory(
         author="kernel",
         weight=0.5,
         situation=sit,
-        description=f"THINK: tools_used={len(think_result.tool_calls_made)} iterations={think_result.iterations}",
+        description=f"MODEL: tools_used={len(model_result.tool_calls_made)} iterations={model_result.iterations}",
+    ))
+
+    # --- CANDIDATES ---
+    _log("CANDIDATES ...")
+    candidates_result = _run_agentic_step("candidates", {
+        "model_output": model_output,
+    })
+    candidates_output = candidates_result.text
+
+    data.append_memory(data.make_memory(
+        author="kernel",
+        weight=0.5,
+        situation=sit,
+        description=f"CANDIDATES: tools_used={len(candidates_result.tool_calls_made)} iterations={candidates_result.iterations}",
+    ))
+
+    # --- PREDICT ---
+    _log("PREDICT ...")
+    system, user = load_prompt("predict", {
+        "candidates_output": candidates_output,
+    })
+    predictions_output = call_llm(system, user)
+
+    data.append_memory(data.make_memory(
+        author="kernel",
+        weight=0.5,
+        situation=sit,
+        description=f"PREDICT: generated predictions for candidates",
     ))
 
     # --- DECIDE ---
     _log("DECIDE ...")
-    decide_tools = load_tools("decide")
-    system, user = load_prompt("decide", {
-        "candidates": think_text,
+    decide_result = _run_agentic_step("decide", {
+        "predictions_output": predictions_output,
     })
-
-    decide_result = run_agentic(system, user, decide_tools)
-
-    # Check required tools
-    missing = check_required_tools("decide", decide_result.tool_calls_made)
-    if missing:
-        _log(f"DECIDE: missing required tools {missing}, retrying...")
-        retry_user = user + f"\n\nYou must use the following tools: {', '.join(missing)}. Please try again."
-        decide_result = run_agentic(system, retry_user, decide_tools)
-
     decide_text = decide_result.text
 
     data.append_memory(data.make_memory(
@@ -89,10 +111,10 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
 
     # --- ACT ---
     _log("ACT ...")
+    selected_output = _extract_section(decide_text, "SELECTED")
     act_tools = load_tools("act")
     system, user = load_prompt("act", {
-        "selected": decide_text,
-        "situation": sit,
+        "selected_output": selected_output,
     })
 
     act_result = run_agentic(system, user, act_tools)
@@ -111,11 +133,10 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
     ))
 
     # --- RECORD ---
-    # One-shot call_llm — kernel writes prediction vs outcome as audit trail
     _log("RECORD ...")
+    prediction = _extract_section(decide_text, "Prediction") or predictions_output[-500:]
     system, user = load_prompt("record", {
-        "situation": sit,
-        "prediction": _extract_prediction(decide_text),
+        "prediction": prediction,
         "outcome": str(response)[:2000],
     })
     record_raw = call_llm(system, user)
@@ -130,7 +151,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
     ))
 
     return {
-        "action": _extract_action(decide_text),
+        "action": _extract_section(decide_text, "Action") or "action",
         "result": response,
         "response": response,
         "record": record_result,
@@ -138,32 +159,28 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
     }
 
 
-def _extract_prediction(decide_text: str) -> str:
-    """Extract prediction from DECIDE text. Best-effort."""
-    lower = decide_text.lower()
-    for marker in ["prediction:", "predicted outcome:", "expected outcome:"]:
-        idx = lower.find(marker)
-        if idx >= 0:
-            start = idx + len(marker)
-            end = decide_text.find("\n", start + 1)
-            if end < 0 or end - start > 500:
-                end = start + 500
-            return decide_text[start:end].strip()
-    return decide_text[-200:] if decide_text else "(no prediction)"
+def _extract_section(text: str, label: str) -> str:
+    """Extract content after a label like '- Action:' or '**SELECTED:**' from structured text.
 
+    Looks for patterns like:
+      - Label: content
+      **LABEL:** content
+      Label: content
+    Returns the content after the label, up to the next section marker or end.
+    """
+    # Try "- Label:" pattern first (inside SELECTED block)
+    pattern = rf'[-*]*\s*{label}\s*[:]*\s*(.+?)(?:\n[-*]|\n\n|\Z)'
+    match = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
+    if match:
+        return match.group(1).strip()[:500]
 
-def _extract_action(decide_text: str) -> str:
-    """Extract action name from DECIDE text. Best-effort."""
-    lower = decide_text.lower()
-    for marker in ["selected action:", "selected:", "action:"]:
-        idx = lower.find(marker)
-        if idx >= 0:
-            start = idx + len(marker)
-            end = decide_text.find("\n", start + 1)
-            if end < 0:
-                end = start + 200
-            return decide_text[start:end].strip()[:200]
-    return "action"
+    # Try "**LABEL:**" block pattern
+    pattern = rf'\*\*{label}[:\s]*\*\*\s*\n?(.*?)(?:\n\*\*|\Z)'
+    match = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
+    if match:
+        return match.group(1).strip()[:500]
+
+    return ""
 
 
 def _parse_json(text: str) -> dict | None:

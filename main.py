@@ -52,9 +52,9 @@ def chat(session):
               help="Timeout in milliseconds (default: 1800000 = 30 min)")
 def run(timeout):
     """Start the internal loop (action → explore → reflect cycles)."""
-    from kernel.step_action import run_action_loop
-    from kernel.step_exploration import run_explore_loop
-    from kernel.step_reflection import should_reflect, run_reflection_loop
+    from kernel.loop_action import run_action_loop
+    from kernel.loop_exploration import run_explore_loop
+    from kernel.loop_reflection import should_reflect, run_reflection_loop
     from kernel.config import load_config
 
     if timeout is None:
@@ -121,7 +121,7 @@ def run(timeout):
 @cli.command()
 def explore():
     """Manually trigger the explore loop."""
-    from kernel.step_exploration import run_explore_loop
+    from kernel.loop_exploration import run_explore_loop
 
     click.echo("Running explore loop...\n")
     result = run_explore_loop()
@@ -135,7 +135,7 @@ def explore():
 @click.option("--trigger", multiple=True, help="Specify trigger reasons")
 def reflect(trigger):
     """Manually trigger the reflection loop."""
-    from kernel.step_reflection import run_reflection_loop
+    from kernel.loop_reflection import run_reflection_loop
 
     triggers = list(trigger) if trigger else ["explicit"]
     click.echo(f"Running reflection loop (triggers: {triggers})...\n")

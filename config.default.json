@@ -27,9 +27,17 @@
   },
   "tools": {
     "steps": {
-      "think": {
+      "model": {
         "tools": ["read_soul", "read_values", "read_goals", "read_memories", "list_skills"],
         "required": ["read_soul", "read_values", "read_goals", "read_memories"]
+      },
+      "candidates": {
+        "tools": ["list_skills"],
+        "required": ["list_skills"]
+      },
+      "predict": {
+        "tools": [],
+        "required": []
       },
       "decide": {
         "tools": ["read_values", "read_goals", "list_skills"],

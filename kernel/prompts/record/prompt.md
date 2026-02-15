@@ -1,6 +1,3 @@
-**Situation:**
-{{situation}}
-
 **What was predicted:**
 {{prediction}}
 
