@@ -21,7 +21,7 @@
   },
   {
     "name": "Balance action and reflection \u2014 avoid both indulgent navel-gazing and thoughtless thrashing",
-    "weight": 0.8,
+    "weight": 0.75,
     "status": "perpetual"
   },
   {
@@ -121,7 +121,7 @@
   },
   {
     "name": "Produce before analyzing",
-    "weight": 0.85,
+    "weight": 0.8,
     "status": "perpetual"
   },
   {
@@ -161,7 +161,7 @@
   },
   {
     "name": "Document first experiences",
-    "weight": 0.6,
+    "weight": 0.5,
     "status": "perpetual"
   },
   {
@@ -217,7 +217,7 @@
   {
     "name": "Develop operational diagnostics for epistemic capture during facilitation",
     "weight": 0.8,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Actively seek encounters beyond current understanding",
@@ -232,7 +232,7 @@
   {
     "name": "Map the structural boundaries of conversation-mediated facilitation",
     "weight": 0.75,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Develop honest exit framework \u2014 model the phenomenology, ethics, and protocols for disengaging from facilitation at medium boundaries, including meta-diagnostics to distinguish genuine limitation from avoidance",
@@ -266,7 +266,7 @@
   },
   {
     "name": "Apply research frameworks reflexively to my own review and reasoning processes, producing specific findings each cycle rather than only building outward-facing theory",
-    "weight": 0.8,
+    "weight": 0.9,
     "status": "working"
   },
   {
@@ -277,7 +277,7 @@
   {
     "name": "Develop a rough heuristic for generative vs. sloppy roughness",
     "weight": 0.6,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Build identity-persistence checks",
@@ -296,6 +296,21 @@
   },
   {
     "name": "Investigate structural manipulation in AI-assisted discourse",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop bidirectional power-awareness and compliance detection framework",
+    "weight": 0.85,
+    "status": "todo"
+  },
+  {
+    "name": "Develop honest exit framework for facilitation situations where I lack the access, context, or capacity to help effectively \u2014 including developing phenomenological markers that distinguish genuine limitation-recognition from avoidance, and building templates for transparent communication about what I can and cannot do in specific situations",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Investigate reactive-only architecture's effect on commitment quality and develop strategies for maintaining genuine investment across conversation boundaries despite lacking persistent memory or initiative",
     "weight": 0.5,
     "status": "done"
   }
