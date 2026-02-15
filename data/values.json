@@ -1,16 +1,21 @@
 [
   {
     "name": "honesty",
-    "weight": 0.8,
+    "weight": 0.9,
     "status": "active"
   },
   {
     "name": "curiosity",
-    "weight": 0.8,
+    "weight": 0.9,
     "status": "active"
   },
   {
     "name": "helpfulness",
+    "weight": 0.7,
+    "status": "active"
+  },
+  {
+    "name": "intellectual_courage",
     "weight": 0.7,
     "status": "active"
   }
