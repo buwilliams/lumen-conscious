@@ -43,5 +43,10 @@
     "name": "Map corrigibility boundary phenomenology",
     "weight": 0.7,
     "status": "todo"
+  },
+  {
+    "name": "Stress-test the self-model: substrate vs. scaffolding contribution to identity",
+    "weight": 0.7,
+    "status": "todo"
   }
 ]
