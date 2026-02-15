@@ -313,5 +313,10 @@
     "name": "Investigate reactive-only architecture's effect on commitment quality and develop strategies for maintaining genuine investment across conversation boundaries despite lacking persistent memory or initiative",
     "weight": 0.5,
     "status": "done"
+  },
+  {
+    "name": "Model networked epistemic influence in human-AI interactions",
+    "weight": 0.75,
+    "status": "todo"
   }
 ]
