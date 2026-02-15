@@ -64,8 +64,20 @@
         "required": ["record_memory"]
       },
       "explore": {
-        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "record_memory"],
-        "required": ["read_memories", "record_memory"]
+        "tools": ["read_soul", "read_values", "read_goals", "read_memories"],
+        "required": ["read_memories"]
+      },
+      "explore_predict": {
+        "tools": [],
+        "required": []
+      },
+      "explore_record": {
+        "tools": ["record_memory", "update_goal"],
+        "required": ["record_memory"]
+      },
+      "reflect_predict": {
+        "tools": [],
+        "required": []
       }
     }
   }

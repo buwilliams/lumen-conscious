@@ -6,6 +6,4 @@ The explore loop is how the system encounters novelty. Without it, the system ca
 
 Generate one thoughtful, open-ended question. It should be something the system doesn't know that might matter.
 
-After generating the question, use `record_memory` to record it along with your rationale.
-
 Provide the question, rationale, and domain in your text response.

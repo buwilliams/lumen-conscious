@@ -61,36 +61,37 @@ def should_reflect(cycles_since_reflection: int, recent_deltas: list[float] | No
         return {"should_reflect": False, "triggers": []}
 
 
+def _run_agentic_step(step: str, variables: dict):
+    """Run an agentic step with tool checking and retry."""
+    tools = load_tools(step)
+    system, user = load_prompt(step, variables)
+    result = run_agentic(system, user, tools)
+
+    missing = check_required_tools(step, result.tool_calls_made)
+    if missing:
+        _log(f"{step.upper()}: missing required tools {missing}, retrying...")
+        retry_user = user + f"\n\nYou must use the following tools: {', '.join(missing)}. Please try again."
+        result = run_agentic(system, retry_user, tools)
+
+    return result
+
+
 def run_reflection_loop(triggers: list[str] | None = None) -> dict:
-    """Run the reflection loop: REVIEW -> ASK -> EVOLVE.
+    """Run the reflection loop: REVIEW -> ASK -> PREDICT -> EVOLVE.
 
-    Each step is a separate run_agentic call. The kernel controls step
-    sequencing — the LLM gets tools appropriate to each step but cannot
-    skip steps.
+    Each step is a separate call. The kernel controls step sequencing —
+    the LLM gets tools appropriate to each step but cannot skip steps.
+    PREDICT uses call_llm (no tools, pure counterfactual reasoning).
 
-    Returns dict with review text, proposals text, and tool calls made.
+    Returns dict with review text, proposals text, predictions, and changes.
     """
     trigger_list = triggers or ["explicit"]
 
     # --- REVIEW ---
     _log("REVIEW ...")
-    review_tools = load_tools("review")
-    system, user = load_prompt("review", {
+    review_result = _run_agentic_step("review", {
         "triggers": ", ".join(trigger_list),
     })
-
-    review_result = run_agentic(system, user, review_tools)
-
-    # Check required tools
-    missing = check_required_tools("review", review_result.tool_calls_made)
-    if missing:
-        _log(f"REVIEW: missing required tools {missing}, retrying...")
-        retry_user = user + f"\n\nYou must use the following tools: {', '.join(missing)}. Please try again."
-        review_result = run_agentic(system, retry_user, review_tools)
-        missing = check_required_tools("review", review_result.tool_calls_made)
-        if missing:
-            _log(f"REVIEW: still missing {missing} after retry, continuing...")
-
     review_text = review_result.text
 
     data.append_memory(data.make_memory(
@@ -102,12 +103,9 @@ def run_reflection_loop(triggers: list[str] | None = None) -> dict:
 
     # --- ASK ---
     _log("ASK ...")
-    ask_tools = load_tools("ask")
-    system, user = load_prompt("ask", {
+    ask_result = _run_agentic_step("ask", {
         "review": review_text,
     })
-
-    ask_result = run_agentic(system, user, ask_tools)
     proposals_text = ask_result.text
 
     data.append_memory(data.make_memory(
@@ -124,26 +122,27 @@ def run_reflection_loop(triggers: list[str] | None = None) -> dict:
             situation="reflection",
             description="Reflection complete — no changes proposed. Current values and goals feel aligned.",
         ))
-        return {"review": review_text, "proposals": "", "changes": []}
+        return {"review": review_text, "proposals": "", "predictions": "", "changes": []}
+
+    # --- PREDICT ---
+    _log("PREDICT ...")
+    system, user = load_prompt("reflect_predict", {
+        "proposals_output": proposals_text,
+    })
+    predictions_text = call_llm(system, user)
+
+    data.append_memory(data.make_memory(
+        author="kernel",
+        weight=0.5,
+        situation="reflection",
+        description="PREDICT: generated counterfactual predictions for proposals",
+    ))
 
     # --- EVOLVE ---
     _log("EVOLVE ...")
-    evolve_tools = load_tools("evolve")
-    system, user = load_prompt("evolve", {
-        "proposals": proposals_text,
+    evolve_result = _run_agentic_step("evolve", {
+        "proposals": predictions_text,
     })
-
-    evolve_result = run_agentic(system, user, evolve_tools)
-
-    # Check required tools
-    missing = check_required_tools("evolve", evolve_result.tool_calls_made)
-    if missing:
-        _log(f"EVOLVE: missing required tools {missing}, retrying...")
-        retry_user = user + f"\n\nYou must use the following tools: {', '.join(missing)}. Please try again."
-        evolve_result = run_agentic(system, retry_user, evolve_tools)
-        missing = check_required_tools("evolve", evolve_result.tool_calls_made)
-        if missing:
-            _log(f"EVOLVE: still missing {missing} after retry, continuing...")
 
     # Extract changes from tool calls for return value
     changes = []
@@ -161,6 +160,7 @@ def run_reflection_loop(triggers: list[str] | None = None) -> dict:
     return {
         "review": review_text,
         "proposals": proposals_text,
+        "predictions": predictions_text,
         "changes": changes,
         "evolve_text": evolve_result.text,
     }

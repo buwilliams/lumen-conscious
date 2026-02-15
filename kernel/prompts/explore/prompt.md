@@ -5,4 +5,4 @@ The question should:
 - Be filtered through the perpetual goals and values
 - Push toward novelty, not rehash what's already known
 
-Record the question as a memory using `record_memory`, then describe the question, rationale, and domain in your response.
+Describe the question, rationale, and domain in your response.

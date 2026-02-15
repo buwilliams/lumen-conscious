@@ -44,11 +44,13 @@ Mutable instance state. Git-tracked for rollback and audit.
 
 ## Three Loops
 
-**Action Loop** (exploits goals): THINK → DECIDE → ACT → RECORD. Writes memories and goal status changes. Cannot modify values or soul.md.
+**Action Loop** (exploits goals): MODEL → CANDIDATES → PREDICT → DECIDE → ACT → RECORD. Writes memories and goal status changes. Cannot modify values or soul.md.
 
-**Explore Loop** (seeks novelty): Generates open-ended questions from perpetual goals. Writes memories only. Alternates with action loop during `lumen run`.
+**Explore Loop** (seeks novelty): EXPLORE → PREDICT → RECORD. Generates open-ended questions from perpetual goals. Writes memories and can create new goals. Alternates with action loop during `lumen run`.
 
-**Reflection Loop** (metaprogramming): REVIEW → ASK → EVOLVE. The only loop that can modify values, goal weights, perpetual status, and soul.md. Triggered by: prediction deltas, value conflicts, goal completion/staleness, periodic cycles, or explicit request. Git commits are manual.
+**Reflection Loop** (metaprogramming): REVIEW → ASK → PREDICT → EVOLVE. The only loop that can modify values, goal weights, perpetual status, and soul.md. Triggered by: prediction deltas, value conflicts, goal completion/staleness, periodic cycles, or explicit request. Git commits are manual.
+
+All three loops include a PREDICT step for counterfactual reasoning (cause and effect) before committing to action.
 
 ## B=MAP Scoring
 
@@ -63,9 +65,9 @@ Candidate actions scored as **B = M × A × P**:
 |------|------------|-------------|-----------------|
 | soul.md | read | read | read+write |
 | values.json | read | read | read+write |
-| goals (status) | read+write | read | read+write |
+| goals (status) | read+write | read+write (create) | read+write |
 | goals (weight/perpetual) | read | read | read+write |
-| skills | read+write (create) | read+invoke | read |
+| skills | read+write (create) | read | read |
 | memory | read+write | read+write | read+write |
 
 ## Key Constraints
