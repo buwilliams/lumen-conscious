@@ -19,6 +19,14 @@ def set_data_dir(path: str | Path):
     _LOCK_DIR = DATA_DIR / ".locks"
 
 
+def clean_locks():
+    """Remove stale lock files from the locks directory."""
+    if _LOCK_DIR.exists():
+        for lock_file in _LOCK_DIR.glob("*.lock"):
+            lock_file.unlink()
+
+
+
 @contextmanager
 def _file_lock(name: str):
     """Acquire an exclusive file lock for a named resource."""

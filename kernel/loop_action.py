@@ -123,10 +123,17 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
     act_result = run_agentic(system, user, act_tools)
     response = act_result.text
 
-    # If skills were invoked, capture their output
-    for tc in act_result.tool_calls_made:
-        if tc["name"] == "invoke_skill":
-            response = tc.get("result", response)
+    # Ensure skill outputs aren't lost if the LLM doesn't repeat them in its text
+    skill_outputs = [
+        tc["result"] for tc in act_result.tool_calls_made
+        if tc["name"] == "invoke_skill" and tc.get("result")
+    ]
+    if skill_outputs and not response:
+        response = skill_outputs[-1]
+    elif skill_outputs:
+        for so in skill_outputs:
+            if so not in response:
+                response = f"{response}\n\n{so}"
 
     data.append_memory(data.make_memory(
         author="kernel",

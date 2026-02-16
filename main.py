@@ -155,6 +155,8 @@ def start(timeout, ablation, record_path, replay_path):
     from kernel.config import load_config
     from kernel import data
 
+    data.clean_locks()
+
     if ablation:
         from kernel.tools import set_ablation_mode
         set_ablation_mode(True)
