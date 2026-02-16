@@ -15,6 +15,7 @@ env/
 # uv
 .python-version
 skills/*/uv.lock
+skills/*/notes.json
 
 # IDE
 .idea/
