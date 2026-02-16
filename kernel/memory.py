@@ -1,6 +1,17 @@
 from kernel.data import read_recent_memories, Memory
 
 
+def summarize_description(description: str) -> str:
+    """Summarize a memory description into key bullet points."""
+    if len(description) < 100:
+        return description
+
+    from kernel.llm import call_llm_summary
+    from kernel.prompts import load_prompt
+    system, user = load_prompt("memory_summarize", {"description": description})
+    return call_llm_summary(system, user)
+
+
 def retrieve_memories(n: int = 20) -> list[Memory]:
     """Retrieve the most relevant memories.
 

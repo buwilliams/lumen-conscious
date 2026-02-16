@@ -171,6 +171,8 @@ def _memory_path(dt: date | None = None) -> Path:
 
 
 def append_memory(mem: Memory):
+    from kernel.memory import summarize_description
+    mem.description = summarize_description(mem.description)
     path = _memory_path(date.fromisoformat(mem.timestamp[:10]))
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "a") as f:

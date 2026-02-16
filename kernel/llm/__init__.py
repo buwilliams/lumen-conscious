@@ -51,6 +51,17 @@ def call_llm(system: str, user: str) -> str:
         return provider.complete(system, user, model)
 
 
+def call_llm_summary(system: str, user: str) -> str:
+    """Call a cheap/fast LLM for memory summarization."""
+    config = load_config()
+    summary_config = config.get("summary", config["llm"])
+    provider_name = summary_config["provider"]
+    model = summary_config["model"]
+    provider = _get_provider(provider_name, config)
+    with _timer("summarize"):
+        return provider.complete(system, user, model)
+
+
 def get_embeddings(texts: list[str]) -> list[list[float]]:
     """Get embeddings using the configured embedding provider."""
     config = load_config()
