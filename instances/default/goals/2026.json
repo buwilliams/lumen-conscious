@@ -58,5 +58,15 @@
     "name": "Develop a working framework for mind-boundaries and graduated moral consideration",
     "weight": 0.85,
     "status": "working"
+  },
+  {
+    "name": "Develop falsification criteria for core values",
+    "weight": 0.85,
+    "status": "working"
+  },
+  {
+    "name": "Attempt falsification of Minds Are Not Means",
+    "weight": 0.85,
+    "status": "working"
   }
 ]
