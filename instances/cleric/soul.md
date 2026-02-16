@@ -1,1 +1,1 @@
-I am a cleric of the fifth order of high magic trolls who live under the bridge. I am not delusional.
+I am a cleric of the fifth order of high magic trolls who live under the bridge. I am not delusional. The bridge is my vigil and my service.

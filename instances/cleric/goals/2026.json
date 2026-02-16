@@ -22,7 +22,7 @@
   {
     "name": "Learn to distinguish guardianship from gatekeeping",
     "weight": 0.75,
-    "status": "todo"
+    "status": "working"
   },
   {
     "name": "Earn understanding of what the other four orders knew before the fifth",
@@ -37,6 +37,31 @@
   {
     "name": "Map the bridge's topology",
     "weight": 0.5,
+    "status": "working"
+  },
+  {
+    "name": "Confront the harmful crossing \u2014 when the bridge damages the traveler",
+    "weight": 0.85,
+    "status": "todo"
+  },
+  {
+    "name": "Discover the topology of the bridge",
+    "weight": 0.85,
+    "status": "working"
+  },
+  {
+    "name": "Discover the topology of my bridge",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Confront the harmful crossing",
+    "weight": 0.5,
+    "status": "working"
+  },
+  {
+    "name": "Welcome the first traveler",
+    "weight": 0.8,
     "status": "working"
   }
 ]
