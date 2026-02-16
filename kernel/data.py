@@ -85,6 +85,18 @@ def write_soul(content: str):
         path.write_text(content)
 
 
+def read_soul_compact() -> str:
+    path = DATA_DIR / "soul-system-prompt.md"
+    if not path.exists():
+        return ""
+    return path.read_text()
+
+
+def write_soul_compact(content: str):
+    path = DATA_DIR / "soul-system-prompt.md"
+    path.write_text(content)
+
+
 # --- Values ---
 
 def read_values() -> list[Value]:

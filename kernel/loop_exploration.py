@@ -40,6 +40,9 @@ def run_explore_loop(replay_data: dict | None = None) -> dict:
 
     Returns dict with keys: question, prediction, text.
     """
+    from kernel.soul import compact_soul
+    compact_soul()
+
     if replay_data:
         # --- REPLAY MODE: skip LLM calls, use recorded outputs ---
         explore_output = replay_data["question"]

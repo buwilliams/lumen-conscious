@@ -38,6 +38,9 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
 
     Returns dict with keys: action, result, response, record, delta.
     """
+    from kernel.soul import compact_soul
+    compact_soul()
+
     config = load_config()
     sit = situation or "No external trigger. Internal cycle."
 

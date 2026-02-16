@@ -85,6 +85,9 @@ def run_reflection_loop(triggers: list[str] | None = None) -> dict:
 
     Returns dict with review text, proposals text, predictions, and changes.
     """
+    from kernel.soul import compact_soul
+    compact_soul()
+
     trigger_list = triggers or ["explicit"]
 
     # --- REVIEW ---
