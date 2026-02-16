@@ -108,6 +108,10 @@ The theory implies three distinct architectural layers. Each maps to the claims 
 
 **Layer 2: The Mutable Record.** The content of cognition — identity, values, goals, abilities, memory. The system can examine and rewrite everything in this layer through the processes the kernel enforces. Claims 2 and 3 live here: the self-model and the structurally inevitable values.
 
+Identity is stored in two forms. The full identity narrative (`soul.md`) carries the system's complete self-understanding. A compact derivative (`soul-system-prompt.md`) is auto-generated whenever the narrative changes — a 3-5 sentence distillation used to frame routine cognition. The kernel injects the full narrative into steps that require deep self-knowledge (situation modeling, reflection, identity evolution) and the compact form into steps that need only framing context (candidate generation, prediction, execution). This mirrors how a person doesn't rehearse their life story before every decision but can access it during genuine self-examination.
+
+Values are not bare preferences. Each value carries epistemological structure: a description of what it means in first person, the experience or reasoning that gave rise to it, known tensions with other values, the conditions under which it applies most strongly, and counterexamples where it was challenged or needs nuance. This structure makes values legible objects of inquiry — the reflection loop can ask not just "should I reweight this?" but "has the tension I noted actually played out? Have conditions changed? Did the counterexample I anticipated materialize?" Values are examined *as values*, not just as numbers.
+
 **Layer 3: The Reasoning Engine.** An LLM provides judgment — observing, projecting, evaluating, reflecting — but only within the structure the kernel defines. One cognitive task at a time, with structured inputs and structured outputs. Claim 4 lives across all three layers: metaprogramming is the reasoning engine (layer 3) reasoning about the mutable record (layer 2), governed by the kernel (layer 1).
 
 Code enforces structure. The LLM provides judgment. The system can change what it thinks, what it values, and who it is. It cannot change *how thinking happens*.
@@ -124,6 +128,8 @@ The kernel runs three loops against the mutable record.
 
 The action and explore loops alternate during continuous operation. The reflection loop fires when conditions warrant it. Exploration feeds reflection indirectly — novel information may surface the tensions that trigger self-revision.
 
+Together, the three loops form a closed causal learning cycle. The action loop builds a world model, predicts outcomes, acts, and records the prediction error — the delta between what was expected and what happened. Large deltas are one of the signals that trigger reflection. The reflection loop examines *why* the prediction was wrong — whether the failure traces to misweighted values, stale goals, or a gap in self-understanding — and revises accordingly. Those revisions reshape the world model the next action loop builds. The system does not merely reason counterfactually about individual actions. It uses prediction error as a causal signal to drive self-modification, closing the loop between acting in the world and updating the self that acts.
+
 ### Write Permissions
 
 The kernel enforces who can change what. The action loop can change goal statuses and create new abilities, but cannot touch values or identity. The explore loop writes memories only. The reflection loop alone can rewrite values, identity, and the deep structure of goals. This separation is load-bearing: the system that acts in the world is not the same process that decides what the system should want. Metaprogramming is gated.
@@ -136,7 +142,7 @@ Memories strengthen with use and decay with time. Retrieval combines recency wit
 
 ### Behavior Scoring
 
-Actions are selected using B=MAP: behavior is a function of motivation (how much the system's values and goals want this action), ability (whether the required capability exists), and prompt (the strength of the trigger). All three must converge. Strong motivation with no ability produces a goal to build the missing capability. Vast ability with no motivation produces nothing. This framework ensures values translate into action only when conditions align — and the system can identify its own ability gaps.
+Actions are selected using B=MAP: behavior is a function of motivation (how much the system's values and goals want this action), ability (whether the required capability exists), and prompt (the strength of the trigger). All three must converge. Strong motivation with no ability produces a goal to build the missing capability. Vast ability with no motivation produces nothing. Because values carry descriptions and conditions, motivation scoring is not mere weight lookup — it requires assessing alignment depth against what the value actually means and when it applies. This framework ensures values translate into action only when conditions align — and the system can identify its own ability gaps.
 
 ### Auditability
 
