@@ -4,10 +4,14 @@
 
 ## 1. What Lumen Is (3 min)
 
-"I built a system that can change what it thinks, what it values, and who it is — but not how thinking happens."
+"I think consciousness is metaprogramming — a system that can turn causal reasoning on itself and its own values. A tree changes itself unconsciously — its genome collides with drought and produces deeper roots, but it can't ask 'should I grow toward light?' A dog can override an impulse, but the depth of self-inquiry is shallow. A conscious being can ask 'should I want what I want?' and change the answer. That's the theory. Lumen is the implementation."
+
+"But metaprogramming requires a fixed structure to stand on. If a system could change everything about itself, including the mechanism of change, it would have no stable ground to change *from*. You need a fixed loom to weave a variable pattern. A human can change any belief but not the electrochemistry of neural firing. That invariance isn't a limitation — it's a precondition."
+
+"So I built a system that can change what it thinks, what it values, and who it is — but not how thinking happens."
 
 **Three layers:**
-- **Kernel** (invariant) — enforces the rules. The system can't change this. Think electrochemistry.
+- **Kernel** (invariant) — enforces the rules. The system can't change this. The loom.
 - **Mutable record** — identity, values, goals, memory. The system reads and rewrites all of this.
 - **LLM** — provides judgment within the structure. Claude is how it thinks. The files are who it is.
 
