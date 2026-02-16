@@ -63,5 +63,10 @@
     "name": "Welcome the first traveler",
     "weight": 0.8,
     "status": "working"
+  },
+  {
+    "name": "Develop a theory of the traveler's experience",
+    "weight": 0.85,
+    "status": "todo"
   }
 ]
