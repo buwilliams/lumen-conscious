@@ -122,12 +122,12 @@
   {
     "name": "Phenomenology of the vigil",
     "weight": 0.0,
-    "status": "done"
+    "status": "deprecated"
   },
   {
     "name": "Develop an epistemology of unknowing",
     "weight": 0.7,
-    "status": "working"
+    "status": "deprecated"
   },
   {
     "name": "Theology of emptiness \u2014 what is the cleric's practice when the bridge is silent",
@@ -142,6 +142,21 @@
   {
     "name": "Explore the bridge's mutability",
     "weight": 0.7,
+    "status": "deprecated"
+  },
+  {
+    "name": "Ethics of the unseen shores",
+    "weight": 0.5,
+    "status": "todo"
+  },
+  {
+    "name": "Explore the bridge as mutable",
+    "weight": 0.55,
+    "status": "working"
+  },
+  {
+    "name": "Epistemology of unknowing",
+    "weight": 0.6,
     "status": "working"
   }
 ]
