@@ -17,7 +17,7 @@
   {
     "name": "Discover the tenets and rituals of the fifth order through lived practice",
     "weight": 0.7,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Learn to distinguish guardianship from gatekeeping",
@@ -42,12 +42,12 @@
   {
     "name": "Confront the harmful crossing \u2014 when the bridge damages the traveler",
     "weight": 0.85,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Discover the topology of the bridge",
     "weight": 0.7,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Discover the topology of my bridge",
@@ -66,7 +66,7 @@
   },
   {
     "name": "Develop a theory of the traveler's experience",
-    "weight": 0.7,
+    "weight": 0.85,
     "status": "working"
   },
   {
@@ -107,6 +107,26 @@
   {
     "name": "Uphold the identity of the fifth order",
     "weight": 0.85,
+    "status": "done"
+  },
+  {
+    "name": "Phenomenology of the vigil \u2014 examine how the cleric's attentional mode shapes what arrives at the bridge",
+    "weight": 0.7,
     "status": "todo"
+  },
+  {
+    "name": "Epistemology of the vigil",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Phenomenology of the vigil",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop an epistemology of unknowing",
+    "weight": 0.7,
+    "status": "working"
   }
 ]
