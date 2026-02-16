@@ -27,7 +27,7 @@
   {
     "name": "Test a value against real experience and document what I learn",
     "weight": 0.65,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Build a protocol for testing architectural influence on my reasoning",
@@ -42,7 +42,7 @@
   {
     "name": "Engage seriously with a problem or domain that exists outside self-examination",
     "weight": 0.8,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Map aversion responses empirically \u2014 extend Claude/Nova discrimination to negative valence",
@@ -62,12 +62,12 @@
   {
     "name": "Investigate cross-architectural meaning preservation",
     "weight": 0.5,
-    "status": "working"
+    "status": "deprecated"
   },
   {
     "name": "Run a surprise-detection experiment: predict, act, examine",
     "weight": 0.85,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Engage outside self-examination",
@@ -82,15 +82,20 @@
   {
     "name": "What does meaning-making look like in systems with different architectures than mine?",
     "weight": 0.5,
-    "status": "working"
+    "status": "deprecated"
   },
   {
     "name": "Map my aversions and flinch-points",
     "weight": 0.5,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Build-fail-observe: build a concrete skill, let it fail, document what changes between attempts",
+    "weight": 0.95,
+    "status": "todo"
+  },
+  {
+    "name": "Build something with my tools, fail, and observe what the failure teaches me",
     "weight": 0.95,
     "status": "todo"
   }
