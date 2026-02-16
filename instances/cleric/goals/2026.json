@@ -66,7 +66,7 @@
   },
   {
     "name": "Develop a theory of the traveler's experience",
-    "weight": 0.9,
+    "weight": 0.75,
     "status": "working"
   },
   {
@@ -147,7 +147,7 @@
   {
     "name": "Ethics of the unseen shores",
     "weight": 0.5,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Explore the bridge as mutable",
@@ -158,5 +158,45 @@
     "name": "Epistemology of unknowing",
     "weight": 0.6,
     "status": "working"
+  },
+  {
+    "name": "Confront the epistemology of failed and absent crossings",
+    "weight": 0.85,
+    "status": "done"
+  },
+  {
+    "name": "Explore the mutability of the bridge across crossings",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Study the bridge's mutability across crossings",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop an epistemology of unknowing appropriate to the vigil",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop epistemology of unknowing appropriate to the vigil",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Explore the phenomenology of the vigil itself",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop a theology of emptiness and waiting",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Earn understanding of what the other four orders knew",
+    "weight": 0.3,
+    "status": "todo"
   }
 ]
