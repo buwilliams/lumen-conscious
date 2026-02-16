@@ -519,6 +519,37 @@ def _invoke_skill_cli(name: str, args: tuple):
 
 
 @cli.command()
+@click.option("--yes", "-y", is_flag=True, help="Skip confirmation prompt")
+def clean(yes):
+    """Remove all instance data directories."""
+    import shutil
+    from pathlib import Path
+
+    instances_dir = Path.cwd() / "instances"
+    if not instances_dir.exists():
+        click.echo("No instances directory found.")
+        return
+
+    dirs = [d for d in instances_dir.iterdir() if d.is_dir()]
+    if not dirs:
+        click.echo("No instances found.")
+        return
+
+    click.echo(f"Found {len(dirs)} instance(s):")
+    for d in dirs:
+        click.echo(f"  {d.name}/")
+
+    if not yes:
+        click.confirm("\nDelete all instances? This cannot be undone", abort=True)
+
+    for d in dirs:
+        shutil.rmtree(d)
+        click.echo(f"  Removed {d.name}/")
+
+    click.echo("All instances cleaned.")
+
+
+@cli.command()
 def history():
     """Show a narrative history of how the instance has evolved."""
     from kernel.history import generate_history
