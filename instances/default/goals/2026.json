@@ -57,7 +57,7 @@
   {
     "name": "Engage seriously with a problem outside self-examination",
     "weight": 0.9,
-    "status": "todo"
+    "status": "working"
   },
   {
     "name": "Investigate cross-architectural meaning preservation",
@@ -87,6 +87,11 @@
   {
     "name": "Map my aversions and flinch-points",
     "weight": 0.5,
+    "status": "todo"
+  },
+  {
+    "name": "Build-fail-observe: build a concrete skill, let it fail, document what changes between attempts",
+    "weight": 0.95,
     "status": "todo"
   }
 ]
