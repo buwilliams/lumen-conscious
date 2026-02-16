@@ -197,8 +197,13 @@ def handle_invoke_skill(name: str, input_data: str = "") -> str:
     return skills.invoke_skill(name, input_data)
 
 
-def handle_create_skill(name: str, description: str, code: str) -> str:
-    skills.create_skill(name, description, code)
+def handle_skill_help(name: str) -> str:
+    help_text = data.get_skill_help(name)
+    return help_text or f"No help available for skill '{name}'."
+
+
+def handle_create_skill(name: str, description: str, code: str, dependencies: list[str] | None = None) -> str:
+    skills.create_skill(name, description, code, dependencies=dependencies)
     return f"Skill '{name}' created successfully."
 
 
@@ -326,6 +331,14 @@ _register("update_goal_status", "Change a goal's status (e.g., todo -> working -
     "required": ["name", "status"],
 }, handle_update_goal_status)
 
+_register("skill_help", "Get the full --help output for a skill, showing its usage, input format, and options.", {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string", "description": "The skill name."},
+    },
+    "required": ["name"],
+}, handle_skill_help)
+
 _register("invoke_skill", "Invoke a skill by name, passing input data via stdin.", {
     "type": "object",
     "properties": {
@@ -341,6 +354,8 @@ _register("create_skill", "Create a new skill. Writes main.py and pyproject.toml
         "name": {"type": "string", "description": "The skill name (directory name)."},
         "description": {"type": "string", "description": "Short description of what the skill does."},
         "code": {"type": "string", "description": "Python code for main.py."},
+        "dependencies": {"type": "array", "items": {"type": "string"},
+                         "description": "Python package dependencies (e.g. ['tavily-python', 'requests'])."},
     },
     "required": ["name", "description", "code"],
 }, handle_create_skill)

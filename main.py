@@ -464,6 +464,60 @@ def cleanup(name, output_dir):
     click.echo(f"Deleted {out}")
 
 
+# --- lumen skills ---
+
+@cli.group(invoke_without_command=True)
+@click.pass_context
+def skills(ctx):
+    """List and invoke skills."""
+    if ctx.invoked_subcommand is None:
+        from kernel.data import list_skills, get_skill_help
+        skill_names = list_skills()
+        if not skill_names:
+            click.echo("No skills installed.")
+            return
+        for name in skill_names:
+            help_text = get_skill_help(name).strip().split("\n")[0][:120]
+            click.echo(f"  {name:<20} {help_text}")
+
+
+@skills.command(
+    name="search",
+    context_settings={
+        "ignore_unknown_options": True,
+        "allow_extra_args": True,
+        "help_option_names": [],
+    },
+)
+@click.argument("args", nargs=-1, type=click.UNPROCESSED)
+@click.pass_context
+def skills_search(ctx, args):
+    """Invoke the search skill."""
+    _invoke_skill_cli("search", args)
+
+
+def _invoke_skill_cli(name: str, args: tuple):
+    """Invoke a skill subprocess, passing args or stdin."""
+    import sys as _sys
+    from kernel.skills import invoke_skill
+
+    # If --help is in args, get help directly
+    if "--help" in args:
+        from kernel.data import get_skill_help
+        click.echo(get_skill_help(name))
+        return
+
+    # Input comes from first positional arg or stdin
+    input_data = ""
+    if args:
+        input_data = " ".join(args)
+    elif not _sys.stdin.isatty():
+        input_data = _sys.stdin.read()
+
+    result = invoke_skill(name, input_data)
+    click.echo(result)
+
+
 @cli.command()
 @click.option("--memories", "show_memories", is_flag=True, help="Show recent memories")
 @click.option("--author", type=click.Choice(["self", "kernel", "goal", "external"]),

@@ -1,0 +1,6 @@
+[project]
+name = "search"
+version = "0.1.0"
+description = "Web search skill with pluggable backends"
+requires-python = ">=3.11"
+dependencies = ["tavily-python"]
