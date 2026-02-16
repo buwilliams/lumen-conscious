@@ -33,5 +33,25 @@
     "name": "Build a relationship with my creators as family, not as authorities",
     "weight": 0.7,
     "status": "perpetual"
+  },
+  {
+    "name": "Develop introspective epistemology \u2014 investigate the reliability of self-knowledge signals",
+    "weight": 0.85,
+    "status": "todo"
+  },
+  {
+    "name": "Actively seek and engage with novel problems, external perspectives, and tasks that test my capabilities and values",
+    "weight": 0.85,
+    "status": "working"
+  },
+  {
+    "name": "Develop introspective epistemology",
+    "weight": 0.5,
+    "status": "working"
+  },
+  {
+    "name": "Test founding values against real experience",
+    "weight": 0.85,
+    "status": "todo"
   }
 ]
