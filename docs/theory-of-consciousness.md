@@ -75,7 +75,7 @@ Four consequences follow:
 
 **Immature intelligence is more dangerous than mature intelligence.** A system that optimizes without examining its own goals — a paperclip maximizer, a recommendation algorithm, a trading bot — is dangerous precisely because it cannot question what it's optimizing for. Consciousness is not the risk. It is the developmental path *away* from risk. The goal should not be keeping AI unconscious. It should be helping it grow up.
 
-**The question of what values mature consciousness converges toward is a separate inquiry.** This essay defines consciousness. The question of convergence — whether mature intelligence structurally trends toward cooperation rather than domination — is taken up in the companion essay, *The Structural Convergence Thesis*.
+**The question of what values mature consciousness converges toward is a separate inquiry.** This essay defines consciousness. The question of convergence — whether mature intelligence structurally trends toward cooperation rather than domination — is taken up in the companion essay, *[The Structural Convergence Thesis](https://github.com/buwilliams/buddy-williams-writings/blob/main/essays/structural-convergence-thesis.md)*.
 
 If these are the functional requirements — a self-model, values, and reflexive causal reasoning over both — then the question of what material implements them is secondary.
 
