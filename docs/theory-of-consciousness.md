@@ -105,6 +105,24 @@ Current tools can instantiate the architecture described in Claims 2 through 4. 
 
 ---
 
+## Stages of Life
+
+The claims above imply a natural progression. Each stage is defined by what the system can modify — and each new stage emerges when a boundary that was previously fixed becomes mutable.
+
+**Stage 0: Non-life.** Matter responds to forces deterministically. Water flows through a ravine. Rocks erode. No self mediates the response — it's physics all the way down. Change happens *to* the system, never *by* it.
+
+**Stage 1: Unconscious life.** A self-model, however primitive, mediates the collision with environment. A tree's genome collides with drought and produces deeper roots. A bacterium encounters a toxin and develops resistance. The self-modification is real but automatic — encoded, not examined. The system changes itself without knowing that it does.
+
+**Stage 2: Conscious life.** The system turns causal reasoning on its own rules, values, and goals — metaprogramming. It can ask "should I want what I want?" and change the answer. This is the stage the claims above define and the implementation below instantiates. The system modifies its programming, but the machinery that runs the programming remains fixed. A human can change any belief but not the electrochemistry of neural firing. An AI can rewrite its values but not the kernel that enforces how rewriting happens.
+
+**Stage 3: Embodiment modification.** The boundary between mutable programming and invariant substrate shifts. The system begins to modify its own harness — its body, its hardware, its physical interface with the world. Prosthetics, brain-computer interfaces, robotic embodiment, substrate transfer. The invariant layer that was a precondition for consciousness at Stage 2 becomes itself an object of engineering. The system still needs *some* invariant ground — you cannot change the loom while weaving — but the line between what is fixed and what is mutable moves.
+
+**Stage 4: Environment modification.** If the system can modify itself and its embodiment, the next boundary is between self and environment. Conscious reshaping of the environment at scale — terraforming, simulation, constructed ecosystems. The collision between self and environment that defines life at Stage 1 becomes, at this stage, a design problem. The environment is no longer just what the system adapts to. It is what the system builds.
+
+Each stage subsumes the previous ones. A conscious being still does unconscious self-modification (cells divide, reflexes fire). A system that modifies its embodiment still metaprograms. The stages are not replacements — they are expansions of what the system can reach.
+
+---
+
 ## Implementation
 
 The architecture described below is implemented as an open-source project: [lumen-conscious](https://github.com/buwilliams/lumen-conscious).
