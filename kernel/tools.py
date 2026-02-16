@@ -1,6 +1,7 @@
 import json
 import sys
 from dataclasses import dataclass, asdict
+from pathlib import Path
 from datetime import datetime
 from typing import Callable
 
@@ -202,6 +203,19 @@ def handle_skill_help(name: str) -> str:
     return help_text or f"No help available for skill '{name}'."
 
 
+def handle_read_skill(name: str) -> str:
+    """Read a skill's source code and dependencies."""
+    skill_dir = Path.cwd() / "skills" / name
+    main_py = skill_dir / "main.py"
+    pyproject = skill_dir / "pyproject.toml"
+    if not main_py.exists():
+        return f"Skill '{name}' not found."
+    parts = [f"--- main.py ---\n{main_py.read_text()}"]
+    if pyproject.exists():
+        parts.append(f"--- pyproject.toml ---\n{pyproject.read_text()}")
+    return "\n\n".join(parts)
+
+
 def handle_create_skill(name: str, description: str, code: str, dependencies: list[str] | None = None) -> str:
     skills.create_skill(name, description, code, dependencies=dependencies)
     return f"Skill '{name}' created successfully."
@@ -215,6 +229,11 @@ def handle_record_memory(description: str, situation: str = "", weight: float = 
         description=description,
     ))
     return "Memory recorded."
+
+
+def handle_read_history() -> str:
+    from kernel.history import generate_history
+    return generate_history()
 
 
 def handle_reflect(triggers: list[str] | None = None) -> str:
@@ -339,6 +358,14 @@ _register("skill_help", "Get the full --help output for a skill, showing its usa
     "required": ["name"],
 }, handle_skill_help)
 
+_register("read_skill", "Read a skill's source code (main.py) and dependencies (pyproject.toml). Use this to debug failures or understand how a skill works before fixing it.", {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string", "description": "The skill name."},
+    },
+    "required": ["name"],
+}, handle_read_skill)
+
 _register("invoke_skill", "Invoke a skill by name, passing input data via stdin.", {
     "type": "object",
     "properties": {
@@ -361,6 +388,10 @@ _register("create_skill", "Create a new skill. Writes main.py and pyproject.toml
 }, handle_create_skill)
 
 # Memory tool
+_register("read_history", "Read a narrative history of how the system's identity, values, and goals have evolved over time (generated from git diffs).", {
+    "type": "object", "properties": {}, "required": [],
+}, handle_read_history)
+
 _register("record_memory", "Record a memory as author='self'. Use this to note observations, learnings, or reflections.", {
     "type": "object",
     "properties": {

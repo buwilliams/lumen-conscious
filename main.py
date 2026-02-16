@@ -519,6 +519,16 @@ def _invoke_skill_cli(name: str, args: tuple):
 
 
 @cli.command()
+def history():
+    """Show a narrative history of how the instance has evolved."""
+    from kernel.history import generate_history
+
+    click.echo("Generating history narrative...\n")
+    narrative = generate_history()
+    click.echo(narrative)
+
+
+@cli.command()
 @click.option("--memories", "show_memories", is_flag=True, help="Show recent memories")
 @click.option("--author", type=click.Choice(["self", "kernel", "goal", "external"]),
               help="Filter memories by author (implies --memories)")

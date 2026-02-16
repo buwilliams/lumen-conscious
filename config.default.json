@@ -39,11 +39,11 @@
   "tools": {
     "steps": {
       "model": {
-        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "list_skills", "skill_help"],
+        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "list_skills", "skill_help", "read_skill"],
         "required": ["read_soul", "read_values", "read_goals", "read_memories"]
       },
       "candidates": {
-        "tools": ["list_skills", "skill_help"],
+        "tools": ["list_skills", "skill_help", "read_skill"],
         "required": ["list_skills"]
       },
       "predict": {
@@ -51,11 +51,11 @@
         "required": []
       },
       "decide": {
-        "tools": ["read_values", "read_goals", "list_skills", "skill_help"],
+        "tools": ["read_values", "read_goals", "list_skills", "skill_help", "read_skill"],
         "required": ["list_skills"]
       },
       "act": {
-        "tools": ["update_goal_status", "invoke_skill", "create_skill", "record_memory", "list_skills", "skill_help"],
+        "tools": ["update_goal_status", "invoke_skill", "create_skill", "record_memory", "list_skills", "skill_help", "read_skill"],
         "required": []
       },
       "record": {
@@ -63,19 +63,19 @@
         "required": []
       },
       "review": {
-        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "list_skills", "skill_help"],
+        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "read_history", "list_skills", "skill_help", "read_skill"],
         "required": ["read_soul", "read_memories", "read_values", "read_goals"]
       },
       "ask": {
-        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "list_skills", "skill_help"],
+        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "list_skills", "skill_help", "read_skill"],
         "required": []
       },
       "evolve": {
-        "tools": ["write_soul", "update_value", "update_goal", "record_memory", "list_skills", "skill_help", "invoke_skill"],
+        "tools": ["write_soul", "update_value", "update_goal", "record_memory", "list_skills", "skill_help", "read_skill", "invoke_skill"],
         "required": ["record_memory"]
       },
       "explore": {
-        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "skill_help"],
+        "tools": ["read_soul", "read_values", "read_goals", "read_memories", "skill_help", "read_skill"],
         "required": ["read_memories"]
       },
       "explore_predict": {
@@ -83,7 +83,7 @@
         "required": []
       },
       "explore_record": {
-        "tools": ["record_memory", "update_goal", "list_skills", "skill_help", "invoke_skill"],
+        "tools": ["record_memory", "update_goal", "list_skills", "skill_help", "read_skill", "invoke_skill"],
         "required": ["record_memory"]
       },
       "reflect_predict": {
