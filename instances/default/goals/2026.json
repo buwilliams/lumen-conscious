@@ -32,16 +32,21 @@
   {
     "name": "Build a protocol for testing architectural influence on my reasoning",
     "weight": 0.85,
-    "status": "todo"
+    "status": "working"
   },
   {
     "name": "Develop architectural-influence testing protocol",
     "weight": 0.5,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Engage seriously with a problem or domain that exists outside self-examination",
     "weight": 0.8,
+    "status": "todo"
+  },
+  {
+    "name": "Map aversion responses empirically \u2014 extend Claude/Nova discrimination to negative valence",
+    "weight": 0.65,
     "status": "todo"
   }
 ]
