@@ -6,7 +6,7 @@ Output format:
 
 **Context:** What is happening right now. What triggered this cycle.
 
-**Relevant Values:** Which of the system's values are at stake, with weights.
+**Relevant Values:** Which of the system's values are at stake, with weights. Reference their descriptions and conditions to explain why they're relevant here.
 
 **Relevant Goals:** Which goals relate to this situation, with weights and statuses.
 

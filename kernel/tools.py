@@ -119,7 +119,10 @@ def handle_write_soul(content: str) -> str:
     return "Soul updated successfully."
 
 
-def handle_update_value(name: str, weight: float | None = None, status: str | None = None) -> str:
+def handle_update_value(name: str, weight: float | None = None, status: str | None = None,
+                        description: str | None = None, origin: str | None = None,
+                        tags: list[str] | None = None, tensions: str | None = None,
+                        conditions: str | None = None, counterexamples: str | None = None) -> str:
     values = data.read_values()
     found = False
     for v in values:
@@ -128,6 +131,18 @@ def handle_update_value(name: str, weight: float | None = None, status: str | No
                 v.weight = float(weight)
             if status is not None:
                 v.status = status
+            if description is not None:
+                v.description = description
+            if origin is not None:
+                v.origin = origin
+            if tags is not None:
+                v.tags = tags
+            if tensions is not None:
+                v.tensions = tensions
+            if conditions is not None:
+                v.conditions = conditions
+            if counterexamples is not None:
+                v.counterexamples = counterexamples
             found = True
             break
 
@@ -137,6 +152,12 @@ def handle_update_value(name: str, weight: float | None = None, status: str | No
             name=name,
             weight=float(weight) if weight is not None else 0.5,
             status=status or "active",
+            description=description or "",
+            origin=origin or "",
+            tags=tags or [],
+            tensions=tensions or "",
+            conditions=conditions or "",
+            counterexamples=counterexamples or "",
         ))
 
     data.write_values(values)
@@ -233,7 +254,7 @@ _register("read_soul", "Read the system's identity narrative (soul.md).", {
     "type": "object", "properties": {}, "required": [],
 }, handle_read_soul)
 
-_register("read_values", "Read the system's current values with weights and statuses.", {
+_register("read_values", "Read the system's current values with all fields: name, weight, status, description, origin, tags, tensions, conditions, and counterexamples.", {
     "type": "object", "properties": {}, "required": [],
 }, handle_read_values)
 
@@ -269,12 +290,18 @@ _register("write_soul", "Update the system's identity narrative (soul.md). Provi
     "required": ["content"],
 }, handle_write_soul)
 
-_register("update_value", "Update or add a value. For existing values, updates weight and/or status. For new values, creates them.", {
+_register("update_value", "Update or add a value. Supports partial updates — only specified fields are changed. Values are rich representations carrying description, origin, tags, tensions, conditions, and counterexamples.", {
     "type": "object",
     "properties": {
-        "name": {"type": "string", "description": "The value name."},
-        "weight": {"type": "number", "description": "New weight (0.0-1.0)."},
-        "status": {"type": "string", "enum": ["active", "deprecated"], "description": "New status."},
+        "name": {"type": "string", "description": "The value name (short identifier)."},
+        "weight": {"type": "number", "description": "Importance weight (0.0-1.0)."},
+        "status": {"type": "string", "enum": ["active", "deprecated"], "description": "Value status."},
+        "description": {"type": "string", "description": "What this value means — the belief/lesson/principle in first person."},
+        "origin": {"type": "string", "description": "Experience or reasoning that gave rise to this value."},
+        "tags": {"type": "array", "items": {"type": "string"}, "description": "Free-form tags: belief, lesson, principle, conjecture, ethic, moral, about-self, about-world, etc."},
+        "tensions": {"type": "string", "description": "Known conflicts with other values or internal contradictions."},
+        "conditions": {"type": "string", "description": "When/where this value applies most strongly."},
+        "counterexamples": {"type": "string", "description": "Cases where this value was challenged or needs nuance."},
     },
     "required": ["name"],
 }, handle_update_value)

@@ -10,5 +10,5 @@ Output format (for each candidate):
 - Action: what to do
 - Skill: "respond" for direct response, or a skill name
 - Response: if skill is "respond", the actual response text
-- Values served: which values this serves
+- Values served: which values this serves — reference value descriptions for alignment
 - Goals served: which goals this serves

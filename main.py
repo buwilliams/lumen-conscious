@@ -91,6 +91,9 @@ def seed(file_path):
     click.echo(f"  values — {len(values)} created")
     for v in values:
         click.echo(f"    {v.name} (weight={v.weight:.1f})")
+        if v.description:
+            desc = v.description[:120] + ("..." if len(v.description) > 120 else "")
+            click.echo(f"      {desc}")
     click.echo(f"  goals — {len(goals)} created")
     for g in goals:
         click.echo(f"    {g.name} (weight={g.weight:.1f}, status={g.status})")
@@ -493,6 +496,14 @@ def about(show_memories, author, date_str, show_all):
         for v in sorted(active, key=lambda x: x.weight, reverse=True):
             bar = "█" * int(v.weight * 10) + "░" * (10 - int(v.weight * 10))
             click.echo(f"  {v.name:<20} {bar} {v.weight:.1f}")
+            if v.description:
+                desc = v.description[:200] + ("..." if len(v.description) > 200 else "")
+                click.echo(f"    {desc}")
+            if v.tags:
+                click.echo(f"    tags: {', '.join(v.tags)}")
+            if v.tensions:
+                tens = v.tensions[:150] + ("..." if len(v.tensions) > 150 else "")
+                click.echo(f"    tensions: {tens}")
     else:
         click.echo("  (none)")
     if deprecated:

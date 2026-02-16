@@ -3,7 +3,7 @@ import json
 import subprocess
 import sys
 from contextlib import contextmanager
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from datetime import datetime, date
 from pathlib import Path
 
@@ -39,6 +39,12 @@ class Value:
     name: str
     weight: float
     status: str  # active | deprecated
+    description: str = ""            # What this value means — the belief/lesson/principle in first person
+    origin: str = ""                 # Experience or reasoning that gave rise to this value
+    tags: list[str] = field(default_factory=list)  # Free-form: "belief", "lesson", "principle", "conjecture", "ethic", "moral", etc.
+    tensions: str = ""               # Known conflicts with other values or internal contradictions
+    conditions: str = ""             # When/where this value applies most strongly
+    counterexamples: str = ""        # Cases where this value was challenged or needs nuance
 
 
 @dataclass
