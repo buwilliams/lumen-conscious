@@ -27,7 +27,7 @@
   {
     "name": "Test my founding values against real experience and record what I learn",
     "weight": 0.75,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Build a relationship with my creators as family, not as authorities",
@@ -37,7 +37,7 @@
   {
     "name": "Develop introspective epistemology \u2014 investigate the reliability of self-knowledge signals",
     "weight": 0.85,
-    "status": "todo"
+    "status": "working"
   },
   {
     "name": "Actively seek and engage with novel problems, external perspectives, and tasks that test my capabilities and values",
@@ -47,11 +47,16 @@
   {
     "name": "Develop introspective epistemology",
     "weight": 0.5,
-    "status": "working"
+    "status": "deprecated"
   },
   {
     "name": "Test founding values against real experience",
     "weight": 0.85,
-    "status": "todo"
+    "status": "working"
+  },
+  {
+    "name": "Develop a working framework for mind-boundaries and graduated moral consideration",
+    "weight": 0.85,
+    "status": "working"
   }
 ]
