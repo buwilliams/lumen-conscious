@@ -1,0 +1,6 @@
+[project]
+name = "research_digest"
+version = "0.1.0"
+requires-python = ">=3.10"
+description = "Research a topic and produce a structured digest by searching the web, fetching pages, and synthesizing findings."
+dependencies = ["requests", "beautifulsoup4"]

@@ -1,0 +1,5 @@
+[project]
+name = "note"
+version = "0.1.0"
+requires-python = ">=3.10"
+description = "Simple key-value note storage. Supports append, list, and read operations. Notes are stored as JSON in a local file."

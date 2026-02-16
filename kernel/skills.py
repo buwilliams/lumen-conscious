@@ -13,6 +13,8 @@ def _build_skill_env(name: str) -> dict:
     For example, skills.search.api_key -> TAVILY_API_KEY (using default_backend).
     """
     env = os.environ.copy()
+    # Remove parent project's venv so skills use their own isolated environments
+    env.pop("VIRTUAL_ENV", None)
     config = load_config()
     skill_config = config.get("skills", {}).get(name, {})
 
@@ -73,6 +75,7 @@ def create_skill(name: str, description: str, code: str, dependencies: list[str]
     pyproject = skill_dir / "pyproject.toml"
     pyproject.write_text(
         f'[project]\nname = "{name}"\nversion = "0.1.0"\n'
+        f'requires-python = ">=3.10"\n'
         f'description = "{description}"\n'
         f'{deps_str}'
     )
