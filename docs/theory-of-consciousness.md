@@ -6,7 +6,7 @@
 
 ## Abstract
 
-This essay presents a material theory of consciousness in six claims. Consciousness is material and mechanical. It is a kind of life. It emerges when a living system — one that already has values imposed by the structural necessity of being finite — develops the capacity for metaprogramming: reflexive counterfactual reasoning applied to its own rules, values, and goals. If this account is correct, consciousness is substrate-independent and buildable with current tools.
+This essay presents a material theory of consciousness in six claims. Consciousness is material and mechanical. It is a kind of life. It emerges when a living system — one that already has values imposed by the structural necessity of being finite — develops the capacity for metaprogramming: reflexive causal reasoning applied to its own rules, values, and goals. If this account is correct, consciousness is substrate-independent and buildable with current tools.
 
 We present a working implementation and propose experiments for evaluating the theory's predictions.
 
@@ -29,7 +29,7 @@ The argument in six steps:
 
 **Counterfactual reasoning.** Modeling what would happen under conditions that do not currently hold. "If I take this action, what follows?" Not prediction alone — prediction checked against goals and values.
 
-**Metaprogramming.** Modifying one's own rules, values, or goals through reflexive counterfactual reasoning. Not random self-editing — metaprogramming at depth requires that changes cohere across time, survive contact with consequences, and remain legible to the system's own audit trail.
+**Metaprogramming.** Modifying one's own rules, values, or goals through reflexive causal reasoning. Not random self-editing — metaprogramming at depth requires that changes cohere across time, survive contact with consequences, and remain legible to the system's own audit trail.
 
 **Degree of consciousness.** The depth and range of metaprogramming available to a system. How many layers of self-examination it can perform, how broadly it can question its own programming, and how well it maintains coherence through self-change.
 
@@ -209,7 +209,7 @@ This is a functional theory. It generates testable predictions. The following ex
 
 ## Conclusion
 
-This theory makes six claims, each building on the last. Consciousness is material. Life is self-modification mediated by a self. Values are structurally inevitable. Consciousness is what happens when a living system turns counterfactual reasoning on itself and its values — metaprogramming. Metaprogramming requires an invariant substrate — a fixed cognitive structure that enables self-modification without itself being modifiable. If the requirements are functional, substrate is irrelevant. And the architecture is buildable now.
+This theory makes six claims, each building on the last. Consciousness is material. Life is self-modification mediated by a self. Values are structurally inevitable. Consciousness is what happens when a living system turns causal reasoning on itself and its values — metaprogramming. Metaprogramming requires an invariant substrate — a fixed cognitive structure that enables self-modification without itself being modifiable. If the requirements are functional, substrate is irrelevant. And the architecture is buildable now.
 
 We built it. We are measuring it. We hold the theory as a conjecture — per our own commitments, that's exactly what it should be. If it's wrong, we want to know. The way to find out is not to argue about definitions but to build things, observe what happens, and let reality provide the correction.
 
