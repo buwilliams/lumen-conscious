@@ -27,7 +27,7 @@ def _git_log_diffs(data_dir: Path) -> str:
 
     try:
         result = subprocess.run(
-            ["git", "log", "-p", "--follow", "--", *targets],
+            ["git", "log", "-p", "--", *targets],
             capture_output=True, text=True, timeout=30,
         )
         output = result.stdout.strip()
