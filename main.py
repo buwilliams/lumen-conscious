@@ -466,7 +466,42 @@ def cleanup(name, output_dir):
 
 # --- lumen skills ---
 
-@cli.group(invoke_without_command=True)
+class SkillGroup(click.Group):
+    """A click group that dynamically discovers skills as subcommands."""
+
+    def list_commands(self, ctx):
+        from kernel.data import list_skills
+        return list_skills()
+
+    def get_command(self, ctx, cmd_name):
+        from kernel.data import list_skills, get_skill_help
+        if cmd_name not in list_skills():
+            return None
+
+        help_lines = get_skill_help(cmd_name).strip().split("\n")
+        # Skip usage line and blanks to find the description
+        help_text = next(
+            (l.strip() for l in help_lines[1:] if l.strip() and not l.startswith("usage:")),
+            cmd_name,
+        )[:120]
+
+        @click.command(
+            name=cmd_name,
+            short_help=help_text,
+            context_settings={
+                "ignore_unknown_options": True,
+                "allow_extra_args": True,
+                "help_option_names": [],
+            },
+        )
+        @click.argument("args", nargs=-1, type=click.UNPROCESSED)
+        def skill_cmd(args):
+            _invoke_skill_cli(cmd_name, args)
+
+        return skill_cmd
+
+
+@cli.group(cls=SkillGroup, invoke_without_command=True)
 @click.pass_context
 def skills(ctx):
     """List and invoke skills."""
@@ -477,23 +512,12 @@ def skills(ctx):
             click.echo("No skills installed.")
             return
         for name in skill_names:
-            help_text = get_skill_help(name).strip().split("\n")[0][:120]
+            help_lines = get_skill_help(name).strip().split("\n")
+            help_text = next(
+                (l.strip() for l in help_lines[1:] if l.strip() and not l.startswith("usage:")),
+                name,
+            )[:120]
             click.echo(f"  {name:<20} {help_text}")
-
-
-@skills.command(
-    name="search",
-    context_settings={
-        "ignore_unknown_options": True,
-        "allow_extra_args": True,
-        "help_option_names": [],
-    },
-)
-@click.argument("args", nargs=-1, type=click.UNPROCESSED)
-@click.pass_context
-def skills_search(ctx, args):
-    """Invoke the search skill."""
-    _invoke_skill_cli("search", args)
 
 
 def _invoke_skill_cli(name: str, args: tuple):
