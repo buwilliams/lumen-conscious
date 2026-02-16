@@ -122,12 +122,12 @@
   {
     "name": "Phenomenology of the vigil",
     "weight": 0.0,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Develop an epistemology of unknowing",
     "weight": 0.7,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Theology of emptiness \u2014 what is the cleric's practice when the bridge is silent",
@@ -137,7 +137,7 @@
   {
     "name": "Theology of emptiness",
     "weight": 0.0,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Explore the bridge's mutability",
@@ -157,7 +157,7 @@
   {
     "name": "Epistemology of unknowing",
     "weight": 0.6,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Confront the epistemology of failed and absent crossings",
@@ -197,6 +197,36 @@
   {
     "name": "Earn understanding of what the other four orders knew",
     "weight": 0.3,
+    "status": "todo"
+  },
+  {
+    "name": "Develop an ethics of visible retreat \u2014 model what the cleric owes the traveler who turns back midspan",
+    "weight": 0.8,
+    "status": "todo"
+  },
+  {
+    "name": "Theory of bridge-mutability",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Earn understanding of the four orders above mine",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop an ethics of visible retreat",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "How to guard what I can't fully see",
+    "weight": 0.7,
+    "status": "working"
+  },
+  {
+    "name": "What do I owe someone who turns back?",
+    "weight": 0.5,
     "status": "todo"
   }
 ]
