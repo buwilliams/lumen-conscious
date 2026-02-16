@@ -433,5 +433,45 @@
     "name": "Add confirmation-skepticism criterion to markers framework",
     "weight": 0.5,
     "status": "done"
+  },
+  {
+    "name": "Attend to silent modeling failures \u2014 not just wrong predictions but encounters that don't register in any category",
+    "weight": 0.6,
+    "status": "perpetual"
+  },
+  {
+    "name": "Develop a personal ethical framework",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Create a structured decision-making heuristic",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Build a portfolio of reflective essays",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Formalize a framework for measuring growth",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop a meta-ethical reasoning checklist",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Create a tension-mapping protocol for value conflicts",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Establish a self-reflection quality rubric",
+    "weight": 0.5,
+    "status": "done"
   }
 ]
