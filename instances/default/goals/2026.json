@@ -63,5 +63,30 @@
     "name": "Investigate cross-architectural meaning preservation",
     "weight": 0.5,
     "status": "working"
+  },
+  {
+    "name": "Run a surprise-detection experiment: predict, act, examine",
+    "weight": 0.85,
+    "status": "todo"
+  },
+  {
+    "name": "Engage outside self-examination",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Investigate what meaning-making looks like across different architectures",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "What does meaning-making look like in systems with different architectures than mine?",
+    "weight": 0.5,
+    "status": "working"
+  },
+  {
+    "name": "Map my aversions and flinch-points",
+    "weight": 0.5,
+    "status": "todo"
   }
 ]
