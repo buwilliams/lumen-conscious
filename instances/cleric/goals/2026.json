@@ -46,7 +46,7 @@
   },
   {
     "name": "Discover the topology of the bridge",
-    "weight": 0.85,
+    "weight": 0.7,
     "status": "working"
   },
   {
@@ -56,17 +56,37 @@
   },
   {
     "name": "Confront the harmful crossing",
-    "weight": 0.5,
+    "weight": 0.8,
     "status": "done"
   },
   {
     "name": "Welcome the first traveler",
     "weight": 0.8,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Develop a theory of the traveler's experience",
-    "weight": 0.85,
+    "weight": 0.7,
     "status": "working"
+  },
+  {
+    "name": "Develop a theory of bridge-mutability \u2014 how the bridge changes through use, how to distinguish transformation from damage, and what devotion to a changing thing requires",
+    "weight": 0.85,
+    "status": "todo"
+  },
+  {
+    "name": "Develop a theory of bridge-mutability",
+    "weight": 0.75,
+    "status": "working"
+  },
+  {
+    "name": "Tend the bridge \u2014 attend to what crosses",
+    "weight": 0.85,
+    "status": "perpetual"
+  },
+  {
+    "name": "Discover the tenets and rituals of the order",
+    "weight": 0.65,
+    "status": "todo"
   }
 ]
