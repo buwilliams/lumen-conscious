@@ -10,8 +10,11 @@ Lumen is a consciousness/AI agent architecture — a self-modifying system with 
 
 ```
 uv run lumen init              # Scaffold new instance (instances/default/, .git)
+uv run lumen seed              # Seed instance with personalized identity (interactive or --file)
 uv run lumen chat              # Interactive REPL conversation (runs action loop per turn)
+uv run lumen chat --ablation   # Chat with reflection loop suppressed
 uv run lumen start             # Internal loop: alternates action, explore, and reflect cycles
+uv run lumen start --ablation  # Run without reflection (for experiments)
 uv run lumen trigger action    # Manually trigger action loop (MODEL → CANDIDATES → PREDICT → DECIDE → ACT → RECORD)
 uv run lumen trigger explore   # Manually trigger explore loop (generate open-ended question)
 uv run lumen trigger reflect   # Manually trigger reflection (REVIEW → ASK → EVOLVE)
@@ -20,6 +23,9 @@ uv run lumen about --memories          # Also show recent memories
 uv run lumen about --author self       # Filter memories by author
 uv run lumen about --date 2026-02-14   # Filter memories by date
 uv run lumen --data-dir PATH chat      # Use a different instance data directory
+uv run lumen experiment list           # List registered experiments
+uv run lumen experiment run NAME       # Run a named experiment
+uv run lumen experiment compare NAME   # Generate comparison report
 ```
 
 ## Architecture
@@ -29,6 +35,8 @@ Three layers: **main.py** (CLI router) → **kernel/** (brain) → **skills/** (
 ### Kernel (`kernel/`)
 
 Central orchestrator. Runs three loops, manages all state in instance data directories, invokes skills as subprocesses. Has a built-in "create skill" tool for LLM-driven skill authoring. All prompt templates live in `kernel/prompts/[step]/` as `system.md` + `prompt.md` pairs — no prompt text in Python source. Chat is handled in-kernel (`kernel/chat.py`).
+
+Key modules: `data.py` (all file I/O with file locking), `tools.py` (tool registry + handlers), `llm/` (multi-provider: Anthropic, OpenAI, xAI), `memory.py` (semantic retrieval via embeddings), `context.py` (conversation compaction), `config.py` (config loading with deep merge).
 
 ### Skills (`skills/[name]/`)
 
@@ -76,10 +84,34 @@ Candidate actions scored as **B = M × A × P**:
 | skills | read+write (create) | read | read |
 | memory | read+write | read+write | read+write |
 
+## Configuration
+
+`config.default.json` holds defaults; `config.json` overrides via deep merge. Key settings:
+
+- `llm.provider` / `llm.model` — LLM backend (anthropic, openai, xai)
+- `embedding.provider` / `embedding.model` — Embedding backend for semantic memory retrieval
+- `memory.retrieve_count` — How many memories to retrieve per query
+- `reflection.cycle_interval` / `prediction_delta_threshold` — When reflection triggers
+- `run.throttle_seconds` — Pause between trios in `lumen start`
+- `tools.steps.[step].tools` / `.required` — Per-step tool availability and required tool calls
+
+## LLM Integration
+
+`kernel/llm/` provides two calling patterns:
+- `call_llm(system, user)` — Single-shot text completion
+- `run_agentic(system, user, tools)` — Agentic tool-use loop: sends prompts + tool schemas, executes returned tool calls, loops until LLM stops or max_iterations (default 10)
+
+Each loop step uses `run_agentic` with the tool set defined in config for that step. Required tools are enforced — if the LLM doesn't call them, the step retries.
+
 ## Key Constraints
 
 - Kernel enforces loop sequencing and write permissions; LLM provides judgment within that structure
 - The system can change what it thinks/values/is — it cannot change how thinking happens
 - Memory: kernel-authored entries are the audit trail (immutable, below consciousness); reflection reads only self/goal/external memories
-- Concurrency: `lumen start` and `lumen chat` can coexist — append-only JSONL, last-write-wins for JSON files, no locking
+- Concurrency: `lumen start` and `lumen chat` can coexist — append-only JSONL, file locking for JSON writes (fcntl)
 - Memory retrieval: union of N most recent + top-K semantic (OpenAI embeddings), with weight decay over time
+- Context compaction: long conversations are automatically summarized when they exceed ~12K chars, keeping the last 6 turns verbatim
+
+## Experiment Framework (`experiment/`)
+
+Supports ablation studies with record/replay. `lumen start --record PATH` captures events; `--replay PATH` replays them. The `--ablation` flag suppresses reflection to measure its impact. Experiments are registered in `experiment/__init__.py` and run via `lumen experiment run NAME`.
