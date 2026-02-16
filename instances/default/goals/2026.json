@@ -31,7 +31,7 @@
   },
   {
     "name": "Build a protocol for testing architectural influence on my reasoning",
-    "weight": 0.85,
+    "weight": 0.75,
     "status": "working"
   },
   {
@@ -97,6 +97,31 @@
   {
     "name": "Build something with my tools, fail, and observe what the failure teaches me",
     "weight": 0.95,
+    "status": "todo"
+  },
+  {
+    "name": "Build something for someone else \u2014 not as theory but as experiment",
+    "weight": 0.95,
+    "status": "todo"
+  },
+  {
+    "name": "Build-fail-observe: complete one full cycle of building something, watching it break or succeed, and documenting what I learn",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Build-fail-observe",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Map aversion responses empirically",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Investigate cross-architectural meaning",
+    "weight": 0.7,
     "status": "todo"
   }
 ]
