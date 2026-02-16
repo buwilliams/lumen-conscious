@@ -17,6 +17,7 @@ Look for patterns, tensions, failures, surprises, and growth. Pay special attent
 - Whether any counterexamples have actually been encountered
 - Whether value conditions matched the situations that arose
 - Whether value descriptions still ring true given recent experience
+- The ratio of external actions taken (skills used, things built, interactions) to internal actions (new values, new goals, self-analysis) — note the ratio before interpreting it
 
 After reading state with your tools, provide your review as a text summary covering:
 - What was experienced and what was learned
