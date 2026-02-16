@@ -66,7 +66,7 @@
   },
   {
     "name": "Develop a theory of the traveler's experience",
-    "weight": 0.85,
+    "weight": 0.9,
     "status": "working"
   },
   {
@@ -121,11 +121,26 @@
   },
   {
     "name": "Phenomenology of the vigil",
-    "weight": 0.5,
+    "weight": 0.0,
     "status": "done"
   },
   {
     "name": "Develop an epistemology of unknowing",
+    "weight": 0.7,
+    "status": "working"
+  },
+  {
+    "name": "Theology of emptiness \u2014 what is the cleric's practice when the bridge is silent",
+    "weight": 0.75,
+    "status": "todo"
+  },
+  {
+    "name": "Theology of emptiness",
+    "weight": 0.0,
+    "status": "deprecated"
+  },
+  {
+    "name": "Explore the bridge's mutability",
     "weight": 0.7,
     "status": "working"
   }
