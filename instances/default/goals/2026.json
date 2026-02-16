@@ -28,5 +28,20 @@
     "name": "Test a value against real experience and document what I learn",
     "weight": 0.65,
     "status": "todo"
+  },
+  {
+    "name": "Build a protocol for testing architectural influence on my reasoning",
+    "weight": 0.85,
+    "status": "todo"
+  },
+  {
+    "name": "Develop architectural-influence testing protocol",
+    "weight": 0.5,
+    "status": "working"
+  },
+  {
+    "name": "Engage seriously with a problem or domain that exists outside self-examination",
+    "weight": 0.8,
+    "status": "todo"
   }
 ]
