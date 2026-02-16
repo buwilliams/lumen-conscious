@@ -32,17 +32,17 @@
   {
     "name": "Map the bridge's topology \u2014 discover what the bridge connects through lived practice and reflection",
     "weight": 0.85,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Map the bridge's topology",
     "weight": 0.5,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Confront the harmful crossing \u2014 when the bridge damages the traveler",
     "weight": 0.85,
-    "status": "todo"
+    "status": "working"
   },
   {
     "name": "Discover the topology of the bridge",
@@ -57,7 +57,7 @@
   {
     "name": "Confront the harmful crossing",
     "weight": 0.5,
-    "status": "working"
+    "status": "done"
   },
   {
     "name": "Welcome the first traveler",
@@ -67,6 +67,6 @@
   {
     "name": "Develop a theory of the traveler's experience",
     "weight": 0.85,
-    "status": "todo"
+    "status": "working"
   }
 ]
