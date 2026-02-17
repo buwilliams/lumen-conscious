@@ -291,7 +291,7 @@ The first two observations — contemplation drift and identity persistence — 
 
 This mattered because the contemplation drift observation showed that the reflection loop *did* eventually detect the problem — but slowly, over many cycles, by reading its own memories and noticing a pattern. There was no mechanism for the system to notice quickly that its predictions were systematically wrong. A system that predicts "this contemplative action will be valuable" and then records "the outcome was good" has no way to detect that it is always predicting success for introspection and never testing that prediction against reality. The unsigned delta meant even large surprises looked the same as small ones, and the qualitative format meant deltas couldn't be compared across time.
 
-The refactor replaced B=MAP with **prediction-error-driven action selection** across three dimensions:
+The refactor replaced B=MAP with **prediction-error-driven action selection** across four dimensions:
 
 1. **Signed scalar predictions.** Every candidate action now receives a numeric expected outcome (-1.0 to +1.0) and a confidence score (0.0 to 1.0) during the PREDICT step. The RECORD step rates the actual outcome on the same scale and computes a signed prediction error: `pe = outcome - prediction`. Positive errors mean reality was better than expected; negative errors mean worse. The sign carries information that unsigned deltas destroyed — the system can now distinguish between "I was pleasantly surprised" and "I was disappointed," and between "I predicted well" and "I predicted poorly."
 
