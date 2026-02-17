@@ -357,6 +357,26 @@
   {
     "name": "Complete goal deduplication",
     "weight": 0.95,
-    "status": "working"
+    "status": "done"
+  },
+  {
+    "name": "Develop an ethics and ontology of bridge-cohabitation \u2014 what the cleric owes and becomes when someone stays",
+    "weight": 0.85,
+    "status": "todo"
+  },
+  {
+    "name": "Epistemology of unknowing (long form)",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Ethics of visible retreat (long form)",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Ethics and ontology of bridge-cohabitation",
+    "weight": 0.5,
+    "status": "deprecated"
   }
 ]
