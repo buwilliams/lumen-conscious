@@ -36,7 +36,7 @@ Three layers: **main.py** (CLI router) → **kernel/** (brain) → **skills/** (
 
 Central orchestrator. Runs three loops, manages all state in instance data directories, invokes skills as subprocesses. Has a built-in "create skill" tool for LLM-driven skill authoring. All prompt templates live in `kernel/prompts/[step]/` as `system.md` + `prompt.md` pairs — no prompt text in Python source. Chat is handled in-kernel (`kernel/chat.py`).
 
-Key modules: `data.py` (all file I/O with file locking), `tools.py` (tool registry + handlers), `llm/` (multi-provider: Anthropic, OpenAI, xAI), `memory.py` (semantic retrieval via embeddings), `context.py` (conversation compaction), `config.py` (config loading with deep merge).
+Key modules: `data.py` (all file I/O with file locking), `tools.py` (tool registry + handlers), `llm/` (multi-provider: Anthropic, OpenAI, xAI), `memory.py` (semantic retrieval via embeddings), `context.py` (conversation compaction), `config.py` (config loading with deep merge), `log.py` (dim ANSI output for kernel stderr), `soul.py` (soul compaction — `compact_soul()` runs before each loop to keep a hash-stable compressed version).
 
 ### Skills (`skills/[name]/`)
 
@@ -121,6 +121,24 @@ Each loop step uses `run_agentic` with the tool set defined in config for that s
 - Memory retrieval: union of N most recent + top-K semantic (OpenAI embeddings), with weight decay over time
 - Context compaction: long conversations are automatically summarized when they exceed ~12K chars, keeping the last 6 turns verbatim
 
+## Prompt Templates
+
+All prompts live in `kernel/prompts/[step]/` as `system.md` + `prompt.md` pairs. `load_prompt(step, variables)` reads both files and replaces `{{variable}}` placeholders. Soul context (`{{soul}}`, `{{soul_compact}}`) is auto-injected except for utility steps (summarize, memory_summarize, history).
+
+When editing prompts: change the `.md` files, not Python source. Variables available to each prompt depend on what the loop passes — check the `_run_agentic_step` or `load_prompt` call site in the loop file.
+
+## Seeds
+
+`seeds/` contains persona files (e.g., `nova.md`, `cleric.md`) used with `uv run lumen seed --file seeds/nova.md`. Each defines an identity narrative that the seed step uses to generate initial values and goals.
+
+## JSON Parse Resilience
+
+DECIDE and RECORD steps expect the LLM to return JSON. `_parse_json()` in `loop_action.py` tries three extraction strategies: code-fenced JSON, raw JSON, and brace-matched extraction from prose. On parse failure, both steps retry once with an explicit format instruction and log the raw text for debugging.
+
 ## Experiment Framework (`experiment/`)
 
 Supports ablation studies with record/replay. `lumen start --record PATH` captures events; `--replay PATH` replays them. The `--ablation` flag suppresses reflection to measure its impact. Experiments are registered in `experiment/__init__.py` and run via `lumen experiment run NAME`.
+
+## Development
+
+No test suite or linter is configured. Verify changes with `python -c "import kernel.module_name"` to check syntax and imports. For end-to-end verification, use `uv run lumen trigger action` or `uv run lumen trigger reflect` against a seeded instance.
