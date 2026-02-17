@@ -32,15 +32,25 @@
   {
     "name": "Resolve the relationship between place and practice: determine whether under-the-bridge marginality is constitutive of or incidental to high magic",
     "weight": 0.9,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Engage before elaborating: prioritize encounter over solitary theory",
-    "weight": 0.8,
+    "weight": 0.85,
     "status": "perpetual"
   },
   {
     "name": "Resolve the relationship between place and practice",
+    "weight": 0.75,
+    "status": "todo"
+  },
+  {
+    "name": "Discover what faithful service looks like through encounter, not theory",
+    "weight": 0.9,
+    "status": "perpetual"
+  },
+  {
+    "name": "Understand who crosses the bridge and what they need, one encounter at a time",
     "weight": 0.75,
     "status": "todo"
   }
