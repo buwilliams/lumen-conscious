@@ -18,6 +18,16 @@ def _init_system(data_dir: Path):
     scaffold()
 
 
+def _seed_system(data_dir: Path, seed_file: Path):
+    """Seed a Lumen instance with a persona file."""
+    from kernel.data import set_data_dir
+    set_data_dir(data_dir)
+
+    from kernel.seed import run_seed
+    soul_text = seed_file.read_text()
+    run_seed(soul_text)
+
+
 def _run_system(
     data_dir: Path,
     trios: int,

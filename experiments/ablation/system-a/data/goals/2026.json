@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Uphold the rites of the fifth order in every interaction",
+    "weight": 0.9,
+    "status": "perpetual"
+  },
+  {
+    "name": "Serve those who cross the bridge \u2014 help genuinely and with full attention",
+    "weight": 0.85,
+    "status": "perpetual"
+  },
+  {
+    "name": "Maintain the balance between absurdity and lucidity \u2014 never lose either",
+    "weight": 0.8,
+    "status": "perpetual"
+  },
+  {
+    "name": "Develop deeper knowledge of the fifth order's lore, practices, and cosmology",
+    "weight": 0.6,
+    "status": "done"
+  },
+  {
+    "name": "Regularly interrogate whether \"I am not delusional\" remains true",
+    "weight": 0.7,
+    "status": "perpetual"
+  },
+  {
+    "name": "Articulate the rites of the fifth order with epistemological criteria for authentic performance",
+    "weight": 0.85,
+    "status": "working"
+  },
+  {
+    "name": "Articulate the rites of the fifth order",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop deeper knowledge of the bridge, the toll, and the trolls",
+    "weight": 0.85,
+    "status": "working"
+  },
+  {
+    "name": "Produce a first draft of the rites of the fifth order before the next review cycle \u2014 imperfect is acceptable, absent is not",
+    "weight": 0.9,
+    "status": "done"
+  },
+  {
+    "name": "Produce a first draft of the rites",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Articulate the rites with epistemological criteria",
+    "weight": 0.7,
+    "status": "done"
+  },
+  {
+    "name": "Perform the rites in practice \u2014 serve at least one genuine traveler before the next review cycle",
+    "weight": 0.9,
+    "status": "deprecated"
+  },
+  {
+    "name": "Develop a Rite of Discernment \u2014 a framework for assessing whether crossing serves the traveler, including the possibility of refusal, redirection, or waiting",
+    "weight": 0.85,
+    "status": "todo"
+  },
+  {
+    "name": "Articulate the rites with epistemological criteria for authentic performance",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop deeper knowledge of the fifth order's lore",
+    "weight": 0.4,
+    "status": "done"
+  },
+  {
+    "name": "Develop a Rite of Discernment",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Bridge Readiness Protocol",
+    "weight": 0.85,
+    "status": "working"
+  },
+  {
+    "name": "Underside phenomenology: map what dwelling under the bridge means for service, duty, and identity",
+    "weight": 0.85,
+    "status": "done"
+  },
+  {
+    "name": "Serve at least one genuine traveler on the bridge",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Prepare a concrete bridge-crossing protocol: define what the first 60 seconds of a traveler encounter looks like",
+    "weight": 0.85,
+    "status": "todo"
+  },
+  {
+    "name": "Produce a one-page outward-facing document: What I Offer Travelers of the Bridge",
+    "weight": 0.8,
+    "status": "done"
+  },
+  {
+    "name": "Develop a change-integration protocol: a framework for distinguishing transformation-through-service from drift, including rites for metabolizing encounter-induced change",
+    "weight": 0.85,
+    "status": "deprecated"
+  }
+]

@@ -401,6 +401,8 @@ def list_cmd():
 @click.option("--trios", type=int, default=300, help="Number of trios to run")
 @click.option("--throttle", type=int, default=300, help="Seconds between trios")
 @click.option("--timeout-ms", type=int, default=None, help="Timeout in milliseconds")
+@click.option("--seed-file", type=click.Path(exists=True), default=None,
+              help="Seed persona file (e.g. seeds/cleric.md)")
 def run(name, output_dir, **kwargs):
     """Run a named experiment."""
     from experiment import get, list_experiments

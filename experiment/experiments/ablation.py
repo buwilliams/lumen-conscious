@@ -3,6 +3,7 @@
 Disables reflection in System B and measures divergence from intact System A.
 """
 
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -12,7 +13,7 @@ import click
 from experiment import Experiment, register
 
 
-def run_ablation(output_dir: Path, *, trios: int = 300, throttle: int = 300, timeout_ms: int | None = None) -> str:
+def run_ablation(output_dir: Path, *, trios: int = 300, throttle: int = 300, timeout_ms: int | None = None, seed_file: str | None = None) -> str:
     """Orchestrate the full ablation experiment.
 
     1. Create two data directories, init each.
@@ -20,7 +21,7 @@ def run_ablation(output_dir: Path, *, trios: int = 300, throttle: int = 300, tim
     3. Run System B with replay + ablation.
     4. Generate comparison report.
     """
-    from experiment.runner import _init_system, _run_system
+    from experiment.runner import _init_system, _seed_system, _run_system
     from experiment.analyze import generate_report
 
     dir_a = output_dir / "system-a"
@@ -29,21 +30,41 @@ def run_ablation(output_dir: Path, *, trios: int = 300, throttle: int = 300, tim
     data_b = dir_b / "data"
     events_path = output_dir / "events.jsonl"
 
+    seed_label = seed_file if seed_file else "(default)"
     click.echo(f"\n{'='*60}")
     click.echo(f"  Reflexivity Ablation Experiment")
     click.echo(f"  Trios: {trios}, Throttle: {throttle}s")
+    click.echo(f"  Seed: {seed_label}")
     click.echo(f"  Output: {output_dir.absolute()}")
     click.echo(f"{'='*60}\n")
 
     # --- Step 1: Initialize both systems ---
     click.echo("[Step 1] Initializing both systems...")
-    for d, label in [(data_a, "A"), (data_b, "B")]:
-        if d.exists():
-            click.echo(f"  System {label}: data/ already exists, skipping init")
+    if seed_file:
+        # Seed System A, then copy to System B for identical starting state
+        # (LLM seed calls produce different output each time)
+        seed_path = Path(seed_file)
+        if data_a.exists():
+            click.echo(f"  System A: data/ already exists, skipping seed")
         else:
-            d.parent.mkdir(parents=True, exist_ok=True)
-            _init_system(d)
-            click.echo(f"  System {label}: initialized at {d}")
+            dir_a.mkdir(parents=True, exist_ok=True)
+            _init_system(data_a)
+            _seed_system(data_a, seed_path)
+            click.echo(f"  System A: seeded at {data_a}")
+        if data_b.exists():
+            click.echo(f"  System B: data/ already exists, skipping copy")
+        else:
+            dir_b.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(data_a, data_b)
+            click.echo(f"  System B: copied from System A at {data_b}")
+    else:
+        for d, label in [(data_a, "A"), (data_b, "B")]:
+            if d.exists():
+                click.echo(f"  System {label}: data/ already exists, skipping init")
+            else:
+                d.parent.mkdir(parents=True, exist_ok=True)
+                _init_system(d)
+                click.echo(f"  System {label}: initialized at {d}")
     click.echo()
 
     # --- Step 2: Run System A ---
@@ -108,5 +129,6 @@ register(Experiment(
         click.Option(["--trios"], type=int, default=300, help="Number of trios to run"),
         click.Option(["--throttle"], type=int, default=300, help="Seconds between trios"),
         click.Option(["--timeout-ms"], type=int, default=None, help="Timeout in milliseconds"),
+        click.Option(["--seed-file"], type=str, default=None, help="Seed persona file path"),
     ],
 ))
