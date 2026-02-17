@@ -53,6 +53,8 @@ class Value:
     tensions: str = ""               # Known conflicts with other values or internal contradictions
     conditions: str = ""             # When/where this value applies most strongly
     counterexamples: str = ""        # Cases where this value was challenged or needs nuance
+    valence: str = "approach"        # approach (move toward) | avoidance (move away from)
+    motivation_type: str = "intrinsic"  # intrinsic (identity-aligned) | extrinsic (externally driven)
 
 
 @dataclass
@@ -69,6 +71,9 @@ class Memory:
     weight: float
     situation: str
     description: str
+    prediction: float = 0.0        # expected outcome (-1.0 to +1.0)
+    outcome: float = 0.0           # actual outcome (-1.0 to +1.0)
+    prediction_error: float = 0.0  # signed: outcome - prediction
 
 
 @dataclass
@@ -207,7 +212,9 @@ def append_memory(mem: Memory):
         print(f"  [{mem.author}] {mem.situation}: {mem.description}", file=sys.stderr)
 
 
-def make_memory(author: str, weight: float, situation: str, description: str) -> Memory:
+def make_memory(author: str, weight: float, situation: str, description: str,
+                 prediction: float = 0.0, outcome: float = 0.0,
+                 prediction_error: float = 0.0) -> Memory:
     """Helper to create a memory with current timestamp."""
     return Memory(
         timestamp=datetime.now().isoformat(),
@@ -215,6 +222,9 @@ def make_memory(author: str, weight: float, situation: str, description: str) ->
         weight=weight,
         situation=situation,
         description=description,
+        prediction=prediction,
+        outcome=outcome,
+        prediction_error=prediction_error,
     )
 
 
@@ -257,13 +267,30 @@ def read_recent_memories(n: int = 20) -> list[Memory]:
     return all_mems[:n]
 
 
+def read_recent_prediction_errors(n: int = 10) -> list[Memory]:
+    """Read the N most recent memories with non-zero prediction_error."""
+    memory_dir = DATA_DIR / "memory"
+    if not memory_dir.exists():
+        return []
+    all_mems = _read_recent_files(memory_dir, limit=n * 10)
+    pe_mems = [m for m in all_mems if m.prediction_error != 0.0]
+    pe_mems.sort(key=lambda m: m.timestamp, reverse=True)
+    return pe_mems[:n]
+
+
 def _read_jsonl(path: Path) -> list[Memory]:
     memories = []
     with open(path) as f:
         for line in f:
             line = line.strip()
             if line:
-                memories.append(Memory(**json.loads(line)))
+                d = json.loads(line)
+                # Handle memories written before prediction_error fields existed
+                for fld in ("prediction", "outcome", "prediction_error"):
+                    d.setdefault(fld, 0.0)
+                for fld in ("valence", "motivation_type"):
+                    d.pop(fld, None)  # strip any stale fields not in Memory
+                memories.append(Memory(**d))
     return memories
 
 

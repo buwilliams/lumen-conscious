@@ -47,26 +47,35 @@ Standalone programs created by the system at runtime. Each has a required `main.
 Mutable instance state. Git-tracked for rollback and audit.
 
 - `soul.md` — Identity narrative (reflection loop only writes)
-- `values.json` — `{name, weight: 0.0-1.0, status: active|deprecated}`
+- `values.json` — `{name, weight: 0.0-1.0, status: active|deprecated, valence: approach|avoidance, motivation_type: intrinsic|extrinsic}`
 - `goals/[year].json` — `{name, weight: 0.0-1.0, status: todo|working|done|perpetual|deprecated}`
-- `memory/[year]/[year]-[month]-[day].jsonl` — Append-only log with `{timestamp, author: self|kernel|goal|external, weight, situation, description}`
+- `memory/[year]/[year]-[month]-[day].jsonl` — Append-only log with `{timestamp, author: self|kernel|goal|external, weight, situation, description, prediction: -1.0 to +1.0, outcome: -1.0 to +1.0, prediction_error: signed (outcome - prediction)}`
 
 ## Three Loops
 
-**Action Loop** (exploits goals): MODEL → CANDIDATES → PREDICT → DECIDE → ACT → RECORD. Writes memories and goal status changes. Cannot modify values or soul.md.
+**Action Loop** (exploits goals): MODEL → CANDIDATES → PREDICT → DECIDE → ACT → RECORD. PREDICT now produces scalar expected_outcome/confidence; RECORD produces signed prediction_error. Writes memories (including prediction errors), goal status changes. Cannot modify values or soul.md.
 
 **Explore Loop** (seeks novelty): EXPLORE → PREDICT → RECORD. Generates open-ended questions from perpetual goals. Writes memories and can create new goals. Alternates with action loop during `lumen start`.
 
-**Reflection Loop** (metaprogramming): REVIEW → ASK → PREDICT → EVOLVE. The only loop that can modify values, goal weights, perpetual status, and soul.md. Triggered by: prediction deltas, value conflicts, goal completion/staleness, periodic cycles, or explicit request.
+**Reflection Loop** (metaprogramming): REVIEW → ASK → PREDICT → EVOLVE. The only loop that can modify values, goal weights, perpetual status, and soul.md. Triggered by: prediction errors, value conflicts, goal completion/staleness, periodic cycles, or explicit request.
 
 All three loops include a PREDICT step for counterfactual reasoning (cause and effect) before committing to action.
 
-## B=MAP Scoring
+## Prediction-Error-Driven Scoring
 
-Candidate actions scored as **B = M × A × P**:
-- **M (Motivation)**: Value+goal alignment (0.0–1.0)
-- **A (Ability)**: Skill exists? 1.0 or 0.0 (if 0, create skill instead)
-- **P (Prompt)**: Trigger strength — 1.0 for direct, decays for indirect
+Candidate actions scored as:
+
+```
+score = expected_outcome × confidence × relevance
+```
+
+- **expected_outcome**: From the PREDICT step (-1.0 to +1.0). How well this action is expected to go.
+- **confidence**: From the PREDICT step (0.0 to 1.0). How certain the prediction is.
+- **relevance**: How well the candidate addresses the current situation (LLM-assessed, 0.0–1.0). Approach values add to relevance when served; avoidance values subtract when triggered.
+
+Skip logic: skip when best score is negative AND confidence > 0.7.
+
+Recent prediction errors (from past RECORD steps) are fed into the DECIDE step so the LLM can detect systematic bias and adjust — this is where learning drives action selection.
 
 ## Tool Filtering
 
@@ -91,7 +100,7 @@ Candidate actions scored as **B = M × A × P**:
 - `llm.provider` / `llm.model` — LLM backend (anthropic, openai, xai)
 - `embedding.provider` / `embedding.model` — Embedding backend for semantic memory retrieval
 - `memory.retrieve_count` — How many memories to retrieve per query
-- `reflection.cycle_interval` / `prediction_delta_threshold` — When reflection triggers
+- `reflection.cycle_interval` / `prediction_error_threshold` — When reflection triggers
 - `run.throttle_seconds` — Pause between trios in `lumen start`
 - `tools.steps.[step].tools` / `.required` — Per-step tool availability and required tool calls
 

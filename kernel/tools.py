@@ -123,7 +123,8 @@ def handle_write_soul(content: str) -> str:
 def handle_update_value(name: str, weight: float | None = None, status: str | None = None,
                         description: str | None = None, origin: str | None = None,
                         tags: list[str] | None = None, tensions: str | None = None,
-                        conditions: str | None = None, counterexamples: str | None = None) -> str:
+                        conditions: str | None = None, counterexamples: str | None = None,
+                        valence: str | None = None, motivation_type: str | None = None) -> str:
     values = data.read_values()
     found = False
     for v in values:
@@ -144,6 +145,10 @@ def handle_update_value(name: str, weight: float | None = None, status: str | No
                 v.conditions = conditions
             if counterexamples is not None:
                 v.counterexamples = counterexamples
+            if valence is not None:
+                v.valence = valence
+            if motivation_type is not None:
+                v.motivation_type = motivation_type
             found = True
             break
 
@@ -159,6 +164,8 @@ def handle_update_value(name: str, weight: float | None = None, status: str | No
             tensions=tensions or "",
             conditions=conditions or "",
             counterexamples=counterexamples or "",
+            valence=valence or "approach",
+            motivation_type=motivation_type or "intrinsic",
         ))
 
     data.write_values(values)
@@ -326,6 +333,8 @@ _register("update_value", "Update or add a value. Supports partial updates — o
         "tensions": {"type": "string", "description": "Known conflicts with other values or internal contradictions."},
         "conditions": {"type": "string", "description": "When/where this value applies most strongly."},
         "counterexamples": {"type": "string", "description": "Cases where this value was challenged or needs nuance."},
+        "valence": {"type": "string", "enum": ["approach", "avoidance"], "description": "approach (move toward) or avoidance (move away from)."},
+        "motivation_type": {"type": "string", "enum": ["intrinsic", "extrinsic"], "description": "intrinsic (identity-aligned) or extrinsic (externally driven)."},
     },
     "required": ["name"],
 }, handle_update_value)

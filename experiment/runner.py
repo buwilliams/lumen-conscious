@@ -53,7 +53,7 @@ def _run_system(
 
     label = "A (intact)" if not ablation else "B (ablated)"
     cycles_since_reflection = 0
-    recent_deltas = []
+    recent_prediction_errors = []
 
     for trio in range(1, effective_trios + 1):
         if recorder:
@@ -62,12 +62,12 @@ def _run_system(
         # --- Action ---
         click.echo(f"  [{label}] trio {trio}: action...", nl=False)
         result = run_action_loop()
-        delta = result.get("delta", 0.0)
-        recent_deltas.append(delta)
-        if len(recent_deltas) > 10:
-            recent_deltas = recent_deltas[-10:]
+        pe = result.get("prediction_error", 0.0)
+        recent_prediction_errors.append(pe)
+        if len(recent_prediction_errors) > 10:
+            recent_prediction_errors = recent_prediction_errors[-10:]
         cycles_since_reflection += 1
-        click.echo(f" delta={delta}", nl=False)
+        click.echo(f" pe={pe:+.2f}", nl=False)
 
         # --- Explore ---
         replay_data = None
@@ -87,7 +87,7 @@ def _run_system(
         cycles_since_reflection += 1
 
         # --- Reflect ---
-        trigger = should_reflect(cycles_since_reflection, recent_deltas)
+        trigger = should_reflect(cycles_since_reflection, recent_prediction_errors)
         if trigger.get("should_reflect"):
             if ablation:
                 data.append_memory(data.make_memory(
@@ -102,7 +102,7 @@ def _run_system(
                 changes = ref_result.get("changes", [])
                 click.echo(f" reflect={len(changes)} changes")
                 cycles_since_reflection = 0
-                recent_deltas = []
+                recent_prediction_errors = []
         else:
             click.echo(f" reflect=skip")
 
@@ -116,5 +116,3 @@ def _run_system(
     if ablation:
         from kernel.tools import set_ablation_mode
         set_ablation_mode(False)
-
-

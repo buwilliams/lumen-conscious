@@ -24,7 +24,7 @@ def _format_memories(memories: list[data.Memory]) -> str:
     return "\n".join(lines)
 
 
-def should_reflect(cycles_since_reflection: int, recent_deltas: list[float] | None = None) -> dict:
+def should_reflect(cycles_since_reflection: int, recent_prediction_errors: list[float] | None = None) -> dict:
     """Evaluate whether to enter the reflection loop.
 
     Returns dict with should_reflect bool and triggers list.
@@ -34,16 +34,21 @@ def should_reflect(cycles_since_reflection: int, recent_deltas: list[float] | No
     ref_config = config["reflection"]
     mems = memory.retrieve_memories(ref_config.get("staleness_cycles", 10) * 4)
 
-    deltas_str = "(none)"
-    if recent_deltas:
-        deltas_str = "\n".join(f"- delta={d}" for d in recent_deltas)
+    pe_str = "(none)"
+    if recent_prediction_errors:
+        lines = []
+        for pe in recent_prediction_errors:
+            sign = "+" if pe > 0 else ""
+            label = "better than expected" if pe > 0 else "worse than expected"
+            lines.append(f"- pe={sign}{pe:.2f} ({label})")
+        pe_str = "\n".join(lines)
 
     system, user = load_prompt("trigger", {
         "memories": _format_memories(mems),
-        "deltas": deltas_str,
+        "prediction_errors": pe_str,
         "cycles_since_reflection": str(cycles_since_reflection),
         "reflection_interval": str(ref_config["cycle_interval"]),
-        "delta_threshold": str(ref_config["prediction_delta_threshold"]),
+        "prediction_error_threshold": str(ref_config["prediction_error_threshold"]),
     })
 
     result_raw = call_llm(system, user)

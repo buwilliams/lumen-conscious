@@ -29,6 +29,18 @@ def _run_agentic_step(step: str, variables: dict) -> "AgenticResult":
     return result
 
 
+def _format_prediction_errors(memories: list[data.Memory]) -> str:
+    """Format recent prediction errors for prompt inclusion."""
+    if not memories:
+        return "(no prediction history yet)"
+    lines = []
+    for m in memories:
+        sign = "+" if m.prediction_error > 0 else ""
+        label = "better than expected" if m.prediction_error > 0 else "worse than expected"
+        lines.append(f"- pe={sign}{m.prediction_error:.2f} ({label}: {m.description[:150]})")
+    return "\n".join(lines)
+
+
 def run_action_loop(situation: str | None = None, conversation_history: str = "") -> dict:
     """Run the action loop: MODEL -> CANDIDATES -> PREDICT -> DECIDE -> ACT -> RECORD.
 
@@ -36,7 +48,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
     PREDICT and RECORD use plain call_llm (no tools, pure reasoning).
     DECIDE uses agentic tool calls. ACT uses agentic tool calls.
 
-    Returns dict with keys: action, result, response, record, delta.
+    Returns dict with keys: action, result, response, record, prediction_error.
     """
     from kernel.soul import compact_soul
     compact_soul()
@@ -89,8 +101,13 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
 
     # --- DECIDE ---
     _log("DECIDE ...")
+    # Query recent prediction errors for learning signal
+    recent_pe_memories = data.read_recent_prediction_errors(10)
+    recent_pe_str = _format_prediction_errors(recent_pe_memories)
+
     decide_result = _run_agentic_step("decide", {
         "predictions_output": predictions_output,
+        "recent_prediction_errors": recent_pe_str,
     })
 
     decision = _parse_json(decide_result.text) or {}
@@ -103,15 +120,15 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         description=f"DECIDE: {json.dumps(decision)}",
     ))
 
-    # Check for skip recommendation (motivation too low)
+    # Check for skip recommendation
     if decision.get("skip"):
         data.append_memory(data.make_memory(
             author="kernel",
             weight=0.3,
             situation=sit,
-            description="DECIDE: Skipped — motivation too low",
+            description="DECIDE: Skipped — best score negative with high confidence",
         ))
-        return {"action": "skip", "result": None, "response": None, "record": None, "delta": 0.0}
+        return {"action": "skip", "result": None, "response": None, "record": None, "prediction_error": 0.0}
 
     # --- ACT ---
     _log("ACT ...")
@@ -145,19 +162,26 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
     # --- RECORD ---
     _log("RECORD ...")
     prediction = selected.get("prediction", predictions_output[-500:])
+    expected_outcome = selected.get("expected_outcome", 0.0)
     system, user = load_prompt("record", {
         "prediction": prediction,
+        "expected_outcome": str(expected_outcome),
         "outcome": str(response)[:2000],
     })
     record_raw = call_llm(system, user)
     record_result = _parse_json(record_raw) or {}
-    delta = record_result.get("delta", 0.0)
+
+    outcome_score = record_result.get("outcome_score", 0.0)
+    prediction_error = record_result.get("prediction_error", 0.0)
 
     data.append_memory(data.make_memory(
         author="kernel",
         weight=0.5,
         situation=sit,
-        description=f"RECORD: delta={delta} {json.dumps(record_result)}",
+        description=f"RECORD: pe={prediction_error:+.2f} {json.dumps(record_result)}",
+        prediction=float(expected_outcome),
+        outcome=float(outcome_score),
+        prediction_error=float(prediction_error),
     ))
 
     return {
@@ -165,7 +189,7 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         "result": response,
         "response": response,
         "record": record_result,
-        "delta": delta,
+        "prediction_error": prediction_error,
     }
 
 

@@ -8,7 +8,7 @@ Python. uv for dependency management. The application is a collection of CLI uti
 
 **Kernel** — Python package at kernel/. Runs the action loop, reflection loop, explore loop, manages the mutable record. Has direct file I/O for data/* (its own persistence — not a skill). Provides the LLM with a built-in "create skill" tool for authoring new Python skills. The LLM can write arbitrary code that gets executed as a subprocess — no sandboxing. Orchestrates everything.
 
-**Skills** — Standalone programs in skills/[name]/. Each skill is its own directory with a required main.py entry point. Skills may contain multiple source files, use any language, and manage their own dependencies independent of the kernel's .venv. The kernel invokes skills by running their main.py as a subprocess, communicating via stdin/stdout. Each skill must implement `--help` to describe its capabilities to the kernel. Each skill faces some part of the world. `chat` faces the user. Future skills face APIs, browsers, databases, whatever the system learns to interact with. Skills are the "ability" in B=MAP.
+**Skills** — Standalone programs in skills/[name]/. Each skill is its own directory with a required main.py entry point. Skills may contain multiple source files, use any language, and manage their own dependencies independent of the kernel's .venv. The kernel invokes skills by running their main.py as a subprocess, communicating via stdin/stdout. Each skill must implement `--help` to describe its capabilities to the kernel. Each skill faces some part of the world. `chat` faces the user. Future skills face APIs, browsers, databases, whatever the system learns to interact with. Skills are the "ability" dimension in action scoring.
 
 **main.py** — CLI entry point. Parses commands and routes to the kernel.
 
@@ -106,9 +106,9 @@ Reflection loop: model possible versions of the self. "If I changed this value, 
 Runs every cycle. Uses values and goals as given. Does not question them.
 
 1. **THINK.** Load soul.md, values.json, active goals, recent memories. Model the situation. Generate candidate actions. For each candidate, run counterfactual reasoning against the world: predict outcomes. Kernel logs: what was loaded, what candidates were generated, what was predicted (author: kernel).
-2. **DECIDE.** Score each candidate action using B=MAP (see B=MAP Scoring below). If motivation is too low (M < 0.2), skip and record the skip. If ability is lacking (A = 0), create a new goal to author a skill that fills the gap. Otherwise, select the highest-scoring action. Kernel logs: which action was selected, which values and goals drove the choice, what the B=MAP scores were (author: kernel).
+2. **DECIDE.** Score each candidate using prediction-informed scoring (see Prediction-Error-Driven Scoring below). If the best score is negative AND confidence > 0.7, skip the action. If no matching skill exists, create a goal to author the missing capability. Otherwise, select the highest-scoring action. Recent prediction errors from past RECORD steps are fed into DECIDE, allowing the system to detect and correct systematic prediction biases over time. Kernel logs: which action was selected, which values and goals drove the choice, what the scores were (author: kernel).
 3. **ACT.** Invoke a skill. The selected action always maps to a skill invocation — `chat` to respond to the user, a future skill to call an API, etc. If the LLM identifies an ability gap (no skill exists for the needed action), it uses the kernel's built-in "create skill" tool to author a new skill directory, then invokes it.
-4. **RECORD.** Kernel logs: what happened, the outcome compared to the prediction from step 1, the delta (author: kernel).
+4. **RECORD.** Kernel logs: what happened, the outcome compared to the prediction from step 1, the prediction error (author: kernel).
 
 Writes: new memories, goal status changes (todo → working → done).
 
@@ -116,23 +116,19 @@ Does not write: values, goal weights, soul.md.
 
 ---
 
-## B=MAP Scoring
+## Prediction-Error-Driven Scoring
 
-Each candidate action receives a score: **B = M × A × P**
+Each candidate action receives a score: **score = expected_outcome × confidence × relevance**
 
-**M (Motivation)** — How much the system's values and goals want this action.
+**expected_outcome** — From the PREDICT step. How well this action is expected to go. Range: -1.0 to +1.0.
 
-For each candidate, identify which values and goals align with it. M = mean(aligned value weights) × goal weight. If the action is reactive (responding to external input rather than pursuing a goal), goal weight defaults to 1.0. Range: 0.0–1.0.
+**confidence** — From the PREDICT step. How certain the prediction is. Range: 0.0 to 1.0.
 
-**A (Ability)** — Whether the system can actually perform the action.
+**relevance** — How well the candidate addresses the current situation. For approach values, alignment adds to relevance. For avoidance values, risk of violation reduces relevance. Range: 0.0 to 1.0.
 
-A = 1.0 if a matching skill exists. A = 0.0 if no skill exists. When A = 0 for the highest-M candidate, the action loop creates a goal to author the missing skill rather than attempting the action.
+The candidate with the highest score wins. If the best score is negative AND confidence > 0.7, the system skips the action. If no matching skill exists, the system creates a goal to author the missing capability.
 
-**P (Prompt)** — The trigger strength.
-
-P = 1.0 for direct triggers (user input in chat, goal selected by the cycle). P decays for indirect triggers (e.g., a stale goal resurfacing scores lower than a fresh user request). Range: 0.0–1.0.
-
-The candidate with the highest B score wins. Ties are broken by the LLM's judgment. The kernel logs all scores for auditability.
+Recent prediction errors from past RECORD steps are fed into DECIDE, allowing the system to detect and correct systematic prediction biases over time.
 
 ---
 
@@ -154,7 +150,7 @@ The explore loop feeds the reflection loop indirectly — novel information disc
 
 Runs after every action loop. Evaluates whether to enter the reflection loop. Checks these conditions:
 
-- Prediction delta exceeds threshold (world model was wrong)
+- Prediction error exceeds threshold (world model was wrong)
 - Action scored high on two or more conflicting values (value tension)
 - A goal was just completed or has been stale for N cycles
 - N action cycles since last reflection (periodic)
@@ -168,7 +164,7 @@ If none fire: next cycle. If any fire: enter reflection loop.
 
 Runs only when triggered. Questions values and goals themselves.
 
-1. **REVIEW.** Load recent memories (author: self, goal, external — exclude kernel), prediction deltas, value conflicts, goal statuses. Summarize what happened since last reflection. Kernel-authored memories are the audit trail, not the experience. The system reflects on what it did and felt, not on the mechanics of how it processed. Kernel logs: what was reviewed, what triggers fired to enter reflection (author: kernel).
+1. **REVIEW.** Load recent memories (author: self, goal, external — exclude kernel), prediction errors, value conflicts, goal statuses. Summarize what happened since last reflection. Kernel-authored memories are the audit trail, not the experience. The system reflects on what it did and felt, not on the mechanics of how it processed. Kernel logs: what was reviewed, what triggers fired to enter reflection (author: kernel).
 2. **ASK.** For each tension or failure surfaced in review, run counterfactual reasoning against the self. "If I reweighted this value, how would past decisions have changed? Should I want what I want?" Generate proposed changes with rationale.
 3. **EVOLVE.** Run a consistency check on all proposed changes before applying. If two proposals contradict (e.g., increase and decrease the same value weight), resolve by keeping the proposal with stronger evidential support from the REVIEW step — log the conflict and the resolution rationale. Then apply consistent changes. For each change, log: what triggered it, what changed, why (author: self). Kernel logs: which files were modified, before and after states (author: kernel). Git commits are manual — the user commits after reviewing changes.
 
@@ -190,7 +186,9 @@ Markdown. Name, ontology, identity narrative. Written by reflection loop only.
 {
   "name": "string",
   "weight": 0.0-1.0,
-  "status": "active | deprecated"
+  "status": "active | deprecated",
+  "valence": "approach | avoidance",
+  "motivation_type": "intrinsic | extrinsic"
 }
 ```
 
@@ -220,7 +218,10 @@ Each skill is its own directory with a required main.py entry point. Skills may 
   "author": "self | kernel | goal | external",
   "weight": 0.0-1.0,
   "situation": "string",
-  "description": "string"
+  "description": "string",
+  "prediction": "optional scalar expected outcome",
+  "outcome": "optional scalar actual outcome",
+  "prediction_error": "optional signed difference (outcome - prediction)"
 }
 ```
 
@@ -286,7 +287,7 @@ The kernel enforces the sequencing and write permissions above. The LLM provides
 
 These are Phase 2 concerns. We list them here so the data model can support them from the start, but we don't build measurement infrastructure until the core loops are stable.
 
-**Does the system's world model improve over time?** The action loop logs predictions and outcomes. Over time, is the delta between them shrinking? (Counterfactual calibration.)
+**Does the system's world model improve over time?** The action loop logs predictions and outcomes. Over time, is the prediction error between them shrinking? (Counterfactual calibration.)
 
 **Are value changes explained?** Every value change should trace back to a self-authored memory with a rationale. Are there unexplained drifts? (Value drift audit.)
 

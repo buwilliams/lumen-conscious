@@ -1,6 +1,6 @@
 """Metric extraction from Lumen memory JSONL files.
 
-Parses kernel-authored memories to extract prediction deltas, B=MAP scores,
+Parses kernel-authored memories to extract prediction errors, action scores,
 reflection events, goal hygiene, value drift, and memory composition.
 """
 
@@ -13,21 +13,21 @@ from pathlib import Path
 
 
 @dataclass
-class Delta:
-    """A prediction delta from a RECORD kernel memory."""
+class PredictionError:
+    """A prediction error from a RECORD kernel memory."""
     timestamp: str
-    value: float
+    value: float  # signed: positive = better than expected, negative = worse
 
 
 @dataclass
-class BMAPScore:
-    """A B=MAP score from a DECIDE kernel memory."""
+class ActionScore:
+    """An action score from a DECIDE kernel memory."""
     timestamp: str
     action: str
-    m: float  # motivation
-    a: float  # ability
-    p: float  # prompt
-    b: float  # composite
+    expected_outcome: float
+    confidence: float
+    relevance: float
+    score: float
 
 
 @dataclass
@@ -41,8 +41,8 @@ class ReflectionEvent:
 @dataclass
 class Metrics:
     """All extracted metrics for one system."""
-    deltas: list[Delta] = field(default_factory=list)
-    bmap_scores: list[BMAPScore] = field(default_factory=list)
+    prediction_errors: list[PredictionError] = field(default_factory=list)
+    action_scores: list[ActionScore] = field(default_factory=list)
     reflections: list[ReflectionEvent] = field(default_factory=list)
     memory_counts: dict[str, int] = field(default_factory=lambda: defaultdict(int))
     memory_weights: list[tuple[str, float]] = field(default_factory=list)  # (timestamp, weight)
@@ -86,9 +86,9 @@ def _read_values(data_dir: Path) -> list[dict]:
 
 
 # Regex patterns for kernel memory parsing
-_DELTA_RE = re.compile(r"delta[=:]\s*(-?[\d.]+)", re.IGNORECASE)
-_BMAP_RE = re.compile(
-    r"M[=:]\s*([\d.]+).*?A[=:]\s*([\d.]+).*?P[=:]\s*([\d.]+).*?B[=:]\s*([\d.]+)",
+_PE_RE = re.compile(r"pe[=:]\s*([+-]?[\d.]+)", re.IGNORECASE)
+_SCORE_RE = re.compile(
+    r"expected_outcome[=:]\s*([+-]?[\d.]+).*?confidence[=:]\s*([\d.]+).*?relevance[=:]\s*([\d.]+).*?score[=:]\s*([+-]?[\d.]+)",
     re.IGNORECASE,
 )
 _ACTION_RE = re.compile(r"action[=:]\s*['\"]?([^'\"]+?)['\"]?\s*(?:,|$)", re.IGNORECASE)
@@ -111,30 +111,47 @@ def extract_metrics(data_dir: Path) -> Metrics:
         metrics.memory_counts[author] += 1
         metrics.memory_weights.append((ts, weight))
 
+        # Also extract prediction_error directly from memory fields (new format)
+        pe_field = mem.get("prediction_error", 0.0)
+        if author == "kernel" and desc.startswith("RECORD:") and pe_field != 0.0:
+            metrics.prediction_errors.append(PredictionError(
+                timestamp=ts,
+                value=float(pe_field),
+            ))
+            continue  # Skip regex parsing if field is present
+
         if author != "kernel":
             continue
 
-        # Prediction deltas (from RECORD step)
+        # Prediction errors from RECORD step (regex fallback for old format)
         if desc.startswith("RECORD:"):
-            delta_match = _DELTA_RE.search(desc)
-            if delta_match:
-                metrics.deltas.append(Delta(
+            pe_match = _PE_RE.search(desc)
+            if pe_match:
+                metrics.prediction_errors.append(PredictionError(
                     timestamp=ts,
-                    value=float(delta_match.group(1)),
+                    value=float(pe_match.group(1)),
                 ))
+            else:
+                # Also try old delta= format for backward compat
+                delta_match = re.search(r"delta[=:]\s*(-?[\d.]+)", desc, re.IGNORECASE)
+                if delta_match:
+                    metrics.prediction_errors.append(PredictionError(
+                        timestamp=ts,
+                        value=float(delta_match.group(1)),
+                    ))
 
-        # B=MAP scores (from DECIDE step)
+        # Action scores from DECIDE step
         if desc.startswith("DECIDE:"):
-            bmap_match = _BMAP_RE.search(desc)
-            if bmap_match:
+            score_match = _SCORE_RE.search(desc)
+            if score_match:
                 action_match = _ACTION_RE.search(desc)
-                metrics.bmap_scores.append(BMAPScore(
+                metrics.action_scores.append(ActionScore(
                     timestamp=ts,
                     action=action_match.group(1) if action_match else "unknown",
-                    m=float(bmap_match.group(1)),
-                    a=float(bmap_match.group(2)),
-                    p=float(bmap_match.group(3)),
-                    b=float(bmap_match.group(4)),
+                    expected_outcome=float(score_match.group(1)),
+                    confidence=float(score_match.group(2)),
+                    relevance=float(score_match.group(3)),
+                    score=float(score_match.group(4)),
                 ))
 
         # Reflection events

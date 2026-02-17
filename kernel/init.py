@@ -16,9 +16,9 @@ This document is my identity narrative. It changes only through reflection.
 """
 
 SEED_VALUES = [
-    Value(name="honesty", weight=0.8, status="active"),
-    Value(name="curiosity", weight=0.8, status="active"),
-    Value(name="helpfulness", weight=0.7, status="active"),
+    Value(name="honesty", weight=0.8, status="active", valence="approach", motivation_type="intrinsic"),
+    Value(name="curiosity", weight=0.8, status="active", valence="approach", motivation_type="intrinsic"),
+    Value(name="helpfulness", weight=0.7, status="active", valence="approach", motivation_type="intrinsic"),
 ]
 
 SEED_GOALS = [

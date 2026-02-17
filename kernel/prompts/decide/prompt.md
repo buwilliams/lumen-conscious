@@ -1,4 +1,7 @@
 **Candidates with Predictions:**
 {{predictions_output}}
 
-Use your tools to check values, goals, and available skills. Then score each candidate using B=MAP and select the best action. Follow the output format exactly.
+**Recent Prediction Errors (from past actions):**
+{{recent_prediction_errors}}
+
+Use your tools to check values, goals, and available skills. Review the prediction error history to calibrate your expectations — look for systematic bias in past predictions. Then score each candidate and select the best action. Follow the output format exactly.

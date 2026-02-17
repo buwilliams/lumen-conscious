@@ -22,10 +22,9 @@
   },
   "reflection": {
     "cycle_interval": 5,
-    "prediction_delta_threshold": 0.3,
+    "prediction_error_threshold": 0.3,
     "staleness_cycles": 10
   },
-  "motivation_threshold": 0.2,
   "run": {
     "timeout_ms": null,
     "throttle_seconds": 900

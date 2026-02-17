@@ -8,11 +8,11 @@ The theoretical foundation is described in [A Theory of Consciousness](https://g
 
 Lumen runs three loops that together produce something like a cognitive cycle:
 
-- **Action** — Pursues goals. Perceives the current situation, generates candidate actions, scores them, executes the best one, and records what happened versus what was predicted.
+- **Action** — Pursues goals. Perceives the current situation, generates candidate actions, scores them using prediction-informed scoring, executes the best one, and records the signed prediction error between expected and actual outcomes.
 - **Explore** — Seeks novelty. Generates open-ended questions from perpetual goals to surface gaps in the system's understanding. Without this, the system can only exploit what it already knows.
 - **Reflection** — Questions itself. Reviews recent experience, asks whether its values and goals still make sense, and modifies them if they don't. This is the only loop that can rewrite the system's identity.
 
-Each loop includes a prediction step for counterfactual reasoning before committing to action. When predictions are wrong, the delta can trigger reflection.
+Each loop includes a prediction step for counterfactual reasoning before committing to action. When prediction errors are large (in either direction), they trigger reflection.
 
 ## Usage
 
@@ -70,9 +70,9 @@ experiment/              # Experiment framework for ablation studies
 Each instance maintains its own mutable state, git-tracked for rollback and audit:
 
 - `soul.md` — Identity narrative
-- `values.json` — Weighted values that guide action scoring
+- `values.json` — Weighted values with valence (approach/avoidance) and motivation type (intrinsic/extrinsic) that guide action scoring
 - `goals/` — Goals partitioned by year, with weights and statuses
-- `memory/` — Append-only daily JSONL logs
+- `memory/` — Append-only daily JSONL logs with signed prediction errors for learning
 
 ### Write Permissions
 

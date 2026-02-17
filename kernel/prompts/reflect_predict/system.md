@@ -16,3 +16,13 @@ Output format: copy each proposal, then append:
 - If applied: predicted consequences of making this change
 - If not applied: predicted consequences of keeping things as they are
 - Recommendation: apply, skip, or modify — with reasoning
+
+## Anticipatory Learning
+
+Given the current trajectory and recent patterns, also consider:
+- What situations are likely upcoming based on active goals and recent experience?
+- Which values or goals should be pre-strengthened to handle anticipated challenges?
+- Are there systematic prediction biases that will compound if not addressed now?
+- Which approach values need reinforcement? Which avoidance values need higher vigilance?
+
+If you identify anticipatory adjustments, include them as additional proposals with the same "If applied / If not applied / Recommendation" format.

@@ -131,7 +131,7 @@ Code enforces structure. The LLM provides judgment. The system can change what i
 
 The kernel runs three loops against the mutable record.
 
-**The action loop** exploits. It takes the system's values and goals as given, models the situation, generates candidate actions, predicts outcomes for each, scores them, and executes the best one. It does not question what it wants — it pursues it. Every action is preceded by a prediction and followed by a record of what actually happened, so the system can track how well its world model performs.
+**The action loop** exploits. It takes the system's values and goals as given, models the situation, generates candidate actions, predicts outcomes for each (scalar expected outcomes with confidence), scores them, and executes the best one. It does not question what it wants — it pursues it. Every action is preceded by a prediction and followed by a record of what actually happened, producing a signed prediction error that measures how well its world model performed.
 
 **The explore loop** discovers. It generates one open-ended question per cycle, filtered through the system's enduring goals and values — seeking what it doesn't know that might matter. Exploration is how the system encounters novelty. Without it, the system can only exploit what it already knows.
 
@@ -139,7 +139,7 @@ The kernel runs three loops against the mutable record.
 
 The action and explore loops alternate during continuous operation. The reflection loop fires when conditions warrant it. Exploration feeds reflection indirectly — novel information may surface the tensions that trigger self-revision.
 
-Together, the three loops form a closed causal learning cycle. The action loop builds a world model, predicts outcomes, acts, and records the prediction error — the delta between what was expected and what happened. Large deltas are one of the signals that trigger reflection. The reflection loop examines *why* the prediction was wrong — whether the failure traces to misweighted values, stale goals, or a gap in self-understanding — and revises accordingly. Those revisions reshape the world model the next action loop builds. The system does not merely reason counterfactually about individual actions. It uses prediction error as a causal signal to drive self-modification, closing the loop between acting in the world and updating the self that acts.
+Together, the three loops form a closed causal learning cycle. The action loop builds a world model, predicts outcomes, acts, and records the prediction error — the signed difference between what was expected and what happened. Large prediction errors are one of the signals that trigger reflection. The reflection loop examines *why* the prediction was wrong — whether the failure traces to misweighted values, stale goals, or a gap in self-understanding — and revises accordingly. Those revisions reshape the world model the next action loop builds. The system does not merely reason counterfactually about individual actions. It uses prediction error as a causal signal to drive self-modification, closing the loop between acting in the world and updating the self that acts.
 
 ### Write Permissions
 
@@ -153,7 +153,11 @@ Memories strengthen with use and decay with time. Retrieval combines recency wit
 
 ### Behavior Scoring
 
-Actions are selected using B=MAP: behavior is a function of motivation (how much the system's values and goals want this action), ability (whether the required capability exists), and prompt (the strength of the trigger). All three must converge. Strong motivation with no ability produces a goal to build the missing capability. Vast ability with no motivation produces nothing. Because values carry descriptions and conditions, motivation scoring is not mere weight lookup — it requires assessing alignment depth against what the value actually means and when it applies. This framework ensures values translate into action only when conditions align — and the system can identify its own ability gaps.
+Actions are selected using prediction-error-driven scoring. Each candidate receives a score based on three factors: expected_outcome (from the PREDICT step, how well this action is expected to go), confidence (from the PREDICT step, how certain the prediction is), and relevance (how well the candidate addresses the current situation, informed by value alignment and type). For approach values, alignment adds to relevance. For avoidance values, risk of violation reduces relevance. The candidate with the highest score wins. If the best score is negative with high confidence, the system skips the action. If no matching skill exists, the system creates a goal to author the missing capability.
+
+Recent prediction errors from past actions are fed into the decision process, allowing the system to detect and correct systematic prediction biases over time. This closes the loop between world modeling and self-modification — the system doesn't just learn what to do, but updates how it evaluates what to do based on how well its past evaluations matched reality.
+
+The theoretical foundation traces to B.J. Fogg's B=MAP model [[9](#def-9)] — behavior as a function of motivation, ability, and prompt — but the implementation has evolved beyond it to incorporate predictive error-correction and value-type awareness.
 
 ### Auditability
 
@@ -167,7 +171,7 @@ These aren't sufficient conditions for consciousness. But they are necessary con
 
 **Value drift audits.** Every value change logged with its trigger. Unexplained drift — value changes without traced observations — is a red flag.
 
-**Counterfactual calibration.** The system logs a prediction before every action and records the outcome after. Over time, the delta between predictions and outcomes measures whether the world model is improving.
+**Counterfactual calibration.** The system logs a prediction before every action and records the outcome after. Over time, the prediction error between predictions and outcomes measures whether the world model is improving.
 
 **Goal hygiene.** Goals tracked for age, staleness, and whether they spawned sub-questions. Goals that persist without action or progress indicate a failure of the reflection loop.
 

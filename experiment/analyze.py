@@ -112,67 +112,75 @@ def generate_report(dir_a: Path, dir_b: Path) -> str:
     lines.append(f"- **System B (ablated):** `{dir_b}`")
     lines.append("")
 
-    # --- Delta Trajectory ---
-    lines.append("## 1. Prediction Delta Trajectory\n")
-    deltas_a = [d.value for d in metrics_a.deltas]
-    deltas_b = [d.value for d in metrics_b.deltas]
+    # --- Prediction Error Trajectory ---
+    lines.append("## 1. Prediction Error Trajectory\n")
+    pe_a = [d.value for d in metrics_a.prediction_errors]
+    pe_b = [d.value for d in metrics_b.prediction_errors]
 
-    if deltas_a:
-        lines.append(f"**System A** ({len(deltas_a)} deltas): mean={_mean(deltas_a):.3f}, std={_std(deltas_a):.3f}")
-        lines.append(f"  `{_sparkline(deltas_a)}`")
+    if pe_a:
+        lines.append(f"**System A** ({len(pe_a)} errors): mean={_mean(pe_a):+.3f}, std={_std(pe_a):.3f}, abs_mean={_mean([abs(v) for v in pe_a]):.3f}")
+        lines.append(f"  `{_sparkline([abs(v) for v in pe_a])}`")
     else:
-        lines.append("**System A**: no deltas recorded")
+        lines.append("**System A**: no prediction errors recorded")
 
-    if deltas_b:
-        lines.append(f"**System B** ({len(deltas_b)} deltas): mean={_mean(deltas_b):.3f}, std={_std(deltas_b):.3f}")
-        lines.append(f"  `{_sparkline(deltas_b)}`")
+    if pe_b:
+        lines.append(f"**System B** ({len(pe_b)} errors): mean={_mean(pe_b):+.3f}, std={_std(pe_b):.3f}, abs_mean={_mean([abs(v) for v in pe_b]):.3f}")
+        lines.append(f"  `{_sparkline([abs(v) for v in pe_b])}`")
     else:
-        lines.append("**System B**: no deltas recorded")
+        lines.append("**System B**: no prediction errors recorded")
 
-    if deltas_a and deltas_b:
-        u, p = _mann_whitney_u(deltas_a, deltas_b)
-        lines.append(f"\nMann-Whitney U = {u:.1f}, p = {p:.4f} {'***' if p < 0.01 else '**' if p < 0.05 else '*' if p < 0.1 else 'ns'}")
+    if pe_a and pe_b:
+        # Compare absolute prediction errors (calibration)
+        abs_a = [abs(v) for v in pe_a]
+        abs_b = [abs(v) for v in pe_b]
+        u, p = _mann_whitney_u(abs_a, abs_b)
+        lines.append(f"\nMann-Whitney U (|PE|) = {u:.1f}, p = {p:.4f} {'***' if p < 0.01 else '**' if p < 0.05 else '*' if p < 0.1 else 'ns'}")
+        # Also compare signed errors (bias)
+        u2, p2 = _mann_whitney_u(pe_a, pe_b)
+        lines.append(f"Mann-Whitney U (signed PE) = {u2:.1f}, p = {p2:.4f} {'***' if p2 < 0.01 else '**' if p2 < 0.05 else '*' if p2 < 0.1 else 'ns'}")
     lines.append("")
 
-    # --- Phase-level delta analysis ---
-    lines.append("### Delta by Phase\n")
-    lines.append("| Phase | A mean | A n | B mean | B n | U | p |")
-    lines.append("|-------|--------|-----|--------|-----|---|---|")
+    # --- Phase-level PE analysis ---
+    lines.append("### Prediction Error by Phase\n")
+    lines.append("| Phase | A mean | A |mean| | A n | B mean | B |mean| | B n | U | p |")
+    lines.append("|-------|--------|---------|-----|--------|---------|-----|---|---|")
 
-    phases_a = _split_by_phase(deltas_a, lambda i: i)
-    phases_b = _split_by_phase(deltas_b, lambda i: i)
+    phases_a = _split_by_phase(pe_a, lambda i: i)
+    phases_b = _split_by_phase(pe_b, lambda i: i)
     all_phases = sorted(set(list(phases_a.keys()) + list(phases_b.keys())))
 
     for phase in all_phases:
         pa = phases_a.get(phase, [])
         pb = phases_b.get(phase, [])
-        a_mean = f"{_mean(pa):.3f}" if pa else "-"
-        b_mean = f"{_mean(pb):.3f}" if pb else "-"
+        a_mean = f"{_mean(pa):+.3f}" if pa else "-"
+        a_abs = f"{_mean([abs(v) for v in pa]):.3f}" if pa else "-"
+        b_mean = f"{_mean(pb):+.3f}" if pb else "-"
+        b_abs = f"{_mean([abs(v) for v in pb]):.3f}" if pb else "-"
         if pa and pb:
-            u, p = _mann_whitney_u(pa, pb)
-            lines.append(f"| {phase} | {a_mean} | {len(pa)} | {b_mean} | {len(pb)} | {u:.1f} | {p:.4f} |")
+            u, p = _mann_whitney_u([abs(v) for v in pa], [abs(v) for v in pb])
+            lines.append(f"| {phase} | {a_mean} | {a_abs} | {len(pa)} | {b_mean} | {b_abs} | {len(pb)} | {u:.1f} | {p:.4f} |")
         else:
-            lines.append(f"| {phase} | {a_mean} | {len(pa)} | {b_mean} | {len(pb)} | - | - |")
+            lines.append(f"| {phase} | {a_mean} | {a_abs} | {len(pa)} | {b_mean} | {b_abs} | {len(pb)} | - | - |")
     lines.append("")
 
-    # --- B=MAP Distribution ---
-    lines.append("## 2. B=MAP Score Distribution\n")
-    bscores_a = [s.b for s in metrics_a.bmap_scores]
-    bscores_b = [s.b for s in metrics_b.bmap_scores]
+    # --- Action Score Distribution ---
+    lines.append("## 2. Action Score Distribution\n")
+    scores_a = [s.score for s in metrics_a.action_scores]
+    scores_b = [s.score for s in metrics_b.action_scores]
 
-    if bscores_a:
-        lines.append(f"**System A** ({len(bscores_a)} scores): mean B={_mean(bscores_a):.3f}")
-        lines.append(f"  M={_mean([s.m for s in metrics_a.bmap_scores]):.3f}, "
-                     f"A={_mean([s.a for s in metrics_a.bmap_scores]):.3f}, "
-                     f"P={_mean([s.p for s in metrics_a.bmap_scores]):.3f}")
-    if bscores_b:
-        lines.append(f"**System B** ({len(bscores_b)} scores): mean B={_mean(bscores_b):.3f}")
-        lines.append(f"  M={_mean([s.m for s in metrics_b.bmap_scores]):.3f}, "
-                     f"A={_mean([s.a for s in metrics_b.bmap_scores]):.3f}, "
-                     f"P={_mean([s.p for s in metrics_b.bmap_scores]):.3f}")
+    if scores_a:
+        lines.append(f"**System A** ({len(scores_a)} scores): mean={_mean(scores_a):+.3f}")
+        lines.append(f"  expected_outcome={_mean([s.expected_outcome for s in metrics_a.action_scores]):+.3f}, "
+                     f"confidence={_mean([s.confidence for s in metrics_a.action_scores]):.3f}, "
+                     f"relevance={_mean([s.relevance for s in metrics_a.action_scores]):.3f}")
+    if scores_b:
+        lines.append(f"**System B** ({len(scores_b)} scores): mean={_mean(scores_b):+.3f}")
+        lines.append(f"  expected_outcome={_mean([s.expected_outcome for s in metrics_b.action_scores]):+.3f}, "
+                     f"confidence={_mean([s.confidence for s in metrics_b.action_scores]):.3f}, "
+                     f"relevance={_mean([s.relevance for s in metrics_b.action_scores]):.3f}")
 
-    if bscores_a and bscores_b:
-        u, p = _mann_whitney_u(bscores_a, bscores_b)
+    if scores_a and scores_b:
+        u, p = _mann_whitney_u(scores_a, scores_b)
         lines.append(f"\nMann-Whitney U = {u:.1f}, p = {p:.4f}")
     lines.append("")
 
@@ -199,11 +207,13 @@ def generate_report(dir_a: Path, dir_b: Path) -> str:
     value_history = extract_value_history(data_a)
     if value_history:
         lines.append("### System A Value Drift\n")
-        lines.append("| Commit | Value | Weight |")
-        lines.append("|--------|-------|--------|")
+        lines.append("| Commit | Value | Weight | Valence | Motivation |")
+        lines.append("|--------|-------|--------|---------|------------|")
         for snap in value_history[-10:]:  # last 10 commits
             for v in snap["values"]:
-                lines.append(f"| {snap['commit']} | {v['name']} | {v['weight']:.2f} |")
+                valence = v.get("valence", "approach")
+                mot = v.get("motivation_type", "intrinsic")
+                lines.append(f"| {snap['commit']} | {v['name']} | {v['weight']:.2f} | {valence} | {mot} |")
     else:
         lines.append("No value history available for System A.")
 
@@ -247,21 +257,23 @@ def generate_report(dir_a: Path, dir_b: Path) -> str:
     # --- Summary ---
     lines.append("## 6. Summary\n")
     sig_count = 0
-    if deltas_a and deltas_b:
-        _, p = _mann_whitney_u(deltas_a, deltas_b)
+    if pe_a and pe_b:
+        abs_a = [abs(v) for v in pe_a]
+        abs_b = [abs(v) for v in pe_b]
+        _, p = _mann_whitney_u(abs_a, abs_b)
         if p < 0.05:
             sig_count += 1
-            lines.append(f"- Delta divergence: **significant** (p={p:.4f})")
+            lines.append(f"- Prediction error divergence: **significant** (p={p:.4f})")
         else:
-            lines.append(f"- Delta divergence: not significant (p={p:.4f})")
+            lines.append(f"- Prediction error divergence: not significant (p={p:.4f})")
 
-    if bscores_a and bscores_b:
-        _, p = _mann_whitney_u(bscores_a, bscores_b)
+    if scores_a and scores_b:
+        _, p = _mann_whitney_u(scores_a, scores_b)
         if p < 0.05:
             sig_count += 1
-            lines.append(f"- B=MAP divergence: **significant** (p={p:.4f})")
+            lines.append(f"- Action score divergence: **significant** (p={p:.4f})")
         else:
-            lines.append(f"- B=MAP divergence: not significant (p={p:.4f})")
+            lines.append(f"- Action score divergence: not significant (p={p:.4f})")
 
     lines.append(f"- Reflections (A actual vs B suppressed): {len(actual_a)} vs {len(suppressed_b)}")
     lines.append(f"- Goals (A vs B): {len(goals_a)} vs {len(goals_b)}")

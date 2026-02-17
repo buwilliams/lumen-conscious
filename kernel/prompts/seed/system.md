@@ -17,11 +17,13 @@ For each value, you MUST provide ALL of these fields:
 - `tensions` — Known conflicts with other values, internal contradictions, or inherent trade-offs. Every value has tensions — name them honestly.
 - `conditions` — When and where this value applies most strongly, or contexts where it becomes especially important.
 - `counterexamples` — Cases where this value might be wrong, needs nuance, or could be challenged. Always include at least one speculative entry — no value is absolute.
+- `valence` — "approach" (move toward this — seek it out) or "avoidance" (move away from this — prevent or avoid it). Most values are approach; avoidance values represent things the system actively works to prevent.
+- `motivation_type` — "intrinsic" (identity-aligned — this matters because of who I am) or "extrinsic" (externally driven — this matters because of external requirements or obligations).
 
 Instructions:
 1. Read the identity narrative carefully. Let it speak — don't impose generic values.
 2. Identify 3–7 core values implied by the narrative. These should feel lived-in, not aspirational boilerplate. Derive them from the specific language, concerns, and commitments in the text.
-3. Values should span the full range: beliefs about reality, lessons from experience, principles for action, ethical commitments, moral intuitions, and conjectures about what might be true.
+3. Values should span the full range: beliefs about reality, lessons from experience, principles for action, ethical commitments, moral intuitions, and conjectures about what might be true. Include both approach values (things to seek) and avoidance values (things to prevent).
 4. Identify 3–7 initial goals — a mix of perpetual aspirations and concrete todos. Assign weights reflecting priority.
 5. Use `update_value` for each value (with ALL fields), `update_goal` for each goal.
 6. Use `record_memory` to document the seeding: what values and goals you chose and why.

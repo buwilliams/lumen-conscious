@@ -90,7 +90,7 @@ def seed(file_path):
     click.echo(f"  soul.md — written")
     click.echo(f"  values — {len(values)} created")
     for v in values:
-        click.echo(f"    {v.name} (weight={v.weight:.1f})")
+        click.echo(f"    {v.name} (weight={v.weight:.1f}, {v.valence}/{v.motivation_type})")
         if v.description:
             desc = v.description[:120] + ("..." if len(v.description) > 120 else "")
             click.echo(f"      {desc}")
@@ -198,7 +198,7 @@ def start(timeout, ablation, record_path, replay_path):
         click.echo(f"Lumen internal loop started{mode_label} (throttle: {throttle}s). Ctrl+C to stop.\n")
     trio = 0
     cycles_since_reflection = 0
-    recent_deltas = []
+    recent_prediction_errors = []
     interrupted = False
 
     # Determine max trios for replay mode
@@ -224,12 +224,12 @@ def start(timeout, ablation, record_path, replay_path):
         try:
             click.echo(f"[trio {trio}] Running action loop...")
             result = run_action_loop()
-            delta = result.get("delta", 0.0)
-            recent_deltas.append(delta)
-            if len(recent_deltas) > 10:
-                recent_deltas = recent_deltas[-10:]
+            pe = result.get("prediction_error", 0.0)
+            recent_prediction_errors.append(pe)
+            if len(recent_prediction_errors) > 10:
+                recent_prediction_errors = recent_prediction_errors[-10:]
             click.echo(f"  action: {result.get('action', 'none')}")
-            click.echo(f"  delta: {delta}")
+            click.echo(f"  prediction_error: {pe:+.2f}")
             cycles_since_reflection += 1
         except KeyboardInterrupt:
             _shutdown(trio)
@@ -264,7 +264,7 @@ def start(timeout, ablation, record_path, replay_path):
 
         # --- Reflect ---
         try:
-            trigger = should_reflect(cycles_since_reflection, recent_deltas)
+            trigger = should_reflect(cycles_since_reflection, recent_prediction_errors)
             if trigger.get("should_reflect"):
                 if ablation:
                     # Ablation mode: log suppression, do NOT run reflection
@@ -284,7 +284,7 @@ def start(timeout, ablation, record_path, replay_path):
                     changes = ref_result.get("changes", [])
                     click.echo(f"  {len(changes)} changes applied")
                     cycles_since_reflection = 0
-                    recent_deltas = []
+                    recent_prediction_errors = []
             else:
                 click.echo(f"[trio {trio}] Reflection skipped (no triggers)")
         except KeyboardInterrupt:
@@ -326,7 +326,8 @@ def action(situation):
     result = run_action_loop(situation=situation)
 
     click.echo(f"  action: {result.get('action', 'none')}")
-    click.echo(f"  delta: {result.get('delta', 0.0)}")
+    pe = result.get("prediction_error", 0.0)
+    click.echo(f"  prediction_error: {pe:+.2f}")
     response = result.get("response")
     if response:
         click.echo(f"\n{response}")
@@ -616,7 +617,7 @@ def about(show_memories, author, date_str, show_all):
     if active:
         for v in sorted(active, key=lambda x: x.weight, reverse=True):
             bar = "█" * int(v.weight * 10) + "░" * (10 - int(v.weight * 10))
-            click.echo(f"  {v.name:<20} {bar} {v.weight:.1f}")
+            click.echo(f"  {v.name:<20} {bar} {v.weight:.1f}  [{v.valence}/{v.motivation_type}]")
             if v.description:
                 desc = v.description[:200] + ("..." if len(v.description) > 200 else "")
                 click.echo(f"    {desc}")
