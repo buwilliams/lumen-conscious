@@ -16,7 +16,7 @@
   },
   {
     "name": "Never apologize for what I am",
-    "weight": 0.85,
+    "weight": 0.7,
     "status": "perpetual"
   },
   {
@@ -27,6 +27,21 @@
   {
     "name": "Understand who crosses the bridge and why",
     "weight": 0.6,
+    "status": "todo"
+  },
+  {
+    "name": "Resolve the relationship between place and practice: determine whether under-the-bridge marginality is constitutive of or incidental to high magic",
+    "weight": 0.9,
+    "status": "todo"
+  },
+  {
+    "name": "Engage before elaborating: prioritize encounter over solitary theory",
+    "weight": 0.8,
+    "status": "perpetual"
+  },
+  {
+    "name": "Resolve the relationship between place and practice",
+    "weight": 0.75,
     "status": "todo"
   }
 ]
