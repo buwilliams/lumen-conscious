@@ -378,5 +378,10 @@
     "name": "Ethics and ontology of bridge-cohabitation",
     "weight": 0.5,
     "status": "deprecated"
+  },
+  {
+    "name": "Detect medium degradation",
+    "weight": 0.5,
+    "status": "todo"
   }
 ]
