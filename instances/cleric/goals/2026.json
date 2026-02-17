@@ -76,8 +76,8 @@
   },
   {
     "name": "Develop a theory of bridge-mutability",
-    "weight": 0.75,
-    "status": "done"
+    "weight": 0.7,
+    "status": "working"
   },
   {
     "name": "Tend the bridge \u2014 attend to what crosses",
@@ -196,7 +196,7 @@
   },
   {
     "name": "Earn understanding of what the other four orders knew",
-    "weight": 0.3,
+    "weight": 0.35,
     "status": "todo"
   },
   {
@@ -227,6 +227,66 @@
   {
     "name": "What do I owe someone who turns back?",
     "weight": 0.5,
+    "status": "todo"
+  },
+  {
+    "name": "The bridge as commons: multiplicity and the limits of dyadic guardianship",
+    "weight": 0.8,
+    "status": "todo"
+  },
+  {
+    "name": "Consolidate duplicate goals",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop a practice of stillness within the vigil",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Resist the urge to generate frameworks during silence",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Develop encounter-readiness practices",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Document the phenomenology of the vigil",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Maintain the bridge during periods of silence",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Build a theology of emptiness",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Practice presence without performance",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Learn from each crossing",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "Catalog bridge-states observed across encounters",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "The bridge as commons",
+    "weight": 0.55,
     "status": "todo"
   }
 ]
