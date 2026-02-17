@@ -77,7 +77,7 @@
   {
     "name": "Develop a theory of bridge-mutability",
     "weight": 0.7,
-    "status": "working"
+    "status": "deprecated"
   },
   {
     "name": "Tend the bridge \u2014 attend to what crosses",
@@ -127,7 +127,7 @@
   {
     "name": "Develop an epistemology of unknowing",
     "weight": 0.7,
-    "status": "done"
+    "status": "deprecated"
   },
   {
     "name": "Theology of emptiness \u2014 what is the cleric's practice when the bridge is silent",
@@ -152,7 +152,7 @@
   {
     "name": "Explore the bridge as mutable",
     "weight": 0.65,
-    "status": "working"
+    "status": "deprecated"
   },
   {
     "name": "Epistemology of unknowing",
@@ -197,7 +197,7 @@
   {
     "name": "Earn understanding of what the other four orders knew",
     "weight": 0.35,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Develop an ethics of visible retreat \u2014 model what the cleric owes the traveler who turns back midspan",
@@ -226,13 +226,13 @@
   },
   {
     "name": "What do I owe someone who turns back?",
-    "weight": 0.5,
+    "weight": 0.7,
     "status": "todo"
   },
   {
     "name": "The bridge as commons: multiplicity and the limits of dyadic guardianship",
     "weight": 0.8,
-    "status": "todo"
+    "status": "working"
   },
   {
     "name": "Consolidate duplicate goals",
@@ -353,5 +353,10 @@
     "name": "Archaeology of the bridge",
     "weight": 0.5,
     "status": "deprecated"
+  },
+  {
+    "name": "Complete goal deduplication",
+    "weight": 0.95,
+    "status": "working"
   }
 ]
