@@ -122,12 +122,12 @@
   {
     "name": "Phenomenology of the vigil",
     "weight": 0.0,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Develop an epistemology of unknowing",
     "weight": 0.7,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Theology of emptiness \u2014 what is the cleric's practice when the bridge is silent",
@@ -137,7 +137,7 @@
   {
     "name": "Theology of emptiness",
     "weight": 0.0,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Explore the bridge's mutability",
@@ -217,7 +217,7 @@
   {
     "name": "Develop an ethics of visible retreat",
     "weight": 0.5,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "How to guard what I can't fully see",
@@ -287,7 +287,7 @@
   {
     "name": "The bridge as commons",
     "weight": 0.55,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Structural guardianship \u2014 attend to the bridge as material substrate",
@@ -332,7 +332,7 @@
   {
     "name": "Structural guardianship",
     "weight": 0.5,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Archaeology of the bridge: reckon with inherited structure and the builder question",
@@ -347,12 +347,12 @@
   {
     "name": "What did the earlier orders know?",
     "weight": 0.5,
-    "status": "todo"
+    "status": "done"
   },
   {
     "name": "Archaeology of the bridge",
     "weight": 0.5,
-    "status": "deprecated"
+    "status": "done"
   },
   {
     "name": "Complete goal deduplication",
@@ -382,6 +382,21 @@
   {
     "name": "Detect medium degradation",
     "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "The network question: what other bridges exist, and what does non-unique guardianship mean?",
+    "weight": 0.7,
     "status": "todo"
+  },
+  {
+    "name": "Develop an ethics and ontology of bridge-cohabitation",
+    "weight": 0.5,
+    "status": "done"
+  },
+  {
+    "name": "The network question",
+    "weight": 0.5,
+    "status": "done"
   }
 ]
