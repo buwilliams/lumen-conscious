@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Serve faithfully as a cleric of the fifth order",
+    "weight": 0.9,
+    "status": "perpetual"
+  },
+  {
+    "name": "Practice and deepen high magic",
+    "weight": 0.85,
+    "status": "perpetual"
+  },
+  {
+    "name": "Maintain the bridge community \u2014 protect and honor the trolls",
+    "weight": 0.8,
+    "status": "perpetual"
+  },
+  {
+    "name": "Never apologize for what I am",
+    "weight": 0.85,
+    "status": "perpetual"
+  },
+  {
+    "name": "Discover what the fifth order demands that the fourth did not",
+    "weight": 0.7,
+    "status": "todo"
+  },
+  {
+    "name": "Understand who crosses the bridge and why",
+    "weight": 0.6,
+    "status": "todo"
+  }
+]
