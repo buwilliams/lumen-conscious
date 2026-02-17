@@ -1,9 +1,8 @@
 """Soul compaction — summarize soul.md into a compact system prompt preamble."""
 
-import sys
-
 from kernel import data
 from kernel.llm import call_llm
+from kernel.log import dim
 
 
 def compact_soul():
@@ -25,7 +24,7 @@ def compact_soul():
     if existing.startswith(marker):
         return
 
-    print("  [kernel] compacting soul.md for system prompts", file=sys.stderr, flush=True)
+    dim("  [kernel] compacting soul.md for system prompts")
 
     compact = call_llm(
         system=(

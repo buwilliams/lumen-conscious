@@ -209,7 +209,8 @@ def append_memory(mem: Memory):
     with open(path, "a") as f:
         f.write(json.dumps(asdict(mem)) + "\n")
     if mem.author == "kernel":
-        print(f"  [{mem.author}] {mem.situation}: {mem.description}", file=sys.stderr)
+        from kernel.log import dim
+        dim(f"  [{mem.author}] {mem.situation}: {mem.description}")
 
 
 def make_memory(author: str, weight: float, situation: str, description: str,

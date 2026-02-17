@@ -48,7 +48,8 @@ def compact_history(history: list[dict], prior_summary: str = "") -> tuple[list[
         lines.append(f"{role}: {turn['content']}")
     text_to_summarize = "\n".join(lines)
 
-    print("  [kernel] Compacting conversation history...", file=sys.stderr, flush=True)
+    from kernel.log import dim
+    dim("  [kernel] Compacting conversation history...")
 
     summary = call_llm(
         system=(

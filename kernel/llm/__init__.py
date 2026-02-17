@@ -8,9 +8,13 @@ from kernel.config import load_config
 from kernel.llm.base import ToolUseRequest, LLMResponse
 
 
+DIM = "\033[2m"
+RESET = "\033[0m"
+
+
 @contextmanager
 def _timer(label: str = ""):
-    """Show an elapsed-seconds counter on stderr while waiting for the LLM."""
+    """Show a dim elapsed-seconds counter on stderr while waiting for the LLM."""
     stop = threading.Event()
     prefix = f"  [{label}] " if label else "  "
 
@@ -18,7 +22,7 @@ def _timer(label: str = ""):
         start = time.monotonic()
         while not stop.wait(1.0):
             elapsed = int(time.monotonic() - start)
-            print(f"\r{prefix}{elapsed}s", end="", file=sys.stderr, flush=True)
+            print(f"\r{DIM}{prefix}{elapsed}s{RESET}", end="", file=sys.stderr, flush=True)
 
     start = time.monotonic()
     t = threading.Thread(target=_tick, daemon=True)
@@ -30,7 +34,7 @@ def _timer(label: str = ""):
         t.join(timeout=2.0)
         elapsed = time.monotonic() - start
         # Clear the counter line and print final time
-        print(f"\r{prefix}{elapsed:.1f}s", file=sys.stderr, flush=True)
+        print(f"\r{DIM}{prefix}{elapsed:.1f}s{RESET}", file=sys.stderr, flush=True)
 
 
 @dataclass
@@ -152,7 +156,7 @@ def run_agentic(system: str, user: str, tools: list, max_iterations: int = 10) -
                 "content": result_str,
             })
 
-            print(f"  [tool] {tc.name}({_summarize_args(tc.arguments)})", file=sys.stderr, flush=True)
+            print(f"{DIM}  [tool] {tc.name}({_summarize_args(tc.arguments)}){RESET}", file=sys.stderr, flush=True)
 
         messages.append({"role": "user", "content": tool_results})
 

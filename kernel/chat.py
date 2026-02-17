@@ -1,15 +1,15 @@
-import sys
 import uuid
 from datetime import datetime
 
 from kernel import data
 from kernel.context import compact_history, format_history
+from kernel.log import dim
 from kernel.loop_action import run_action_loop
 
 
 def _log(msg: str):
-    """Print a kernel progress message to stderr."""
-    print(f"  [kernel] {msg}", file=sys.stderr, flush=True)
+    """Print a dim kernel progress message to stderr."""
+    dim(f"  [kernel] {msg}")
 
 
 class ChatSession:

@@ -444,7 +444,8 @@ def load_tools(step: str) -> list[Tool]:
         elif name in TOOL_REGISTRY:
             loaded.append(TOOL_REGISTRY[name])
         else:
-            print(f"  [warning] Unknown tool '{name}' in config for step '{step}'", file=sys.stderr)
+            from kernel.log import dim
+            dim(f"  [warning] Unknown tool '{name}' in config for step '{step}'")
 
     return loaded
 

@@ -1,14 +1,13 @@
-import sys
-
 from kernel import data
 from kernel.llm import call_llm, run_agentic
+from kernel.log import dim
 from kernel.prompts import load_prompt
 from kernel.tools import load_tools, check_required_tools
 
 
 def _log(msg: str):
-    """Print a kernel progress message to stderr."""
-    print(f"  [kernel] {msg}", file=sys.stderr, flush=True)
+    """Print a dim kernel progress message to stderr."""
+    dim(f"  [kernel] {msg}")
 
 
 def _run_agentic_step(step: str, variables: dict):

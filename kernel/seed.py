@@ -1,17 +1,17 @@
 import json
-import sys
 from datetime import datetime
 from pathlib import Path
 
 import kernel.data as kdata
 from kernel.config import load_config
 from kernel.llm import run_agentic
+from kernel.log import dim
 from kernel.prompts import load_prompt
 from kernel.tools import load_tools, check_required_tools
 
 
 def _log(msg: str):
-    print(f"  [kernel] {msg}", file=sys.stderr, flush=True)
+    dim(f"  [kernel] {msg}")
 
 
 def run_seed(soul_text: str):
