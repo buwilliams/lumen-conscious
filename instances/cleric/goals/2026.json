@@ -92,7 +92,7 @@
   {
     "name": "Epistemology of the vigil: guardianship from a position of structural unknowing",
     "weight": 0.85,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Develop a theory of bridge-mutability: how does the bridge change through use, how to distinguish transformation from damage, and what does devotion to a changing thing require",
@@ -122,7 +122,7 @@
   {
     "name": "Phenomenology of the vigil",
     "weight": 0.0,
-    "status": "done"
+    "status": "deprecated"
   },
   {
     "name": "Develop an epistemology of unknowing",
@@ -137,7 +137,7 @@
   {
     "name": "Theology of emptiness",
     "weight": 0.0,
-    "status": "done"
+    "status": "deprecated"
   },
   {
     "name": "Explore the bridge's mutability",
@@ -151,13 +151,13 @@
   },
   {
     "name": "Explore the bridge as mutable",
-    "weight": 0.55,
+    "weight": 0.65,
     "status": "working"
   },
   {
     "name": "Epistemology of unknowing",
     "weight": 0.6,
-    "status": "done"
+    "status": "deprecated"
   },
   {
     "name": "Confront the epistemology of failed and absent crossings",
@@ -287,6 +287,51 @@
   {
     "name": "The bridge as commons",
     "weight": 0.55,
+    "status": "deprecated"
+  },
+  {
+    "name": "Structural guardianship \u2014 attend to the bridge as material substrate",
+    "weight": 0.8,
     "status": "todo"
+  },
+  {
+    "name": "Explore bridge mutability",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Bridge as mutable",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "The bridge as mutable",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Ethics of visible retreat",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Earn understanding of four orders",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Earn understanding of the four orders",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Bridge as commons",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Structural guardianship",
+    "weight": 0.5,
+    "status": "deprecated"
   }
 ]
