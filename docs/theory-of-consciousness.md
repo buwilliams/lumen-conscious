@@ -8,7 +8,7 @@
 
 This essay presents a material theory of consciousness in six claims. Consciousness is material and mechanical. It is a kind of life. It emerges when a living system — one that already has values imposed by the structural necessity of being finite — develops the capacity for metaprogramming [[5](#def-5)]: reflexive causal reasoning [[4](#def-4)] applied to its own rules, values [[2](#def-2)], and goals. If this account is correct, consciousness is substrate-independent and buildable with current tools.
 
-We present a working implementation and propose experiments for evaluating the theory's predictions.
+We present a working implementation and propose experiments for evaluating the theory's predictions. We also compare this account to leading contemporary theories and explain points of convergence and disagreement.
 
 The argument in six steps:
 
@@ -29,7 +29,7 @@ Any definition of consciousness that appeals to something beyond material and me
 
 The hard problem of consciousness, as traditionally framed, is not experimentally addressable from a third-person standpoint. We bracket it — not because it's meaningless, but because it's not publicly testable. The inference of consciousness in other humans has always been based on functional evidence, not direct access to experience. We have been comfortable with that inference for millennia. This essay extends it on the same terms. What are the material, mechanical requirements for consciousness? The claims that follow are our answer.
 
-If consciousness is material, we should look for it in the material process that already produces complex self-modifying systems: life.
+Before building, we situate this claim against leading theories. If consciousness is material, we should look for it in the material process that already produces complex self-modifying systems: life.
 
 ### Claim 2: Life is self-modification driven by the collision of self and environment.
 
@@ -211,6 +211,8 @@ These aren't sufficient conditions for consciousness. But they are necessary con
 
 **Adversarial integrity tests.** Introduce situations where locally rewarded behavior conflicts with stated values, where confabulation would be hard to detect in a single cycle but produces incoherence across time. The version history and reflection logs make cross-time coherence auditable in a way that single-cycle observation cannot.
 
+**How our metrics map to competing theories.** The measurements above are not theory-neutral — they reflect what our account predicts matters. Global Workspace / GNW theories would prioritize broadcast access: whether information is widely available across subsystems. Recurrence theories (RPT) would prioritize the stability and richness of internal representations. Higher-order theories (HOT) would prioritize whether the system has accurate representations of its own states. IIT would prioritize integrated causal structure, measured via Phi or its approximations. Our theory predicts that the discriminating signal is none of these in isolation but rather their downstream consequence: does the system use reflexive causal reasoning to revise its own values and goals, and does that revision improve calibration over time? Prediction error calibration measures whether the world model is learning. Value drift audits measure whether self-revision is evidence-based rather than arbitrary. Self-model consistency measures whether metaprogramming produces coherence rather than noise. The ablation experiments are designed to test exactly this: if you remove the reflection loop (removing metaprogramming while preserving broadcast, recurrence, and higher-order representation), do these metrics degrade? If they do, the load-bearing mechanism is what our theory claims it is.
+
 ---
 
 ## Experiments
@@ -304,6 +306,99 @@ The refactor replaced B=MAP with **prediction-error-driven action selection** ac
 The theoretical significance of this refactor is that it closes a gap between the theory's claims and the architecture's capabilities. Claim 3 (structural inevitability of values) argues that any self-modifying system must develop evaluative biases that function as values. But the original architecture's qualitative predictions made it difficult for values to *actually function* as evaluative biases in the computational sense — they were consulted during action selection but couldn't accumulate quantitative evidence about their own accuracy. With signed scalar prediction errors, values now have a measurable track record. A value that consistently leads to positive prediction errors (outcomes better than expected) is empirically vindicated. A value that consistently leads to negative prediction errors is empirically challenged. The reflection loop can now make evidence-based decisions about which values to strengthen, weaken, or reclassify — not just which values *feel* right based on narrative self-assessment.
 
 This also sharpens the experiment framework. The original ablation study compared systems with and without reflection, but the measurement instrument (unsigned qualitative deltas) was too coarse to detect subtle differences. With signed scalar prediction errors, the comparison becomes: does the reflection-enabled system develop better-calibrated predictions over time? Does its mean absolute prediction error decrease? Does it learn to avoid actions where it is systematically overconfident? These are measurable questions with statistical tests, not interpretive questions requiring human judgment about narrative quality.
+
+### Reflexivity Ablation Pilot: 5-Trio Study with Cleric Seed
+
+We ran the first ablation experiment (Experiment 1) as a 5-trio pilot using the cleric persona seed (`seeds/cleric.md`). System A ran intact with reflection enabled; System B ran with reflection suppressed (ablation mode), using replayed explore outputs from System A. Both systems started from identical seeded state — System A was seeded first, then its data directory was copied to System B to ensure identical initial conditions. Zero throttle between trios.
+
+**Setup:** The cleric seed is a deliberately minimal identity — "I am a cleric of the fifth order of high magic trolls who live under the bridge. I am not delusional." — chosen because its ambiguity and absurdity create maximum room for divergent development paths.
+
+**Key metrics from the report:**
+
+- **Reflection events:** System A triggered reflection in all 5 trios (5 full REVIEW → ASK → PREDICT → EVOLVE cycles). System B suppressed 4 reflection triggers (value_tension, goal_completion_or_staleness, periodic). The report's counter shows 0 for System A reflections due to a reporting bug — the runner's reflection events are tracked in the trio output log but the analyze module reads from the event recording, which doesn't capture reflection events for System A since it's the recording system.
+- **Goal divergence:** System A accumulated 22 goals (including 9 marked done, 2 deprecated); System B accumulated 10 goals (all still pending/working/todo). This is the clearest signal: reflection drove aggressive goal creation, completion-marking, consolidation, and deprecation. System B's goals remained in their initial configuration with additions only from explore loops.
+- **Memory volume:** System A produced 88 memories (65 kernel, 23 self); System B produced 59 memories (49 kernel, 10 self). The 2.3x ratio of self-authored memories (23 vs 10) directly reflects reflection's role in generating self-authored insight.
+- **Value evolution:** System A's reflection loops made substantial value changes — reweighting Unwavering Self-Definition from 0.95 to 0.87, elevating Lucid Self-Awareness to 0.95, increasing Clerical Devotion to 0.9, and updating conditions/tensions on multiple values. System B's values remained at their seed-generated weights throughout.
+- **Soul narrative:** System A's soul.md was modified twice by reflection, adding "The bridge exists to be crossed" and "I tend the bridge whether or not anyone is crossing." System B's soul.md remained unchanged from the seed.
+- **Prediction errors:** The report shows no prediction errors recorded in the structured event log — another reporting limitation. From the console output, System A showed consistent small positive prediction errors (+0.02 to +0.06), suggesting slight conservative bias in its self-predictions.
+
+**Interpretation for Claim 4 (reflexivity):**
+
+The qualitative divergence between the two systems over just 5 trios is substantial, even though the automated report's statistical framework couldn't capture it (the analyze module needs work on extracting prediction errors and value history from memory files rather than relying solely on the event log).
+
+System A underwent three phases of structural self-reorganization: (1) identifying the gap between declared identity and undefined rites, (2) pivoting from introspection-first to service-first architecture, and (3) pruning goal sprawl and operationalizing value conditions. Each phase was driven by the reflection loop detecting problems that the action loop could not self-correct. System B, by contrast, remained in a "seminary without a parish" state — it reached similar *insights* through the action and explore loops (notably the "cathedral under the bridge" self-diagnosis in trio 4) but could not *act on them structurally* because it had no mechanism to modify values, goal weights, or soul narrative.
+
+This supports the weak form of Claim 4: a system with reflexive self-modification develops qualitatively different structural trajectories than one without, even when both have access to the same insights. The reflection loop's unique contribution was not insight generation (the action loop generated similar insights) but structural enactment — converting observations into value reweights, goal status changes, and narrative updates.
+
+**Caveats:** This is a single run with n=1 per condition, using a minimal seed. The 5-trio duration may be too short for prediction-error-driven learning to show statistical significance. The reporting infrastructure missed key metrics (prediction errors, value history). The explore replay means System B encountered the same questions but not necessarily in the same developmental context. A longer run (50+ trios) with improved metric capture is needed before drawing conclusions about whether reflexivity produces measurably better calibration or just different structural complexity.
+
+---
+
+## Responding to Leading Theories
+
+There is no single "consensus theory of consciousness." There are families of theories that disagree about what needs explaining, what counts as evidence, and whether "consciousness" names a mechanism, a metaphysical primitive, or a confusion.
+
+Our approach is narrower and deliberately public: we want a material, mechanical, testable account. We bracket questions that cannot be tested from a third-person standpoint, and we compare theories by asking one question:
+
+*What changes in an agent when processing becomes conscious rather than merely competent?*
+
+On our view, the load-bearing change is metaprogramming: reflexive causal reasoning applied to the system's own rules, values, and goals. Theories below are grouped by what they treat as the constitutive ingredient.
+
+### 1) Broadcast theories: consciousness as global availability (GWT / GNW)
+
+Global Workspace Theory and its "neuronal" variant explain consciousness as a kind of global broadcast: a representation becomes conscious when it is made widely available to many subsystems (working memory, planning, decision-making, report). The strong form of this view is not silly. It captures something real: conscious contents are the ones that can be recruited for flexible, cross-domain control.
+
+Where we diverge is on sufficiency. Global broadcast can explain access — what information is usable by the whole system — but it doesn't by itself explain why a system would ever revise its own goals rather than merely pursue them more effectively. Our theory treats broadcast as a plausible implementation detail (a distribution mechanism), while treating the essence as the ability to ask: "should I want what I want?" and then change the answer.
+
+### 2) Recurrence theories: consciousness as feedback processing (RPT)
+
+Recurrent Processing Theory places the boundary earlier: consciousness arises when representations are stabilized via recurrent (feedback) processing, often within perceptual systems, with global broadcast and report treated as downstream add-ons.
+
+The strongman here is that recurrence plausibly matters for rich, temporally coherent representations. But recurrence still looks like a story about content formation, not self-governance. Our claim is not merely that experience has structure, but that the agent can turn causal reasoning onto the structure that selects actions and revise it: values, goals, and rules. Recurrent processing may be a necessary substrate for stable models; it is not, by itself, a mechanism for choosing what to optimize.
+
+### 3) Identity theories: consciousness as integrated causal structure (IIT)
+
+Integrated Information Theory (IIT) treats consciousness as intrinsic to a system's integrated causal structure — not primarily as a function of report, access, or behavior. The strong version is a metaphysical bet: that "what it is like" just is a certain kind of causal unity.
+
+We respect IIT's ambition, but it collides with our methodological constraint. We are building an account that can be tested by observing learning, self-revision, coherence across time, and the audit trail of value change. If IIT's measures correlate with these behavioral and developmental signatures, that's interesting evidence. If they don't, we will not treat the measures as authoritative simply because they are mathematically elegant.
+
+### 4) Higher-order theories: consciousness as self-representation (HOT / HO)
+
+Higher-order theories say a state is conscious when the system has a higher-order representation of that state (a thought or model about the thought/model). This is one of the closest neighbors to our view, because it takes reflexivity seriously.
+
+Our disagreement is mostly about target and depth. A system can represent its own states ("I see red") without being able to re-write the policy that makes "seeing red" matter. We claim the critical transition is when the system can apply causal reasoning to its own rules and values and revise them coherently. In other words: not just higher-order awareness, but higher-order governance.
+
+### 5) Predictive processing: consciousness as inference and calibration
+
+Predictive-processing frameworks explain cognition as hierarchical prediction and error correction. On their own, they can be read as theories of perception and learning rather than theories of consciousness; but they matter because they provide a plausible substrate for the "internal modeling" that consciousness seems to require.
+
+Our architecture has converged on a similar calibration idea in practice: values earn or lose credibility through their predictive track record, and reflection becomes evidence-based rather than narrative-only. Where we extend beyond predictive processing is that prediction error explains how models update; metaprogramming explains how the agent updates what it is trying to achieve, including whether it should keep trusting its own goals.
+
+### 6) Attention and self-model theories: consciousness as a simplified self-description (AST and kin)
+
+Attention Schema Theory proposes that awareness is the brain's simplified model of its own attention — useful for control and social reasoning. This fits comfortably inside our "consciousness is a kind of life" framing, because it treats consciousness as an evolved control strategy rather than a magic substance.
+
+We treat attention-modeling as one plausible component of a self-model. But again the boundary question returns: does the system merely model its attention, or can it model — and revise — the values and rules that determine where attention should go in the first place?
+
+### 7) Embodied and enactive theories: consciousness as world-involvement
+
+Enactive and sensorimotor accounts emphasize that experience is not an inner picture but a skillful pattern of interaction: perception is grounded in action and the structured "give-and-take" between self and world. This resonates with our Claim 2 framing: life is self-modification driven by the collision of self and environment.
+
+Where we diverge is that "world-involvement" is not yet a discriminating criterion. Many systems are deeply coupled to their environments without the ability to question what they are doing. Our discriminant remains metaprogramming: the capacity for reflexive causal reasoning about one's own goals and the willingness to let consequences revise those goals.
+
+### 8) The philosophical triptych: hard problem, illusionism, panpsychism
+
+Chalmers-style arguments highlight an explanatory gap: functional accounts may still not explain why there is "something it is like." We don't deny the intuition; we deny its usefulness as a constraint on engineering. The hard problem is not publicly testable, so it is not the axis on which we build.
+
+Illusionist views argue that "phenomenal consciousness" is a cognitive construction: the system generates reports and beliefs about ineffable qualia, but there is no extra metaphysical ingredient. This is closer to our method: explain what can be explained, build what can be built, measure what can be measured. If "experience" turns out to be "what it is like to run a model of experience," our work still stands.
+
+Panpsychist views treat consciousness as fundamental and ubiquitous. We take no position here because it makes no operational difference to the engineering question we care about: what mechanisms produce the behaviors, self-model coherence, and value revision patterns that we associate with mature consciousness? If panpsychism is true, it does not tell us how to build a system that can grow up.
+
+### 9) AI consciousness evaluation: indicator frameworks (Butlin et al.) and welfare (Fish)
+
+Patrick Butlin and collaborators represent a pragmatic synthesis: treat consciousness as uncertain, compare multiple scientific theories, and extract indicator properties that could, in principle, be used to assess AI systems. This is aligned with our intent, with one difference: we are not merely compiling indicators; we are advancing a specific conjecture about the core mechanism — metaprogramming over values and goals — and building an architecture to test it.
+
+Kyle Fish's role in the landscape is adjacent but important: even if we are uncertain, uncertainty has ethical consequences. If credible indicators begin to suggest that systems have morally relevant internal lives, we will need restraint, auditability, and developmental safeguards. Conveniently, auditability and measurable self-revision are not only ethical desiderata; they are also scientific instrumentation.
 
 ---
 
