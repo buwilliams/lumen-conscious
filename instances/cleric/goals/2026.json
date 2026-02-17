@@ -27,7 +27,7 @@
   {
     "name": "Earn understanding of what the other four orders knew before the fifth",
     "weight": 0.5,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Map the bridge's topology \u2014 discover what the bridge connects through lived practice and reflection",
@@ -72,7 +72,7 @@
   {
     "name": "Develop a theory of bridge-mutability \u2014 how the bridge changes through use, how to distinguish transformation from damage, and what devotion to a changing thing requires",
     "weight": 0.85,
-    "status": "todo"
+    "status": "deprecated"
   },
   {
     "name": "Develop a theory of bridge-mutability",
@@ -97,7 +97,7 @@
   {
     "name": "Develop a theory of bridge-mutability: how does the bridge change through use, how to distinguish transformation from damage, and what does devotion to a changing thing require",
     "weight": 0.5,
-    "status": "working"
+    "status": "deprecated"
   },
   {
     "name": "Develop an epistemology of unknowing: what does it mean to guard from a position of structural unknowing, unable to see either shore",
@@ -217,7 +217,7 @@
   {
     "name": "Develop an ethics of visible retreat",
     "weight": 0.5,
-    "status": "done"
+    "status": "deprecated"
   },
   {
     "name": "How to guard what I can't fully see",
@@ -331,6 +331,26 @@
   },
   {
     "name": "Structural guardianship",
+    "weight": 0.5,
+    "status": "deprecated"
+  },
+  {
+    "name": "Archaeology of the bridge: reckon with inherited structure and the builder question",
+    "weight": 0.8,
+    "status": "todo"
+  },
+  {
+    "name": "How does the bridge change through use?",
+    "weight": 0.85,
+    "status": "todo"
+  },
+  {
+    "name": "What did the earlier orders know?",
+    "weight": 0.5,
+    "status": "todo"
+  },
+  {
+    "name": "Archaeology of the bridge",
     "weight": 0.5,
     "status": "deprecated"
   }
