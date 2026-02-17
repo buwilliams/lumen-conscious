@@ -110,7 +110,19 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         "recent_prediction_errors": recent_pe_str,
     })
 
-    decision = _parse_json(decide_result.text) or {}
+    decision = _parse_json(decide_result.text)
+    if decision is None:
+        _log(f"DECIDE: failed to parse JSON, retrying... (raw text: {decide_result.text[:200]})")
+        system, user = load_prompt("decide", {
+            "predictions_output": predictions_output,
+            "recent_prediction_errors": recent_pe_str,
+        })
+        retry_user = user + "\n\nYour previous response could not be parsed. You MUST return a valid JSON block in a markdown code fence. Follow the output format exactly."
+        retry_result = run_agentic(system, retry_user, load_tools("decide"))
+        decision = _parse_json(retry_result.text) or {}
+        if not decision:
+            _log(f"DECIDE: retry also failed (raw text: {retry_result.text[:200]})")
+
     selected = decision.get("selected", {})
 
     data.append_memory(data.make_memory(
@@ -169,7 +181,12 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
         "outcome": str(response)[:2000],
     })
     record_raw = call_llm(system, user)
-    record_result = _parse_json(record_raw) or {}
+    record_result = _parse_json(record_raw)
+    if record_result is None:
+        _log(f"RECORD: failed to parse JSON (raw text: {record_raw[:200]})")
+        retry_user = user + "\n\nYour previous response could not be parsed. You MUST return a valid JSON block in a markdown code fence. Follow the output format exactly."
+        record_raw = call_llm(system, retry_user)
+        record_result = _parse_json(record_raw) or {}
 
     outcome_score = record_result.get("outcome_score", 0.0)
     prediction_error = record_result.get("prediction_error", 0.0)
@@ -194,7 +211,8 @@ def run_action_loop(situation: str | None = None, conversation_history: str = ""
 
 
 def _parse_json(text: str) -> dict | None:
-    """Parse JSON from markdown code fences or raw JSON. Used only for RECORD step."""
+    """Parse JSON from markdown code fences, raw JSON, or embedded JSON object."""
+    # Try code-fenced JSON first
     pattern = r'```(?:json)?\s*\n(.*?)\n```'
     match = re.search(pattern, text, re.DOTALL)
     if match:
@@ -202,7 +220,24 @@ def _parse_json(text: str) -> dict | None:
             return json.loads(match.group(1))
         except json.JSONDecodeError:
             pass
+    # Try raw JSON
     try:
         return json.loads(text)
     except (json.JSONDecodeError, ValueError):
-        return None
+        pass
+    # Try to find a JSON object embedded in prose text
+    # Find the outermost { ... } block by matching braces
+    start = text.find('{')
+    if start != -1:
+        depth = 0
+        for i in range(start, len(text)):
+            if text[i] == '{':
+                depth += 1
+            elif text[i] == '}':
+                depth -= 1
+                if depth == 0:
+                    try:
+                        return json.loads(text[start:i + 1])
+                    except json.JSONDecodeError:
+                        break
+    return None
